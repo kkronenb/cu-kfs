@@ -16,27 +16,24 @@
 
 package edu.cornell.kfs.coa.businessobject;
 
-import java.util.HashMap;
 
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.businessobject.SubObjectCodeGlobal;
 import org.kuali.kfs.coa.businessobject.SubObjectCodeGlobalDetail;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.service.BusinessObjectService;
 
 /**
  * 
  */
 public class CUSubObjectCodeGlobal extends SubObjectCodeGlobal implements GlobalBusinessObject {
 
-
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SubObjectCodeGlobal.class);    
     private String subObjectCodeDescr;
 
     public void populate(SubObjectCode old, AccountGlobalDetail accountGlobalDetail, SubObjectCodeGlobalDetail subObjCdGlobalDetail) {
-        old.setSubObjectCodeName(update(old.getSubObjectCodeDescr(), subObjectCodeDescr));
+    	SubObjectCodeExtendedAttribute cuSubObjectCodeExtendedData = (SubObjectCodeExtendedAttribute) old.getExtension();
+        cuSubObjectCodeExtendedData.setSubObjectCodeDescr(update(subObjectCodeDescr, cuSubObjectCodeExtendedData.getSubObjectCodeDescr()));
     }
 	
 	public String getSubObjectCodeDescr() {
