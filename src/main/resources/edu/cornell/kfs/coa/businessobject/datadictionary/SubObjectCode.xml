@@ -62,7 +62,7 @@
 	<bean id="SubObjectCode-financialSubObjectCode-parentBean" abstract="true" parent="SubObjectAttribute" />     
                                         
   <bean id="SubObjectCode-extension-subObjectCodeDescr" parent="SubObjectCode-extension-subObjectCodeDescr-parentBean"/>
-  <bean id="SubObjectCode-extension-subObjectCodeDescr-parentBean" abstract="true" parent="SubObjectCode-extension-subObjectCodeDescr">
+  <bean id="SubObjectCode-extension-subObjectCodeDescr-parentBean" abstract="true" parent="SubObjectCodeExtendedAttribute-subObjectCodeDescr">
     <property name="name" value="extension.subObjectCodeDescr"/>
   </bean>
 
