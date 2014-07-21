@@ -33,7 +33,7 @@
         <bean parent="ObjectCode-financialObjectCode"/>
         <bean parent="Account-accountNumber"/>
         <ref bean="SubObjectCode-financialSubObjectCode"/>
-        <ref bean="SubObjectCode-extension-subObjectCodeDescr"/> 
+        <ref bean="SubObjectCode-extension-subObjectCodeDescr"/>
         <ref bean="SubObjectCode-financialSubObjectCodeName"/>
         <ref bean="SubObjectCode-financialSubObjectCdshortNm"/>
         <ref bean="SubObjectCode-active"/>
@@ -120,80 +120,4 @@
          <property name="name" value="account.organizationCode"/>
     </bean>                                               
 
-<!-- Business Object Inquiry Definition -->
-
-
-  <bean id="SubObjectCode-inquiryDefinition" parent="SubObjectCode-inquiryDefinition-parentBean" />
-
-  <bean id="SubObjectCode-inquiryDefinition-parentBean" abstract="true"
-    parent="InquiryDefinition">
-    <property name="title" value="Sub-Object Code Inquiry" />
-    <property name="inquirySections">
-      <list>
-        <ref bean="SubObjectCode-inquirySectionDefinition" />
-      </list>
-    </property>
-  </bean>
-
-  <bean id="SubObjectCode-inquirySectionDefinition" parent="SubObjectCode-inquirySectionDefinition-parentBean" />
-  <bean id="SubObjectCode-inquirySectionDefinition-parentBean"
-    parent="InquirySectionDefinition" abstract="true">
-    <property name="title" value="" />
-    <property name="numberOfColumns" value="1" />
-    <property name="inquiryFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear" />
-        <bean parent="FieldDefinition" p:attributeName="accountNumber" />
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
-        <bean parent="FieldDefinition" p:attributeName="financialObjectCode" />
-        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode" />
-        <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/> 
-        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName" />
-        <bean parent="FieldDefinition" p:attributeName="active" />
-        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCdshortNm" />
-      </list>
-    </property>
-  </bean>
-
-  <!-- Business Object Lookup Definition -->
-
-  <bean id="SubObjectCode-lookupDefinition" parent="SubObjectCode-lookupDefinition-parentBean" />
-  <bean id="SubObjectCode-lookupDefinition-parentBean" abstract="true" parent="SubObjectCode-lookupDefinition-base-parentBean" />
-  <bean id="SubObjectCode-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition">
-    <property name="title" value="Sub-Object Code Lookup"/>
-    
-    <property name="defaultSort">
-      <bean parent="SortDefinition">
-        <property name="attributeNames">
-          <list>
-            <value>financialSubObjectCode</value>
-          </list>
-        </property>
-      </bean>
-    </property>
-    <property name="lookupFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear" p:defaultValueFinderClass="org.kuali.kfs.sys.businessobject.defaultvalue.FiscalYearFinder"/>
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
-        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
-        <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/> 
-        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
-      </list>
-    </property>
-    <property name="resultFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
-        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
-        <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/> 
-        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
-      </list>
-    </property>
-  </bean>
 </beans>

@@ -15,6 +15,14 @@
  limitations under the License.
 -->
 
+  <bean id="SubObjectCodeGlobalMaintenanceDocument-EditGlobalSubObjectCode" parent="SubObjectCodeGlobalMaintenanceDocument-EditGlobalSubObjectCode-parentBean">
+    <property name="maintainableItems">
+      <list merge="true">
+        <bean parent="MaintainableFieldDefinition" p:name="subObjectCodeDescr"/>
+      </list>
+    </property>
+  </bean>
+
   <bean id="SubObjectCodeGlobalMaintenanceDocument-EditAccounts" parent="SubObjectCodeGlobalMaintenanceDocument-EditAccounts-parentBean">
     <property name="id" value="Edit Accounts"/>
     <property name="title" value="Edit Accounts"/>

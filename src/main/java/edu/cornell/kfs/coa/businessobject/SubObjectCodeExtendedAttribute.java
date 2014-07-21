@@ -3,17 +3,13 @@
  */
 package edu.cornell.kfs.coa.businessobject;
 
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.service.BusinessObjectService;
-
-import edu.cornell.kfs.sys.businessobject.YearEndPersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * @author kco26
  *
  */
-public class SubObjectCodeExtendedAttribute extends YearEndPersistableBusinessObjectExtensionBase {
+public class SubObjectCodeExtendedAttribute extends PersistableBusinessObjectBase {
 
 
 	/**

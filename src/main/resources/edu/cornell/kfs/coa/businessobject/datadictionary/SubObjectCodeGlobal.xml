@@ -19,7 +19,7 @@
   <bean id="SubObjectCodeGlobal" parent="SubObjectCodeGlobal-parentBean"/>
 
   <bean id="SubObjectCodeGlobal-parentBean" abstract="true" parent="BusinessObjectEntry">
-    <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.SubObjectCodeGlobal"/>
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CUSubObjectCodeGlobal"/>
     <property name="objectLabel" value="Sub-Object Code Global"/>
     <property name="attributes">
       <list>
@@ -48,7 +48,9 @@
   </bean>
   
   <bean id="SubObjectCodeGlobal-subObjectCodeDescr" parent="SubObjectCodeGlobal-subObjectCodeDescr-parentBean"/>
-  <bean id="SubObjectCodeGlobal-subObjectCodeDescr-parentBean" abstract="true" parent="SubObjectCodeExtendedAttribute-subObjectCodeDescr" />
+  <bean id="SubObjectCodeGlobal-subObjectCodeDescr-parentBean" abstract="true" parent="SubObjectCodeExtendedAttribute-subObjectCodeDescr">
+    <property name="name" value="extension.subObjectCodeDescr"/>
+  </bean>
  
   <bean id="SubObjectCodeGlobal-financialSubObjectCodeShortName" parent="SubObjectCodeGlobal-financialSubObjectCodeShortName-parentBean"/>
   <bean id="SubObjectCodeGlobal-financialSubObjectCodeShortName-parentBean" abstract="true" parent="SubObjectCode-financialSubObjectCdshortNm">
