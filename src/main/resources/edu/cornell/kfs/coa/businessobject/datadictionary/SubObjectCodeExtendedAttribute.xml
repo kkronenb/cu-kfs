@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+
+  <bean id="SubObjectCodeExtendedAttribute" parent="SubObjectCodeExtendedAttribute-parentBean"/>
+
+  <bean id="SubObjectCodeExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubObjectCodeExtendedAttribute"/>
+    <property name="objectLabel" value="SubObjectCodeExtendedAttribute"/>
+    <property name="attributes">
+      <list>
+        <ref bean="SubObjectCodeExtendedAttribute-subObjectCodeDescr"/>
+      </list>
+    </property>        
+  </bean>
+
+<!-- Attribute Definitions -->
+  <bean id="SubObjectCodeExtendedAttribute-subObjectCodeDescr" parent="SubObjectCodeExtendedAttribute-subObjectCodeDescr-parentBean"/>
+  <bean id="SubObjectCodeExtendedAttribute-subObjectCodeDescr-parentBean" abstract="true" parent="GenericAttributes-genericBigText">
+    <property name="name" value="subObjectCodeDescr"/>
+    <property name="label" value="Sub Object Code Description"/>
+    <property name="shortLabel" value="Description"/>
+    <property name="required" value="false"/>
+    <property name="maxLength" value="600"/>
+    <property name="validationPattern">
+      <bean parent="AnyCharacterWithWhitespaceValidation" />
+    </property>
+    
+    <property name="control">
+    <bean parent="TextareaControlDefinition" p:rows="3" p:cols="60"/>
+    </property>
+    
+  </bean>
+     
+</beans>
+  
+
