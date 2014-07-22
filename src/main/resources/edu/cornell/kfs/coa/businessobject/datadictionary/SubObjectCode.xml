@@ -30,6 +30,7 @@
  
   <!-- Business Object Inquiry Definition -->
   
+  <!-- This works until we try to add the extension, at which point we get a NullPointerException. -->
   <bean id="SubObjectCode-inquirySectionDefinition" parent="SubObjectCode-inquirySectionDefinition-parentBean">
     <property name="title" value="" />
     <property name="numberOfColumns" value="1" />
@@ -40,16 +41,27 @@
         <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode" />
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode" />
-        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/> -->
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/> --><!-- This doesn't work if the extension isn't commented out. -->
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName" />
         <bean parent="FieldDefinition" p:attributeName="active" />
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCdshortNm" />
       </list>
     </property>
   </bean>
+  
+  <!-- I believe this should work, assuming the above works.
+  <bean id="SubObjectCode-inquirySectionDefinition" parent="SubObjectCode-inquirySectionDefinition-parentBean">
+    <property name="inquiryFields">
+      <list merge="true">
+        <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/>
+      </list>
+    </property>
+  </bean>
+  -->
 
   <!-- Business Object Lookup Definition -->
 
+  <!-- This works until we try to add the extension, at which point we get NullPointerExceptions. -->
   <bean id="SubObjectCode-lookupDefinition" parent="SubObjectCode-lookupDefinition-parentBean">
     <property name="title" value="Sub-Object Code Lookup"/>
     
@@ -70,7 +82,7 @@
         <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
-        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> --><!-- This doesn't work if the extension isn't commented out. -->
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
@@ -83,7 +95,7 @@
         <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
-        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> --><!-- This doesn't work if the extension isn't commented out. -->
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
