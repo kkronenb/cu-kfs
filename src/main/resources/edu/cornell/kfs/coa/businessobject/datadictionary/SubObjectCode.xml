@@ -118,6 +118,68 @@
     <bean id="SubObjectCode-account.organizationCode" parent="SubObjectCode-account.organizationCode-parentBean"/>
     <bean id="SubObjectCode-account.organizationCode-parentBean" abstract="true" parent="Organization-organizationCode">
          <property name="name" value="account.organizationCode"/>
-    </bean>                                               
+    </bean>       
+                                            
+ 
+  <!-- Business Object Inquiry Definition -->
+  
+  <bean id="SubObjectCode-inquirySectionDefinition" parent="SubObjectCode-inquirySectionDefinition-parentBean">
+    <property name="title" value="" />
+    <property name="numberOfColumns" value="1" />
+    <property name="inquiryFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear" />
+        <bean parent="FieldDefinition" p:attributeName="accountNumber" />
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
+        <bean parent="FieldDefinition" p:attributeName="financialObjectCode" />
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode" />
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName" />
+        <bean parent="FieldDefinition" p:attributeName="active" />
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCdshortNm" />
+      </list>
+    </property>
+  </bean>
 
+  <!-- Business Object Lookup Definition -->
+
+  <bean id="SubObjectCode-lookupDefinition" parent="SubObjectCode-lookupDefinition-parentBean">
+    <property name="title" value="Sub-Object Code Lookup"/>
+    
+    <property name="defaultSort">
+      <bean parent="SortDefinition">
+        <property name="attributeNames">
+          <list>
+            <value>financialSubObjectCode</value>
+          </list>
+        </property>
+      </bean>
+    </property>
+    
+    <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear" p:defaultValueFinderClass="org.kuali.kfs.sys.businessobject.defaultvalue.FiscalYearFinder"/>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
+      </list>
+    </property>
+    
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
+      </list>
+    </property>
+  </bean>
+  
 </beans>
