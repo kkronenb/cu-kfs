@@ -21,12 +21,13 @@ import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.businessobject.SubObjectCodeGlobal;
 import org.kuali.kfs.coa.businessobject.SubObjectCodeGlobalDetail;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.krad.bo.GlobalBusinessObject;
 
 /**
  * 
  */
-public class CUSubObjectCodeGlobal extends SubObjectCodeGlobal implements GlobalBusinessObject {
+public class CUSubObjectCodeGlobal extends SubObjectCodeGlobal implements GlobalBusinessObject, MutableInactivatable {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SubObjectCodeGlobal.class);    
     private String subObjectCodeDescr;

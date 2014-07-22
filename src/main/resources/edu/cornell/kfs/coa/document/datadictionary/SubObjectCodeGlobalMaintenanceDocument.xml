@@ -15,6 +15,10 @@
  limitations under the License.
 -->
 
+  <bean id="SubObjectCodeGlobalMaintenanceDocument" parent="SubObjectCodeGlobalMaintenanceDocument-parentBean">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CUSubObjectCodeGlobal"/>
+  </bean>
+
   <bean id="SubObjectCodeGlobalMaintenanceDocument-EditGlobalSubObjectCode" parent="SubObjectCodeGlobalMaintenanceDocument-EditGlobalSubObjectCode-parentBean">
     <property name="maintainableItems">
       <list merge="true">
