@@ -40,10 +40,10 @@
         <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode" />
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode" />
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/> -->
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName" />
         <bean parent="FieldDefinition" p:attributeName="active" />
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCdshortNm" />
-        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr"/> -->
       </list>
     </property>
   </bean>
@@ -70,9 +70,9 @@
         <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
-        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
       </list>
     </property>
     
@@ -83,9 +83,9 @@
         <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
+        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
         <bean parent="FieldDefinition" p:attributeName="financialSubObjectCodeName"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
-        <!-- <bean parent="FieldDefinition" p:attributeName="extension.subObjectCodeDescr" p:required="false"/> -->
       </list>
     </property>
   </bean>
