@@ -22,15 +22,17 @@ public class CuVendorServiceImplTest extends KualiTestBase {
 	}
 	
 	public void testGetVendorByVendorName() {
-		VendorDetail myDetail = VendorDetailFixture.ANAK_INC.createVendorDetail();
-		VendorDetail theDetail = cuVendorService.getVendorByVendorName("Anak Inc");
+		VendorDetail anakFixtureDetail = VendorDetailFixture.ANAK_INC.createVendorDetail();
+		VendorDetail anakDBDetail = cuVendorService.getVendorByVendorName("Anak Inc");
+		VendorDetail addFixtureDetail = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
+		VendorDetail addDBDetail = cuVendorService.getVendorByVendorName("ADD Associates Inc");
 		
-		assertEquals(theDetail.isVendorParentIndicator(), myDetail.isVendorParentIndicator());
-		assertEquals(theDetail.getVendorDetailAssignedIdentifier(), myDetail.getVendorDetailAssignedIdentifier());
+		assertEquals(anakFixtureDetail.isVendorParentIndicator(), anakDBDetail.isVendorParentIndicator());
+		assertEquals(anakFixtureDetail.getVendorDetailAssignedIdentifier(), anakDBDetail.getVendorDetailAssignedIdentifier());
 		
-		System.out.println("got the detail");
-		System.out.println(" alt name:" + theDetail.getAltVendorName());
-		System.out.println(" default address city: " + theDetail.getDefaultAddressCity());
+		assertEquals(addFixtureDetail.isVendorParentIndicator(), addDBDetail.isVendorParentIndicator());
+		assertEquals(addFixtureDetail.getVendorDetailAssignedIdentifier(), addDBDetail.getVendorDetailAssignedIdentifier());
+		
 	}
 	
 }

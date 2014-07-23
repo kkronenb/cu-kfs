@@ -5,8 +5,8 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 
 public enum VendorDetailFixture {
 
-	ANAK_INC("Anak Inc", false, 4506, 2),
-	ADD_ASSOCIATES_INC("ADD AssociatesInc", true, 4435, 0);
+	ANAK_INC("Anak Inc", false, 4506, 0),
+	ADD_ASSOCIATES_INC("ADD Associates Inc", true, 4435, 0);
 	
 	public final String vendorName;
 	public final boolean vendorParentIndicator;
