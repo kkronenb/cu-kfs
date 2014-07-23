@@ -21,21 +21,11 @@ public class CuCommodityCodeUpdateServiceImplTest extends KualiTestBase {
     
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CommodityCodeUpdateService.class);
 	private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/vnd/fixture/commodityCodeFlatFile.txt";
-    private String batchDirectory;  
-	private String batchFile;
     
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		commodityCodeUpdateService = SpringContext.getBean(CommodityCodeUpdateService.class);
-//        kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
-//		batchDirectory = kualiConfigurationService.getPropertyValueAsString(com.rsmart.kuali.kfs.sys.KFSConstants.STAGING_DIRECTORY_KEY) + "/vnd/commodityCode";
-//        batchFile = batchDirectory + "/dataFile.txt";
-//		File batchDirectoryFile = new File(batchDirectory);
-//        File dataFileSrc = new File(DATA_FILE_PATH);
-//        File dataFileDest = new File(batchFile);
-//        FileUtils.copyFile(dataFileSrc, dataFileDest);        
-        
 	}
 	
 	public void testLoadCommodityCodeFile() {
