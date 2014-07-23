@@ -35,10 +35,13 @@ public class CuCommodityCodeUpdateServiceImplTest extends KualiTestBase {
 		ArrayList<CommodityCode> noCommodityList = (ArrayList<CommodityCode>) commodityCodeUpdateService.parseCommodityCodeList(zeroLength);
 		byte[] content = commodityCodeUpdateService.getFileContent(DATA_FILE_PATH);
 		ArrayList<CommodityCode> someCommodityCodes = (ArrayList<CommodityCode>) commodityCodeUpdateService.parseCommodityCodeList(content);
+		
 		assertEquals(noContent.length, zeroLength.length);
 		assertEquals(noCommodityList.size(), noList.size());
 		assertNotSame(content.length, 0);
 		assertNotSame(someCommodityCodes.size(), 0);
+		
+		assert(commodityCodeUpdateService.loadCommodityCodeFile(DATA_FILE_PATH));
 	}
 
 }
