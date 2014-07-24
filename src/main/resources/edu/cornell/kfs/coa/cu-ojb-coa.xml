@@ -638,10 +638,11 @@
     <field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="financialObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="financialSubObjectCode" column="FIN_SUB_OBJ_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="subObjectCodeDescr" column="SUB_OBJ_CD_DESCR" jdbc-type="VARCHAR" />
-
+    
   </class-descriptor>
 
 	<class-descriptor class="org.kuali.kfs.coa.businessobject.SubObjectCode" table="CA_SUB_OBJECT_CD_T">
