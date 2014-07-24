@@ -11,14 +11,18 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 public enum RequisitionFixture {
 
-	REQ_B2B("Description", "B2B", new Integer(0), new Integer(5314),
-			new Integer(4190), "line 1 address", "line 2 address", "city",
-			"NY", "14850", "US", "abc@email.com", "6072203712", "attn name",
-			new Integer(1), "Delivery Line 1 address",
+	REQ_B2B("Description", "B2B", 0, 5314, 4190, "line 1 address",
+			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
+			"6072203712", "attn name", 1, "Delivery Line 1 address",
 			"Delivery Line 2 address", "Delivery City Name", "110", "US", "NY",
 			"14850", "billing City Name", "US", "abc@email.com",
 			"billing line 1 address", "607-220-3712", "14850", "NY",
-			"Billing name", RequisitionItemFixture.REQ_ITEM);
+			"Billing name", RequisitionItemFixture.REQ_ITEM),
+
+	REQ_NON_B2B("Description", "STAN", 0, 4291, null, "line 1 address",
+			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
+			"6072203712", "attn name", 1, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null);
 
 	public final String documentDescription;
 	public final String requisitionSourceCode;
