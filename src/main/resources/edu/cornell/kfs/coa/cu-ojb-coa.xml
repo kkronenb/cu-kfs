@@ -618,16 +618,7 @@
 	      <orderby name="chartOfAccountsCode" sort="ASC" />
 	      <orderby name="financialObjectCode" sort="ASC" />
 	    <inverse-foreignkey field-ref="documentNumber" />
-	  </collection-descriptor>
-	  
-    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.coa.businessobject.SubObjectCodeExtendedAttribute"
-      auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
-      <foreignkey field-ref="universityFiscalYear" />
-      <foreignkey field-ref="chartOfAccountsCode" />
-      <foreignkey field-ref="accountNumber" />
-      <foreignkey field-ref="financialObjectCode" />
-      <foreignkey field-ref="financialSubObjectCode" />
-    </reference-descriptor>
+	  </collection-descriptor>	  
 	  
 	</class-descriptor>
 
