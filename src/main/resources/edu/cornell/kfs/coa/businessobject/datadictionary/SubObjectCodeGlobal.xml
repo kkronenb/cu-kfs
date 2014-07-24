@@ -28,7 +28,6 @@
 <!-- Attribute Definitions -->
 
   <bean id="SubObjectCodeGlobal-subObjectCodeDescr" parent="SubObjectCodeExtendedAttribute-subObjectCodeDescr">
-    <property name="name" value="extension.subObjectCodeDescr"/>
   </bean>
   
 </beans>
