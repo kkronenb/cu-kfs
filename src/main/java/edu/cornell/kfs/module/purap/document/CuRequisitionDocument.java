@@ -156,9 +156,6 @@ public class CuRequisitionDocument extends RequisitionDocument {
     
     public void toCopyFromGateway() throws WorkflowException, ValidationException {
        //no validation for the KFS copy requisition rules:
-       //  if (!this.getAllowsCopy()) {
-       //      throw new IllegalStateException(this.getClass().getName() + " does not support document-level copying");
-       // }
        
         String sourceDocumentHeaderId = getDocumentNumber();
         setNewDocumentHeader();
