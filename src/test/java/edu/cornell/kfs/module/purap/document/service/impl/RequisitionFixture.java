@@ -19,6 +19,30 @@ public enum RequisitionFixture {
 			"billing line 1 address", "607-220-3712", "14850", "NY",
 			"Billing name", RequisitionItemFixture.REQ_ITEM),
 
+	REQ_B2B_INVALID("Description", "B2B", 0, 5314, 4190, null,
+			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
+			"6072203712", "attn name", 1, "Delivery Line 1 address",
+			"Delivery Line 2 address", "Delivery City Name", "110", "US", "NY",
+			"14850", "billing City Name", "US", "abc@email.com",
+			"billing line 1 address", "607-220-3712", "14850", "NY",
+			"Billing name", RequisitionItemFixture.REQ_ITEM),
+
+	REQ_B2B_CXML("Description", "B2B", 0, 5314, 4190, "line 1 address",
+			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
+			"6072203712", "attn name", 1, "Delivery Line 1 address",
+			"Delivery Line 2 address", "Delivery City Name", "110", "US", "NY",
+			"14850", "billing City Name", "US", "abc@email.com",
+			"billing line 1 address", "607-220-3712", "14850", "NY",
+			"Billing name", RequisitionItemFixture.REQ_ITEM),
+
+	REQ_B2B_CXML_INVALID("Description", "B2B", 0, 5314, 4190, null,
+			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
+			"6072203712", "attn name", 1, "Delivery Line 1 address",
+			"Delivery Line 2 address", "Delivery City Name", "110", "US", null,
+			null, "billing City Name", "US", "abc@email.com",
+			"billing line 1 address", "607-220-3712", "14850", "NY",
+			"Billing name", RequisitionItemFixture.REQ_ITEM),
+
 	REQ_NON_B2B("Description", "STAN", 0, 4291, null, "line 1 address",
 			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
 			"6072203712", "attn name", 1, null, null, null, null, null, null,
@@ -190,10 +214,20 @@ public enum RequisitionFixture {
 		requisitionDocument.setBillingStateCode(billingStateCode);
 		requisitionDocument.setBillingName(billingName);
 
-		requisitionDocument.addItem(itemFixture.createRequisitionItem());
+		if (itemFixture != null) {
+			requisitionDocument.addItem(itemFixture.createRequisitionItem());
+		}
 
-		SpringContext.getBean(DocumentService.class).saveDocument(
-				requisitionDocument);
+		requisitionDocument.refreshNonUpdateableReferences();
+
+		return requisitionDocument;
+	}
+
+	public RequisitionDocument createRequisition(DocumentService documentService)
+			throws WorkflowException {
+		RequisitionDocument requisitionDocument = this.createRequisition();
+
+		documentService.saveDocument(requisitionDocument);
 		requisitionDocument.refreshNonUpdateableReferences();
 
 		return requisitionDocument;

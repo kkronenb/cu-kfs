@@ -9,6 +9,9 @@ import org.kuali.rice.krad.service.DocumentService;
 
 public enum PurchaseOrderFixture {
 	PO_B2B(RequisitionFixture.REQ_B2B, 10, true, "Description", PurchaseOrderStatuses.APPDOC_PENDING_CXML),
+	PO_B2B_INVALID(RequisitionFixture.REQ_B2B_INVALID, 10, true, "Description", PurchaseOrderStatuses.APPDOC_PENDING_CXML),
+	PO_B2B_CXML_VALIDATION(RequisitionFixture.REQ_B2B_CXML, 10, true, "Description", PurchaseOrderStatuses.APPDOC_PENDING_CXML),
+	PO_B2B_CXML_VALIDATION_INVALID(RequisitionFixture.REQ_B2B_CXML_INVALID, 10, true, "Description", PurchaseOrderStatuses.APPDOC_PENDING_CXML),
 	PO_NON_B2B_OPEN(RequisitionFixture.REQ_NON_B2B, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
 	PO_NON_B2B_IN_PROCESS(RequisitionFixture.REQ_NON_B2B, 10, true, "Description", PurchaseOrderStatuses.APPDOC_IN_PROCESS);
 
@@ -28,17 +31,31 @@ public enum PurchaseOrderFixture {
 		this.applicationDocumentStatus = applicationDocumentStatus;
 	}
 
-	public PurchaseOrderDocument createPurchaseOrderdDocument()throws WorkflowException {
+	public PurchaseOrderDocument createPurchaseOrderdDocument(boolean savedReq)throws WorkflowException {
 		PurchaseOrderDocument purchaseOrderDocument = (PurchaseOrderDocument) SpringContext.getBean(DocumentService.class).getNewDocument(PurchaseOrderDocument.class);
-		purchaseOrderDocument.populatePurchaseOrderFromRequisition(requisitionFixture.createRequisition());
+		
+		if(savedReq){
+			purchaseOrderDocument.populatePurchaseOrderFromRequisition(requisitionFixture.createRequisition(SpringContext.getBean(DocumentService.class)));
+		}
+		else{
+			purchaseOrderDocument.populatePurchaseOrderFromRequisition(requisitionFixture.createRequisition());
+		}
 		purchaseOrderDocument.setContractManagerCode(this.contractManagerCode);
 		purchaseOrderDocument.setPurchaseOrderCurrentIndicator(this.purchaseOrderCurrentIndicator);
 		purchaseOrderDocument.getDocumentHeader().setDocumentDescription(this.documentDescription);
 		purchaseOrderDocument.setApplicationDocumentStatus(applicationDocumentStatus);
+		
+		purchaseOrderDocument.refreshNonUpdateableReferences();
+
+		return purchaseOrderDocument;
+	}
+	
+	public PurchaseOrderDocument createPurchaseOrderdDocument(DocumentService documentService)throws WorkflowException {
+		PurchaseOrderDocument purchaseOrderDocument = this.createPurchaseOrderdDocument(true);
 
 		purchaseOrderDocument.refreshNonUpdateableReferences();
 		purchaseOrderDocument.prepareForSave();
-		AccountingDocumentTestUtils.saveDocument(purchaseOrderDocument, SpringContext.getBean(DocumentService.class));
+		AccountingDocumentTestUtils.saveDocument(purchaseOrderDocument, documentService);
 
 		return purchaseOrderDocument;
 	}

@@ -12,6 +12,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.service.DocumentService;
 
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
@@ -21,6 +22,7 @@ public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 
 	private PurchaseOrderService purchaseOrderService;
 	protected PurchaseOrderDao purchaseOrderDao;
+	private DocumentService documentService;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -28,13 +30,14 @@ public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 
 		purchaseOrderService = SpringContext.getBean(PurchaseOrderService.class);
 		purchaseOrderDao = SpringContext.getBean(PurchaseOrderDao.class);
+		documentService = SpringContext.getBean(DocumentService.class);
 
 	}
 
 	public void testPerformPurchaseOrderFirstTransmitViaPrinting()
 			throws Exception {
 
-		PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_OPEN.createPurchaseOrderdDocument();
+		PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_OPEN.createPurchaseOrderdDocument(documentService);
 
 		ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
 		try {
@@ -66,7 +69,7 @@ public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 	 * @throws Exception
 	 */
 	public void testCompletePurchaseOrderAmendment_NonB2B() throws Exception {
-		PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_IN_PROCESS.createPurchaseOrderdDocument();
+		PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_IN_PROCESS.createPurchaseOrderdDocument(documentService);
 
 		purchaseOrderService.completePurchaseOrderAmendment(po);
 
@@ -82,7 +85,7 @@ public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 	 * @throws Exception
 	 */
 	public void testCompletePurchaseOrderAmendment_B2B() throws Exception {
-		PurchaseOrderDocument po = PurchaseOrderFixture.PO_B2B.createPurchaseOrderdDocument();
+		PurchaseOrderDocument po = PurchaseOrderFixture.PO_B2B.createPurchaseOrderdDocument(documentService);
 		po.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.ELECTRONIC);
 		purchaseOrderService.completePurchaseOrderAmendment(po);
 
