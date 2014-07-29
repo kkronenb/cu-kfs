@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.document.service.impl;
+package edu.cornell.kfs.module.purap.fixture;
 
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.context.SpringContext;

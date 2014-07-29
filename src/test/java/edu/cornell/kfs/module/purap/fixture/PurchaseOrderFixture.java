@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.document.service.impl;
+package edu.cornell.kfs.module.purap.fixture;
 
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -6,6 +6,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.krad.service.DocumentService;
+
 
 public enum PurchaseOrderFixture {
 	PO_B2B(RequisitionFixture.REQ_B2B, 10, true, "Description", PurchaseOrderStatuses.APPDOC_PENDING_CXML),

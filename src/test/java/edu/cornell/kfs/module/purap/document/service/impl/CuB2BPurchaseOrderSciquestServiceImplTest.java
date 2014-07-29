@@ -10,6 +10,8 @@ import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.krad.service.DocumentService;
 
+import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
+
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuB2BPurchaseOrderSciquestServiceImplTest extends KualiTestBase {
 	

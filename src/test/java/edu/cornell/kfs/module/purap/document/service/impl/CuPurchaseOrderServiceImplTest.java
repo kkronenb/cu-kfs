@@ -14,6 +14,8 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.exception.ValidationException;
 import org.kuali.rice.krad.service.DocumentService;
 
+import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
+
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 

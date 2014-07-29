@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.document.service.impl;
+package edu.cornell.kfs.module.purap.fixture;
 
 import java.math.BigDecimal;
 
