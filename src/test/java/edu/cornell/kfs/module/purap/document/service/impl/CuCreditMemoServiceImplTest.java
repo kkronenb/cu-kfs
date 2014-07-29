@@ -33,6 +33,16 @@ public class CuCreditMemoServiceImplTest extends KualiTestBase {
 		creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		assertTrue(creditMemoDocument.isHoldIndicator());
+		assertTrue(UserNameFixture.mo14.getPerson().getPrincipalId().equalsIgnoreCase(creditMemoDocument.getLastActionPerformedByPersonId()));
+	}
+	
+	public void testRemoveHoldOnCreditMemo() throws Exception {
+		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+
+		creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
+
+		assertFalse(creditMemoDocument.isHoldIndicator());
+		assertTrue(creditMemoDocument.getLastActionPerformedByPersonId() == null);
 	}
 
 }
