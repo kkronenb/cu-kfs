@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.service.DocumentService;
 
+import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 
 @ConfigureContext(session = UserNameFixture.mo14)
@@ -80,6 +81,17 @@ public class CuCreditMemoServiceImplTest extends KualiTestBase {
 
 		assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
 		assertEquals(currentTimeStamp, creditMemoDocument.getCreditMemoPaidTimestamp());
+	}
+	
+	public void testPopulateDocumentAfterInit() throws Exception {
+		
+		CuVendorCreditMemoDocument creditMemoDocument = (CuVendorCreditMemoDocument)VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+
+		creditMemoServiceImpl.populateDocumentAfterInit(creditMemoDocument);
+
+		assertNotNull(creditMemoDocument.getPaymentMethodCode());
+		assertEquals("P", creditMemoDocument.getPaymentMethodCode());
+		
 	}
 
 }
