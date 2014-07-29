@@ -45,8 +45,10 @@ public enum RequisitionFixture {
 
 	REQ_NON_B2B("Description", "STAN", 0, 4291, null, "line 1 address",
 			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
-			"6072203712", "attn name", 1, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null);
+			"6072203712", "attn name", 1,  "Delivery Line 1 address",
+			"Delivery Line 2 address", "Delivery City Name", "110", "US", null,
+			null, "billing City Name", "US", "abc@email.com",
+			"billing line 1 address", "607-220-3712", "14850", "NY", "Billing name", null);
 
 	public final String documentDescription;
 	public final String requisitionSourceCode;
