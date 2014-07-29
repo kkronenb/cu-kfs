@@ -1,11 +1,15 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import java.sql.Date;
+
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.service.DocumentService;
 
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
@@ -42,7 +46,28 @@ public class CuCreditMemoServiceImplTest extends KualiTestBase {
 		creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		assertFalse(creditMemoDocument.isHoldIndicator());
-		assertTrue(creditMemoDocument.getLastActionPerformedByPersonId() == null);
+		assertNull(creditMemoDocument.getLastActionPerformedByPersonId());
+	}
+	
+	public void testrResetExtractedCreditMemo_Successful() throws Exception {
+		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+		creditMemoDocument.setExtractedTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+		creditMemoServiceImpl.resetExtractedCreditMemo(creditMemoDocument, "unit test");
+
+		assertNull(creditMemoDocument.getExtractedTimestamp());
+		assertNull(creditMemoDocument.getCreditMemoPaidTimestamp());
+	}
+	
+	public void testrResetExtractedCreditMemo_Fail() throws Exception {
+		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+		creditMemoDocument.setApplicationDocumentStatus(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS);
+		creditMemoDocument.setExtractedTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+		creditMemoDocument.setCreditMemoPaidTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+
+		creditMemoServiceImpl.resetExtractedCreditMemo(creditMemoDocument, "unit test");
+
+		assertNotNull(creditMemoDocument.getExtractedTimestamp());
+		assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
 	}
 
 }
