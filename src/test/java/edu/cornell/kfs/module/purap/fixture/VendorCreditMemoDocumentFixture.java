@@ -49,7 +49,7 @@ public enum VendorCreditMemoDocumentFixture {
 		creditMemoDocument.setVendorDetailAssignedIdentifier(this.vendorDetailAssignedIdentifier);
 		creditMemoDocument.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
 		creditMemoDocument.setCreditMemoNumber(this.creditMemoNumber);
-		creditMemoDocument.setCreditMemoDate(new Date(SpringContext.getBean(DateTimeService.class).getCurrentDate().getTime()));
+		creditMemoDocument.setCreditMemoDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
 		creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
 
 		creditMemoDocument.prepareForSave();

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
@@ -68,6 +69,17 @@ public class CuCreditMemoServiceImplTest extends KualiTestBase {
 
 		assertNotNull(creditMemoDocument.getExtractedTimestamp());
 		assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
+	}
+	
+	public void testMarkPaid() throws Exception {
+		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+
+		Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
+		Timestamp currentTimeStamp = new Timestamp(currentDate.getTime());
+		creditMemoServiceImpl.markPaid(creditMemoDocument, currentDate);
+
+		assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
+		assertEquals(currentTimeStamp, creditMemoDocument.getCreditMemoPaidTimestamp());
 	}
 
 }
