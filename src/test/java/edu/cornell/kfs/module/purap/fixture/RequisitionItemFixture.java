@@ -11,6 +11,10 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 public enum RequisitionItemFixture {
 	REQ_ITEM(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
 			new KualiDecimal(1), new KualiDecimal(1), "80141605",
+			new BigDecimal(1), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE),
+	
+	REQ_ITEM_INACTIVE_COMM_CD(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
+			new KualiDecimal(1), new KualiDecimal(1), "24112404",
 			new BigDecimal(1), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE);
 
 	public final Integer itemLineNumber;

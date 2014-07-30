@@ -11,8 +11,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 
 @ConfigureContext(session = UserNameFixture.mo14)
-public class CuPurchasingAccountsPayableModuleServiceImplTest extends
-		KualiTestBase {
+public class CuPurchasingAccountsPayableModuleServiceImplTest extends KualiTestBase {
 
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchasingAccountsPayableModuleServiceImplTest.class);
 
