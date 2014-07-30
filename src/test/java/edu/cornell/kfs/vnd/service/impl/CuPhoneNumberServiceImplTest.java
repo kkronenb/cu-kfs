@@ -18,22 +18,15 @@ public class CuPhoneNumberServiceImplTest extends KualiTestBase {
 	}
 	
 	public void testFormatNumberIfPossible( ) {
-		String phoneNumberOne = "5551239876";
-		String phoneNumberTwo = "8001115000";
-		String formattedNumberOne = cuPhoneNumberServiceImpl.formatNumberIfPossible(phoneNumberOne);
-		String formattedNumberTwo = cuPhoneNumberServiceImpl.formatNumberIfPossible(phoneNumberTwo);
-		
 		
 		PhoneNumberFixture oneEightHundred = PhoneNumberFixture.EIGHT_HUNNID;
-		PhoneNumberFixture longDistance = PhoneNumberFixture.LONG_DISTANCE;
+		PhoneNumberFixture withParentheses = PhoneNumberFixture.W_PARENS;
 		PhoneNumberFixture losAngeles = PhoneNumberFixture.LOS_ANGELES;
-		PhoneNumberFixture nyc = PhoneNumberFixture.NYC;
-		
-		System.out.println("formatted phone numbers: " + formattedNumberOne + " ** " +
-		formattedNumberTwo);
-		
-		System.out.println("eight: " + oneEightHundred.unformatted + " ** " + cuPhoneNumberServiceImpl.formatNumberIfPossible(oneEightHundred.unformatted) + " ** FF: " + oneEightHundred.formatted);
-		
-		System.out.println("long distance: " + longDistance.unformatted + " ** " + cuPhoneNumberServiceImpl.formatNumberIfPossible(longDistance.unformatted) + " ** FF: " + longDistance.formatted);
+		PhoneNumberFixture nyc = PhoneNumberFixture.NYC_SPACES;
+
+		assertEquals(cuPhoneNumberServiceImpl.formatNumberIfPossible(oneEightHundred.unformatted), oneEightHundred.formatted);
+		assertEquals(cuPhoneNumberServiceImpl.formatNumberIfPossible(withParentheses.unformatted), withParentheses.formatted);
+		assertEquals(cuPhoneNumberServiceImpl.formatNumberIfPossible(losAngeles.unformatted), losAngeles.formatted);
+		assertEquals(cuPhoneNumberServiceImpl.formatNumberIfPossible(nyc.unformatted), nyc.formatted);
 	}
 }
