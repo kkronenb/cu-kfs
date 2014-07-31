@@ -38,6 +38,7 @@ public enum PhoneNumberParameterFixture {
 		phoneNumberParam.setVendorPhoneGeneratedIdentifier(this.vendorPhoneGeneratedIdentifier);
 		phoneNumberParam.setVendorPhoneNumber(this.vendorPhoneNumber);
 		phoneNumberParam.setVendorPhoneTypeCode(this.vendorPhoneTypeCode);
+		phoneNumberParam.setVendorPhoneExtensionNumber(this.vendorPhoneExtensionNumber);
 		
 		return phoneNumberParam;
 	}

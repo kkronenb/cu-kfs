@@ -1,10 +1,14 @@
 package edu.cornell.kfs.vnd.service;
 
+import java.util.List;
+
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
+import edu.cornell.kfs.vnd.fixture.PhoneNumberParameterFixture;
 import edu.cornell.kfs.vnd.fixture.VendorDetailFixture;
+import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
 
 @ConfigureContext
 public class KFSVendorWebServiceImplTest extends KualiTestBase {
@@ -22,9 +26,26 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			String result = kfsVendorWebService.retrieveKfsVendor(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "not a type");
 			
 			assertTrue(result.equals("Vendor Not Found"));
+			VendorDetail vd = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
+
+			List<VendorPhoneNumberParam> thePhoneNumbers = PhoneNumberParameterFixture.ONE.getAllFixtures();
 			
-			kfsVendorWebService.addVendor();
-			kfsVendorWebService.addVendor(vendorName, vendorTypeCode, isForeign, taxNumber, taxNumberType, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
+			for (int i=0; i!=thePhoneNumbers.size(); i++) {
+				VendorPhoneNumberParam vppp = thePhoneNumbers.get(i);
+				System.out.println("phone: " + vppp.getVendorPhoneNumber() + " type: " + vppp.getVendorPhoneTypeCode() + " extension: " + vppp.getVendorPhoneExtensionNumber());
+			}
+			
+//			kfsVendorWebService.addVendor(vd.getVendorName(), vd.getVendorHeader().getVendorTypeCode(), vd.getVendorHeader().getVendorForeignIndicator(),
+//					vd.getVendorHeader().getVendorTaxNumber(), vd.getVendorHeader().getVendorTaxTypeCode(), vd.getVendorHeader().getVendorOwnershipCode(),
+//					vd.isTaxableIndicator(), vd.getExtension(), );
+			
+			
+			
+			
+			
+			
+			
+//			kfsVendorWebService.addVendor(vendorName, vendorTypeCode, isForeign, taxNumber, taxNumberType, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
 //			kfsVendorWebService.retrieveKfsVendorByEin(vendorEin);
 //			kfsVendorWebService.retrieveKfsVendorByNamePlusLastFour(vendorName, lastFour);
 //			kfsVendorWebService.updateVendor(vendorName, vendorTypeCode, isForeign, vendorNumber, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
