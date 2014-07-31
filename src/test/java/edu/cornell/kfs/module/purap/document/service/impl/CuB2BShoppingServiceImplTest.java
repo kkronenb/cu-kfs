@@ -28,7 +28,7 @@ public class CuB2BShoppingServiceImplTest extends KualiTestBase {
 
 	}
 
-	public void DISABLED_testCreateRequisitionsFromCxml() throws Exception {
+	public void testCreateRequisitionsFromCxml() throws Exception {
 		B2BShoppingCart cart = CuB2BShoppingCartFixture.B2B_CART_USING_VENDOR_ID.createB2BShoppingCart();
 
 		List<RequisitionDocument> requisitions = b2bShoppingService.createRequisitionsFromCxml(cart, UserNameFixture.ccs1.getPerson());
