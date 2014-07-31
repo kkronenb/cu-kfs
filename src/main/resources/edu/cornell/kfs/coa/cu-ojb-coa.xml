@@ -636,6 +636,45 @@
     
   </class-descriptor>
 
+	<class-descriptor class="org.kuali.kfs.coa.businessobject.SubObjectCodeCurrent" table="CA_SUB_OBJECT_CD_V">
+		<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" index="true" />
+		<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="financialObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="financialSubObjectCode" column="FIN_SUB_OBJ_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="financialSubObjectCodeName" column="FIN_SUB_OBJ_CD_NM" jdbc-type="VARCHAR" />
+		<field-descriptor name="financialSubObjectCdshortNm" column="FIN_SUBOBJ_SHRT_NM" jdbc-type="VARCHAR" />
+		<field-descriptor name="active" column="FIN_SUBOBJ_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		
+		<reference-descriptor name="financialObject" class-ref="org.kuali.kfs.coa.businessobject.ObjectCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+	    <foreignkey field-ref="universityFiscalYear" />
+	    <foreignkey field-ref="chartOfAccountsCode" />
+	    <foreignkey field-ref="financialObjectCode" />
+		</reference-descriptor>
+		
+		<reference-descriptor name="universityFiscal" class-ref="org.kuali.kfs.sys.businessobject.SystemOptions" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+	    <foreignkey field-ref="universityFiscalYear" />
+		</reference-descriptor>
+		
+		<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+	    <foreignkey field-ref="chartOfAccountsCode" />
+		</reference-descriptor>
+		
+		<reference-descriptor name="account" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+		    <foreignkey field-ref="chartOfAccountsCode" />
+		    <foreignkey field-ref="accountNumber" />
+		</reference-descriptor>
+		
+    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.coa.businessobject.SubObjectCodeExtendedAttribute"
+		                      auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+		  <foreignkey field-ref="universityFiscalYear" />
+		  <foreignkey field-ref="chartOfAccountsCode" />
+		  <foreignkey field-ref="accountNumber" />
+		  <foreignkey field-ref="financialObjectCode" />
+		  <foreignkey field-ref="financialSubObjectCode" />
+		</reference-descriptor>
+	</class-descriptor>
+
 	<class-descriptor class="org.kuali.kfs.coa.businessobject.SubObjectCode" table="CA_SUB_OBJECT_CD_T">
 		<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true" />
 		<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
