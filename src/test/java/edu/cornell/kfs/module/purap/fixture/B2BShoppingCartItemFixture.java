@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.fixture;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
 
 /**
@@ -23,7 +24,16 @@ public enum B2BShoppingCartItemFixture {
             //"624007902" // SupplierID-DUNS: value in KFS
             "12829371", // SupplierID-DUNS: value from SciQuest
             "4050097", // SupplierID-SystemSupplierID
-            "Cart name" // Cart Name
+            "Cart name", // Cart Name
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true"
     );     
 
     public String quantity;
@@ -41,7 +51,16 @@ public enum B2BShoppingCartItemFixture {
     public String duns;
     public String systemSupplierID;
     public String cartName;
-    
+    public String controlled;
+    public String radioactiveMinor;
+    public String greenProduct;
+    public String hazardous;
+    public String selectAgent;
+    public String radioactive;
+    public String toxin;
+    public String green;
+    public String energyStar;
+
     private B2BShoppingCartItemFixture(
             String quantity,
             String supplierPartId,
@@ -57,7 +76,16 @@ public enum B2BShoppingCartItemFixture {
             String systemProductID,
             String duns,
             String systemSupplierID,
-            String cartName
+            String cartName,
+            String controlled,
+            String radioactiveMinor,
+            String greenProduct,
+            String hazardous,
+            String selectAgent,
+            String radioactive,
+            String toxin,
+            String green,
+            String energyStar
     ) {
         this.quantity = quantity;
         this.supplierPartId = supplierPartId;
@@ -74,6 +102,15 @@ public enum B2BShoppingCartItemFixture {
         this.duns = duns;
         this.systemSupplierID = systemSupplierID;
         this.cartName = cartName;
+        this.controlled = controlled;
+        this.radioactiveMinor = radioactiveMinor;
+        this.greenProduct = greenProduct;
+        this.hazardous = hazardous;
+        this.selectAgent = selectAgent;
+        this.radioactive = radioactive;
+        this.toxin = toxin;
+        this.green = green;
+        this.energyStar = energyStar;
     }
     
     /**
@@ -97,6 +134,16 @@ public enum B2BShoppingCartItemFixture {
         item.addExtrinsic("Product Source", productSource);
         item.addExtrinsic("SystemProductID", systemProductID);
         item.addExtrinsic("CartName", cartName);
+        
+        item.addClassification("Controlled", controlled);
+        item.addClassification("RadioactiveMinor", radioactiveMinor);
+        item.addClassification("GreenProduct", greenProduct);
+        item.addClassification("Hazardous", hazardous);
+        item.addClassification("SelectAgent", selectAgent);
+        item.addClassification("Radioactive", radioactive);
+        item.addClassification("Toxin", toxin);
+        item.addClassification("Green", green);
+        item.addClassification("EnergyStar", energyStar);
         
         item.setSupplier("DUNS", duns);
         item.setSupplier("SystemSupplierID", systemSupplierID);
