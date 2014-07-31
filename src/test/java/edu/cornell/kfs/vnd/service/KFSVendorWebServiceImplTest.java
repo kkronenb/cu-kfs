@@ -20,11 +20,11 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 	public void testVendorWebService() {
 		try {
 			String result = kfsVendorWebService.retrieveKfsVendor(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "not a type");
-
-			System.out.println("value of result: " + result);
 			
 			assertTrue(result.equals("Vendor Not Found"));
-//			kfsVendorWebService.addVendor(vendorName, vendorTypeCode, isForeign, taxNumber, taxNumberType, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
+			
+			kfsVendorWebService.addVendor();
+			kfsVendorWebService.addVendor(vendorName, vendorTypeCode, isForeign, taxNumber, taxNumberType, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
 //			kfsVendorWebService.retrieveKfsVendorByEin(vendorEin);
 //			kfsVendorWebService.retrieveKfsVendorByNamePlusLastFour(vendorName, lastFour);
 //			kfsVendorWebService.updateVendor(vendorName, vendorTypeCode, isForeign, vendorNumber, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);

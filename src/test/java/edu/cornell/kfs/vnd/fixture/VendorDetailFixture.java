@@ -11,8 +11,11 @@ public enum VendorDetailFixture {
 	
 	public final String vendorName;
 	public final boolean vendorParentIndicator;
+	public final boolean isForeign;
 	public final Integer vendorHeaderGeneratedIdentifier;
 	public final Integer vendorDetailAssignedIdentifier;
+	public final String vendorTypeCode;
+	public final String taxNumber;
 	
 	private VendorDetailFixture(String vendorName, boolean vendorParentIndicator, 
 			Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier) 
@@ -21,6 +24,22 @@ public enum VendorDetailFixture {
 		this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
 		this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
 		this.vendorParentIndicator = vendorParentIndicator;
+	}
+	//kfsVendorWebService.addVendor(vendorName, vendorTypeCode, isForeign, taxNumber, taxNumberType, 
+	//ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
+
+	//addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, 
+	//String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
+	//List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorPhoneNumberParam> phoneNumbers, 
+	//List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {
+
+	
+	private VendorDetailFixture(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber,
+			String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice) {
+		this.vendorName = vendorName;
+		this.vendorTypeCode = vendorTypeCode;
+		this.isForeign = isForeign;
+		this.taxNumber = taxNumber;
 	}
 	
 	public VendorDetail createVendorDetail() {
