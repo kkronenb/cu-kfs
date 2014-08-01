@@ -29,6 +29,8 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			VendorDetail vd = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
 
 			List<VendorPhoneNumberParam> thePhoneNumbers = PhoneNumberParameterFixture.ONE.getAllFixtures();
+			List<VendorAddressParam> theAddresses = AddressParameterFixture.ONE.getAllFixtures();
+			List<VendorSupplierDiversityParam> theSupplierDiversities = SupplierDiversityParameterFixture.ONE.getAllFixtures();
 			
 			for (int i=0; i!=thePhoneNumbers.size(); i++) {
 				VendorPhoneNumberParam vppp = thePhoneNumbers.get(i);
@@ -40,7 +42,13 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 //					vd.isTaxableIndicator(), vd.getExtension(), );
 			
 			
-			
+//			public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
+//	                
+			//List<VendorAddressParam> addresses,List<VendorContactParam> contacts,
+			//List<VendorPhoneNumberParam> phoneNumbers, 
+			//List<VendorSupplierDiversityParam> supplierDiversitys) 
+					//throws Exception {
+
 			
 			
 			
