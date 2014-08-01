@@ -6,9 +6,12 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
+import edu.cornell.kfs.vnd.fixture.AddressParameterFixture;
 import edu.cornell.kfs.vnd.fixture.PhoneNumberParameterFixture;
 import edu.cornell.kfs.vnd.fixture.VendorDetailFixture;
+import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
+import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
 
 @ConfigureContext
 public class KFSVendorWebServiceImplTest extends KualiTestBase {
@@ -26,21 +29,30 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			String result = kfsVendorWebService.retrieveKfsVendor(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "not a type");
 			
 			assertTrue(result.equals("Vendor Not Found"));
-			VendorDetail vd = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
+			VendorDetailFixture vdf = VendorDetailFixture.VENDOR_TO_CREATE;
 
 			List<VendorPhoneNumberParam> thePhoneNumbers = PhoneNumberParameterFixture.ONE.getAllFixtures();
 			List<VendorAddressParam> theAddresses = AddressParameterFixture.ONE.getAllFixtures();
-			List<VendorSupplierDiversityParam> theSupplierDiversities = SupplierDiversityParameterFixture.ONE.getAllFixtures();
+			List<VendorSupplierDiversityParam> theSupplierDiversities = SupplierDiversityParameterFixture.getAllFixtures();
 			
 			for (int i=0; i!=thePhoneNumbers.size(); i++) {
 				VendorPhoneNumberParam vppp = thePhoneNumbers.get(i);
 				System.out.println("phone: " + vppp.getVendorPhoneNumber() + " type: " + vppp.getVendorPhoneTypeCode() + " extension: " + vppp.getVendorPhoneExtensionNumber());
 			}
+			for (int j=0; j!=theAddresses.size();j++) {
+				VendorAddressParam vap = theAddresses.get(j);
+				System.out.println("address: " + vap.getVendorCityName());
+			}
+			for (int k=0; k!=theSupplierDiversities.size();k++) {
+				VendorSupplierDiversityParam vsdp = theSupplierDiversities.get(k);
+				System.out.println("supplier diversity code: " +vsdp.getVendorSupplierDiversityCode());
+			}
 			
-//			kfsVendorWebService.addVendor(vd.getVendorName(), vd.getVendorHeader().getVendorTypeCode(), vd.getVendorHeader().getVendorForeignIndicator(),
-//					vd.getVendorHeader().getVendorTaxNumber(), vd.getVendorHeader().getVendorTaxTypeCode(), vd.getVendorHeader().getVendorOwnershipCode(),
-//					vd.isTaxableIndicator(), vd.getExtension(), );
+//still need a vendorContacts fixture
 			
+//			kfsVendorWebService.addVendor(vdf.vendorName, vdf.vendorTypeCode, vdf.isForeign, vdf.taxNumber, vdf.taxNumberType, 
+//					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, vd, thePhoneNumbers, theSupplierDiversities);
+
 			
 //			public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
 //	                

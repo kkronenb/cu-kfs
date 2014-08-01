@@ -36,10 +36,12 @@ public enum SupplierDiversityParameterFixture {
 		return supplierDiversityParameter;
 	}
 	
-	public List<VendorSupplierDiversityParam> getAllFixtures() {
+	public static List<VendorSupplierDiversityParam> getAllFixtures() {
 		ArrayList<VendorSupplierDiversityParam> allFixtures = new ArrayList<VendorSupplierDiversityParam>();
 		
-		allFixtures.add(ONE.createSupplierDiversityParameter());
+		allFixtures.add(DISABLED.createSupplierDiversityParameter());
+		allFixtures.add(HUB_ZONE.createSupplierDiversityParameter());
+		allFixtures.add(MINORITY_OWNED.createSupplierDiversityParameter());
 		
 		return allFixtures;
 	}
