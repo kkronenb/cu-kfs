@@ -7,12 +7,12 @@ import edu.cornell.kfs.vnd.service.params.VendorContactParam;
 
 public enum VendorContactFixture {
 
-	ONE(1, "ACCOUNTS RECEIVABLE", "Jane Doe", "jane@nosuchvendor.com", "a test vendor contact",
-			"P.O. Box 654", "Nowhereville", "SD", "99900", "USA", "John Dough", true),
-	TWO(2, "PARTS", "Sandy Claus", "sandy@north_pole_workshop.com", "a test vendor contact",
-					"3 Christmas Lane", "Nosuchplace", "ND", "99901", "USA", "Kris Kringle", true),	
-	THREE(3, "INSURANCE", "John Nobody", "john@whatisinsurance.com", "a test vendor contact",
-			"333 State St", "Imaginetown", "RI", "99902", "USA", "Dewey, Cheatem, and Howe", true),;	
+	ONE(1, "AR", "Jane Doe", "jane@nosuchvendor.com", "a test vendor contact",
+			"P.O. Box 654", "Nowhereville", "SD", "99900", "US", "John Dough", true),
+	TWO(2, "PT", "Sandy Claus", "sandy@north_pole_workshop.com", "a test vendor contact",
+					"3 Christmas Lane", "Nosuchplace", "ND", "99901", "US", "Kris Kringle", true),	
+	THREE(3, "IN", "John Nobody", "john@whatisinsurance.com", "a test vendor contact",
+			"333 State St", "Imaginetown", "RI", "99902", "US", "Dewey, Cheatem, and Howe", true),;	
 
 	
     public final Integer vendorContactGeneratedIdentifier;
