@@ -284,6 +284,8 @@ public enum PaymentRequestFixture {
 		paymentRequestDocument.setUseTaxIndicator(useTaxIndicator);
 		
 		paymentRequestDocument.setInvoiceDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+		
+		paymentRequestDocument.getDocumentHeader().setDocumentDescription("Description");
 
 		return paymentRequestDocument;
 
