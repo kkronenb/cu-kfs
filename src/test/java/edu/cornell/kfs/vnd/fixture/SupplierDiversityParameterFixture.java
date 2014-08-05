@@ -1,4 +1,4 @@
-package edu.cornell.kfs.vnd.service;
+package edu.cornell.kfs.vnd.fixture;
 
 import java.util.ArrayList;
 import java.util.Date;

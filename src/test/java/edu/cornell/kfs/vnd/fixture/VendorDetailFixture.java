@@ -71,6 +71,7 @@ public enum VendorDetailFixture {
 		vendorDetail.setVendorParentIndicator(this.vendorParentIndicator);
 		vendorDetail.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
 		vendorDetail.setVendorDetailAssignedIdentifier(this.vendorDetailAssignedIdentifier);
+		vendorDetail.setVendorHeader(VendorHeaderFixture.ONE.createVendorHeader());
 		return vendorDetail;
 	}
 

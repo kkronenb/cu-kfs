@@ -11,7 +11,7 @@ import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
 @ConfigureContext
 public enum AddressParameterFixture {
 
-	ONE(1, "?", "332 Someplace Street", "Somewhereville", "ND", "USA", true, true);
+	ONE(1, "PO", "332 Someplace Street", "Somewhereville", "ND", "USA", true, true);
 	
 	public final Integer identifier;
 	public final String vendorAddressTypeCode;
@@ -37,6 +37,13 @@ public enum AddressParameterFixture {
 		VendorAddressParam vendorAddressParam = new VendorAddressParam();
 		
 		vendorAddressParam.setActive(active);
+		vendorAddressParam.setVendorAddressTypeCode(vendorAddressTypeCode);
+		vendorAddressParam.setVendorLine1Address(vendorLine1Address);
+		vendorAddressParam.setVendorCityName(vendorCityName);
+		vendorAddressParam.setVendorStateCode(vendorStateCode);
+		vendorAddressParam.setVendorCountryCode(vendorCountryCode);
+		vendorAddressParam.setVendorDefaultAddressIndicator(vendorDefaultAddressIndicator);
+		vendorAddressParam.setVendorAddressGeneratedIdentifier(identifier);
 		
 		return vendorAddressParam;
 	}

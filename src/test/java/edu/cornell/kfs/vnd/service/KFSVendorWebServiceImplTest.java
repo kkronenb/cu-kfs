@@ -5,11 +5,17 @@ import java.util.List;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.fixture.AddressParameterFixture;
 import edu.cornell.kfs.vnd.fixture.PhoneNumberParameterFixture;
+import edu.cornell.kfs.vnd.fixture.SupplierDiversityParameterFixture;
+import edu.cornell.kfs.vnd.fixture.VendorContactFixture;
+import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorDetailFixture;
 import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
+import edu.cornell.kfs.vnd.service.params.VendorContactParam;
 import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
 import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
 
@@ -34,6 +40,7 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			List<VendorPhoneNumberParam> thePhoneNumbers = PhoneNumberParameterFixture.ONE.getAllFixtures();
 			List<VendorAddressParam> theAddresses = AddressParameterFixture.ONE.getAllFixtures();
 			List<VendorSupplierDiversityParam> theSupplierDiversities = SupplierDiversityParameterFixture.getAllFixtures();
+			List<VendorContactParam> theContacts = VendorContactFixture.ONE.getAllFixtures();
 			
 			for (int i=0; i!=thePhoneNumbers.size(); i++) {
 				VendorPhoneNumberParam vppp = thePhoneNumbers.get(i);
@@ -47,12 +54,26 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 				VendorSupplierDiversityParam vsdp = theSupplierDiversities.get(k);
 				System.out.println("supplier diversity code: " +vsdp.getVendorSupplierDiversityCode());
 			}
+			for (int i=0; i!=theContacts.size(); i++) {
+				VendorContactParam vcp = theContacts.get(i);
+				System.out.println("contact name: " + vcp.getVendorContactName() + " - C/O " + vcp.getVendorAttentionName());
+			}
 			
-//still need a vendorContacts fixture
 			
-//			kfsVendorWebService.addVendor(vdf.vendorName, vdf.vendorTypeCode, vdf.isForeign, vdf.taxNumber, vdf.taxNumberType, 
-//					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, vd, thePhoneNumbers, theSupplierDiversities);
+			VendorDetail vd = vdf.createVendorDetail();				
+			VendorHeader vh = vd.getVendorHeader();
+			VendorDetailExtension vdx = VendorDetailExtensionFixture.EXTENSION.createVendorDetailExtension();
+			
+			String anotherTry = kfsVendorWebService.addVendor(vd.getVendorName(), vh.getVendorTypeCode(), vh.getVendorForeignIndicator(), vh.getVendorTaxNumber(),
+					vh.getVendorTaxTypeCode(), vh.getVendorOwnershipCode(), vd.isTaxableIndicator(), vdx.isEinvoiceVendorIndicator(), theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
+			
+			System.out.println("another try result: " + anotherTry);
+			
+			String theResult = kfsVendorWebService.addVendor(vdf.vendorName, vdf.vendorTypeCode, vdf.isForeign, vdf.taxNumber, vdf.taxNumberType, 
+					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
 
+			
+			System.out.println("\n\n\nthe end result of all this: " + theResult + "\n\n\n");
 			
 //			public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
 //	                
