@@ -45,24 +45,38 @@ public enum RequisitionFixture {
 
 	REQ_NON_B2B("Description", "STAN", 0, 4291, null, "line 1 address",
 			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
-			"6072203712", "attn name", 1,  "Delivery Line 1 address",
+			"6072203712", "attn name", 1, "Delivery Line 1 address",
 			"Delivery Line 2 address", "Delivery City Name", "110", "US", null,
 			null, "billing City Name", "US", "abc@email.com",
-			"billing line 1 address", "607-220-3712", "14850", "NY", "Billing name", null, null),
-	
-	REQ_NON_B2B_CAP_ASSET_ITEM("Description", "STAN", 0, 4291, null, "line 1 address",
-			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
-			"6072203712", "attn name", 1,  "Delivery Line 1 address",
-			"Delivery Line 2 address", "Delivery City Name", "110", "US", null,
-			null, "billing City Name", "US", "abc@email.com",
-			"billing line 1 address", "607-220-3712", "14850", "NY", "Billing name", RequisitionItemFixture.REQ_ITEM, RequisitionCapitalAssetFixture.REC1),
-	
-	REQ_NON_B2B_CAP_ASSET_ITEM_INACTIVE_COMM_CODE("Description", "STAN", 0, 4291, null, "line 1 address",
-			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
-			"6072203712", "attn name", 1,  "Delivery Line 1 address",
-			"Delivery Line 2 address", "Delivery City Name", "110", "US", null,
-			null, "billing City Name", "US", "abc@email.com",
-			"billing line 1 address", "607-220-3712", "14850", "NY", "Billing name", RequisitionItemFixture.REQ_ITEM_INACTIVE_COMM_CD, null);
+			"billing line 1 address", "607-220-3712", "14850", "NY",
+			"Billing name", null, null),
+
+	REQ_NON_B2B_CAP_ASSET_ITEM("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name", RequisitionItemFixture.REQ_ITEM,
+			RequisitionCapitalAssetFixture.REC1),
+
+	REQ_NON_B2B_CAP_ASSET_ITEM_INACTIVE_COMM_CODE("Description", "STAN", 0,
+			4291, null, "line 1 address", "line 2 address", "city", "NY",
+			"14850", "US", "abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_ITEM_INACTIVE_COMM_CD, null),
+
+	REQ_NON_B2B_TRADE_IN_ITEMS("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_ITEM_TRADE_IN, null);
 
 	public final String documentDescription;
 	public final String requisitionSourceCode;
@@ -97,7 +111,7 @@ public enum RequisitionFixture {
 	public final String billingStateCode;
 	public final String billingName;
 
-	public final RequisitionItemFixture itemFixture;
+	public final RequisitionItemFixture item;
 	public final RequisitionCapitalAssetFixture capitalAssetFixture;
 
 	private RequisitionFixture(String documentDescription,
@@ -120,7 +134,7 @@ public enum RequisitionFixture {
 			String billingEmailAddress, String billingLine1Address,
 			String billingPhoneNumber, String billingPostalCode,
 			String billingStateCode, String billingName,
-			RequisitionItemFixture itemFixture,
+			RequisitionItemFixture item,
 			RequisitionCapitalAssetFixture capitalAssetFixture) {
 
 		this.documentDescription = documentDescription;
@@ -156,8 +170,8 @@ public enum RequisitionFixture {
 		this.billingStateCode = billingStateCode;
 		this.billingName = billingName;
 
-		this.itemFixture = itemFixture;
-		
+		this.item = item;
+
 		this.capitalAssetFixture = capitalAssetFixture;
 
 	}
@@ -234,12 +248,13 @@ public enum RequisitionFixture {
 		requisitionDocument.setBillingStateCode(billingStateCode);
 		requisitionDocument.setBillingName(billingName);
 
-		if (itemFixture != null) {
-			requisitionDocument.addItem(itemFixture.createRequisitionItem());
+		if (item != null) {
+			requisitionDocument.addItem(item.createRequisitionItem());
 		}
-		
-		if(capitalAssetFixture!=null){
-			requisitionDocument.getPurchasingCapitalAssetItems().add(capitalAssetFixture.REC1.newRecord());
+
+		if (capitalAssetFixture != null) {
+			requisitionDocument.getPurchasingCapitalAssetItems().add(
+					capitalAssetFixture.REC1.newRecord());
 		}
 
 		requisitionDocument.refreshNonUpdateableReferences();
