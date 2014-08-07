@@ -3,7 +3,7 @@ package edu.cornell.kfs.vnd.fixture;
 import org.kuali.kfs.vnd.businessobject.OwnershipType;
 
 public enum VendorOwnershipTypeFixture {
-	ONE(true, "blah", "blah", true);
+	ONE(true, "CP", "CORPORATION", true);
 	
 	public final boolean active;
 	public final String vendorOwnershipCode;

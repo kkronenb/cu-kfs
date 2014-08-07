@@ -24,6 +24,8 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 
 	KFSVendorWebService kfsVendorWebService;
 	
+	private static final String failureString = "Vendor Not Found";
+	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -34,35 +36,19 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 		try {
 			String result = kfsVendorWebService.retrieveKfsVendor(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "not a type");
 			
-			assertTrue(result.equals("Vendor Not Found"));
+			assertTrue(result.equals(failureString));
 			VendorDetailFixture vdf = VendorDetailFixture.VENDOR_TO_CREATE;
 
 			List<VendorPhoneNumberParam> thePhoneNumbers = PhoneNumberParameterFixture.ONE.getAllFixtures();
 			List<VendorAddressParam> theAddresses = AddressParameterFixture.ONE.getAllFixtures();
 			List<VendorSupplierDiversityParam> theSupplierDiversities = SupplierDiversityParameterFixture.getAllFixtures();
 			List<VendorContactParam> theContacts = VendorContactFixture.ONE.getAllFixtures();
-			
-			for (int i=0; i!=thePhoneNumbers.size(); i++) {
-				VendorPhoneNumberParam vppp = thePhoneNumbers.get(i);
-				System.out.println("phone: " + vppp.getVendorPhoneNumber() + " type: " + vppp.getVendorPhoneTypeCode() + " extension: " + vppp.getVendorPhoneExtensionNumber());
-			}
-			for (int j=0; j!=theAddresses.size();j++) {
-				VendorAddressParam vap = theAddresses.get(j);
-				System.out.println("address: " + vap.getVendorCityName());
-			}
-			for (int k=0; k!=theSupplierDiversities.size();k++) {
-				VendorSupplierDiversityParam vsdp = theSupplierDiversities.get(k);
-				System.out.println("supplier diversity code: " +vsdp.getVendorSupplierDiversityCode());
-			}
-			for (int i=0; i!=theContacts.size(); i++) {
-				VendorContactParam vcp = theContacts.get(i);
-				System.out.println("contact name: " + vcp.getVendorContactName() + " - C/O " + vcp.getVendorAttentionName());
-			}
-			
+						
 			
 			VendorDetail vd = vdf.createVendorDetail();				
 			VendorHeader vh = vd.getVendorHeader();
 			VendorDetailExtension vdx = VendorDetailExtensionFixture.EXTENSION.createVendorDetailExtension();
+			vd.setExtension(vdx);
 			
 			String anotherTry = kfsVendorWebService.addVendor(vd.getVendorName(), vh.getVendorTypeCode(), vh.getVendorForeignIndicator(), vh.getVendorTaxNumber(),
 					vh.getVendorTaxTypeCode(), vh.getVendorOwnershipCode(), vd.isTaxableIndicator(), vdx.isEinvoiceVendorIndicator(), theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
@@ -82,17 +68,26 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			//List<VendorSupplierDiversityParam> supplierDiversitys) 
 					//throws Exception {
 
+			VendorDetail vdetail = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
+			boolean blah = kfsVendorWebService.vendorExists("4154-0", "VENDORID");
 			
+			String id = vdetail.getVendorHeaderGeneratedIdentifier().toString() + "-" + vdetail.getVendorDetailAssignedIdentifier().toString();
 			
+			boolean boolResult = kfsVendorWebService.vendorExists(id , "VENDORID");
 			
+			boolean b = kfsVendorWebService.vendorExists("839874281", "DUNS");
+			
+			System.out.println("Does ADD assoctiates exist in db?: " + boolResult + " the other one? " + blah + " b?:" + b + " id: " + vdetail.getVendorHeaderGeneratedIdentifier());
 			
 //			kfsVendorWebService.addVendor(vendorName, vendorTypeCode, isForeign, taxNumber, taxNumberType, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
-//			kfsVendorWebService.retrieveKfsVendorByEin(vendorEin);
-//			kfsVendorWebService.retrieveKfsVendorByNamePlusLastFour(vendorName, lastFour);
+			String val = kfsVendorWebService.retrieveKfsVendorByEin("123456789");
+			
+	
+			kfsVendorWebService.retrieveKfsVendorByNamePlusLastFour(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "9999");
 //			kfsVendorWebService.updateVendor(vendorName, vendorTypeCode, isForeign, vendorNumber, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
 //			kfsVendorWebService.uploadAtt(vendorId, fileData, fileName, noteText);
 //			kfsVendorWebService.uploadAttachment(vendorId, fileData, fileName, noteText);
-//			kfsVendorWebService.vendorExists(vendorId, vendorIdType);
+
 		}
 		catch (Exception e) {
 			e.printStackTrace();

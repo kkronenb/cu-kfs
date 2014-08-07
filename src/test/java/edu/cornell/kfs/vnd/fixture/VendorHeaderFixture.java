@@ -5,7 +5,7 @@ import org.kuali.kfs.vnd.businessobject.VendorType;
 
 public enum VendorHeaderFixture {
 	
-	ONE("some type code", Boolean.TRUE);
+	ONE("PO", Boolean.TRUE);
 	
 	public final String vendorTypeCode;
 	public final Boolean vendorForeignIndicator;
@@ -17,10 +17,11 @@ public enum VendorHeaderFixture {
 	
 	public VendorHeader createVendorHeader() {
 		VendorHeader vendorHeader = new VendorHeader();
-		vendorHeader.setVendorOwnership(VendorOwnershipTypeFixture.ONE.createVendorOwnershipType());
+		vendorHeader.setVendorOwnershipCode(VendorOwnershipTypeFixture.ONE.vendorOwnershipCode);
+//		vendorHeader.setVendorOwnership(VendorOwnershipTypeFixture.ONE.createVendorOwnershipType());
 		vendorHeader.setVendorForeignIndicator(this.vendorForeignIndicator);
 		vendorHeader.setVendorTypeCode(vendorTypeCode);
-		vendorHeader.setVendorType(this.createVendorType());
+//		vendorHeader.setVendorType(this.createVendorType());
 		return vendorHeader;
 	}
 

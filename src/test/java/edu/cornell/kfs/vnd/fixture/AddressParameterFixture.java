@@ -11,7 +11,7 @@ import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
 @ConfigureContext
 public enum AddressParameterFixture {
 
-	ONE(1, "PO", "332 Someplace Street", "Somewhereville", "ND", "US", true, true);
+	ONE(1, "PO", "332 Someplace Street", "Somewhereville", "ND", "14850", "US", true, true);
 	
 	public final Integer identifier;
 	public final String vendorAddressTypeCode;
@@ -19,17 +19,20 @@ public enum AddressParameterFixture {
 	public final String vendorCityName;
 	public final String vendorStateCode;
 	public final String vendorCountryCode;
+	public final String vendorZipCode;
 	public boolean vendorDefaultAddressIndicator;
 	public boolean active;
 	
 	private AddressParameterFixture(Integer identifier, String vendorAddressTypeCode, String vendorLine1Address,
-			String vendorCityName, String vendorStateCode, String vendorCountryCode, boolean defaultAddressIndicator, boolean active) {
+			String vendorCityName, String vendorStateCode, String vendorZipCode, String vendorCountryCode, boolean vendorDefaultAddressIndicator, boolean active) {
 		this.identifier = identifier;
 		this.vendorAddressTypeCode = vendorAddressTypeCode;
 		this.vendorLine1Address = vendorLine1Address;
 		this.vendorCityName = vendorCityName;
 		this.vendorCountryCode = vendorCountryCode;
 		this.vendorStateCode = vendorStateCode;
+		this.vendorZipCode = vendorZipCode;
+		this.vendorDefaultAddressIndicator = vendorDefaultAddressIndicator;
 	}
 	
 	
@@ -44,7 +47,7 @@ public enum AddressParameterFixture {
 		vendorAddressParam.setVendorCountryCode(vendorCountryCode);
 		vendorAddressParam.setVendorDefaultAddressIndicator(vendorDefaultAddressIndicator);
 		vendorAddressParam.setVendorAddressGeneratedIdentifier(identifier);
-		
+		vendorAddressParam.setVendorZipCode(vendorZipCode);
 		return vendorAddressParam;
 	}
 	
