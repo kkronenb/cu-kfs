@@ -53,12 +53,15 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			
 			String vendorWebServiceResult = "";
 			boolean vendorExists = false;
+
+			//need to determine what is problematic about the fixtures before these addVendor calls will work
+			//
 			
 //			vendorWebServiceResult = kfsVendorWebService.addVendor(vd.getVendorName(), vh.getVendorTypeCode(), vh.getVendorForeignIndicator(), vh.getVendorTaxNumber(),
 //					vh.getVendorTaxTypeCode(), vh.getVendorOwnershipCode(), vd.isTaxableIndicator(), vdx.isEinvoiceVendorIndicator(), theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
 						
 //			vendorWebServiceResult = kfsVendorWebService.addVendor(vdf.vendorName, vdf.vendorTypeCode, vdf.isForeign, vdf.taxNumber, vdf.taxNumberType, 
-//d					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
+//					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
 
 			
 			VendorDetail vdetail = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
