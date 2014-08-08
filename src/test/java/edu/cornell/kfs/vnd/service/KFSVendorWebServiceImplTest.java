@@ -36,7 +36,7 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 		try {
 			String result = kfsVendorWebService.retrieveKfsVendor(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "not a type");
 			
-			assertTrue(result.equals(failureString));
+			assertTrue("Attempt to retrieve vendor that doesn't exist results in failure", result.equals(failureString));
 			VendorDetailFixture vdf = VendorDetailFixture.VENDOR_TO_CREATE;
 
 			List<VendorPhoneNumberParam> thePhoneNumbers = PhoneNumberParameterFixture.ONE.getAllFixtures();
@@ -50,44 +50,40 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			VendorDetailExtension vdx = VendorDetailExtensionFixture.EXTENSION.createVendorDetailExtension();
 			vd.setExtension(vdx);
 			
-			String anotherTry = kfsVendorWebService.addVendor(vd.getVendorName(), vh.getVendorTypeCode(), vh.getVendorForeignIndicator(), vh.getVendorTaxNumber(),
-					vh.getVendorTaxTypeCode(), vh.getVendorOwnershipCode(), vd.isTaxableIndicator(), vdx.isEinvoiceVendorIndicator(), theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
 			
-			System.out.println("another try result: " + anotherTry);
+			String vendorWebServiceResult = "";
+			boolean vendorExists = false;
 			
-			String theResult = kfsVendorWebService.addVendor(vdf.vendorName, vdf.vendorTypeCode, vdf.isForeign, vdf.taxNumber, vdf.taxNumberType, 
-					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
+//			vendorWebServiceResult = kfsVendorWebService.addVendor(vd.getVendorName(), vh.getVendorTypeCode(), vh.getVendorForeignIndicator(), vh.getVendorTaxNumber(),
+//					vh.getVendorTaxTypeCode(), vh.getVendorOwnershipCode(), vd.isTaxableIndicator(), vdx.isEinvoiceVendorIndicator(), theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
+						
+//			vendorWebServiceResult = kfsVendorWebService.addVendor(vdf.vendorName, vdf.vendorTypeCode, vdf.isForeign, vdf.taxNumber, vdf.taxNumberType, 
+//d					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
 
 			
-			System.out.println("\n\n\nthe end result of all this: " + theResult + "\n\n\n");
-			
-//			public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
-//	                
-			//List<VendorAddressParam> addresses,List<VendorContactParam> contacts,
-			//List<VendorPhoneNumberParam> phoneNumbers, 
-			//List<VendorSupplierDiversityParam> supplierDiversitys) 
-					//throws Exception {
-
 			VendorDetail vdetail = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
-			boolean blah = kfsVendorWebService.vendorExists("4154-0", "VENDORID");
-			
-			String id = vdetail.getVendorHeaderGeneratedIdentifier().toString() + "-" + vdetail.getVendorDetailAssignedIdentifier().toString();
-			
-			boolean boolResult = kfsVendorWebService.vendorExists(id , "VENDORID");
-			
-			boolean b = kfsVendorWebService.vendorExists("839874281", "DUNS");
-			
-			System.out.println("Does ADD assoctiates exist in db?: " + boolResult + " the other one? " + blah + " b?:" + b + " id: " + vdetail.getVendorHeaderGeneratedIdentifier());
-			
-//			kfsVendorWebService.addVendor(vendorName, vendorTypeCode, isForeign, taxNumber, taxNumberType, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
-			String val = kfsVendorWebService.retrieveKfsVendorByEin("123456789");
-			
-	
-			kfsVendorWebService.retrieveKfsVendorByNamePlusLastFour(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "9999");
-//			kfsVendorWebService.updateVendor(vendorName, vendorTypeCode, isForeign, vendorNumber, ownershipTypeCode, isTaxable, isEInvoice, addresses, contacts, phoneNumbers, supplierDiversitys);
-//			kfsVendorWebService.uploadAtt(vendorId, fileData, fileName, noteText);
-//			kfsVendorWebService.uploadAttachment(vendorId, fileData, fileName, noteText);
 
+			vendorExists = kfsVendorWebService.vendorExists("4154-0", "VENDORID");
+			
+			assertTrue("Able to retrieve the vendor with vendor Id 4154-0",vendorExists);
+			
+			String compositeId = vdetail.getVendorHeaderGeneratedIdentifier().toString() + "-" + vdetail.getVendorDetailAssignedIdentifier().toString();
+			
+			vendorExists = kfsVendorWebService.vendorExists(compositeId , "VENDORID");
+			
+			assertTrue("Able to retrieve vendor: " + compositeId, vendorExists);
+			
+			vendorExists = kfsVendorWebService.vendorExists("839874281", "DUNS");
+		
+			assertTrue("Able to retrive vendor by DUNS number", vendorExists);			
+			
+			vendorWebServiceResult = kfsVendorWebService.retrieveKfsVendorByEin("123456789");
+
+			assertTrue("Attempt to retrieve non-existant vendor by Ein fails",failureString.equals(vendorWebServiceResult));
+	
+			vendorWebServiceResult = kfsVendorWebService.retrieveKfsVendorByNamePlusLastFour(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "9999");
+
+			assertTrue("Attempt to retrieve non-existant vendor using last vendor name and last 4 digits fails",failureString.equals(vendorWebServiceResult));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
