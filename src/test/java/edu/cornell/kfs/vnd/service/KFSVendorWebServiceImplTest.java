@@ -82,7 +82,7 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			
 			vendorWebServiceResult = kfsVendorWebService.retrieveKfsVendorByEin("123456789");
 
-			assertTrue("Attempt to retrieve non-existant vendor by Ein fails",failureString.equals(vendorWebServiceResult));
+			assertTrue("Attempt to retrieve non-existant vendor by Ein fails", vendorWebServiceResult.equals(failureString));
 	
 			vendorWebServiceResult = kfsVendorWebService.retrieveKfsVendorByNamePlusLastFour(VendorDetailFixture.NO_SUCH_VENDOR.vendorName, "9999");
 
