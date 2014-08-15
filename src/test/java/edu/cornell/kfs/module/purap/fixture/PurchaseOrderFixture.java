@@ -14,6 +14,7 @@ public enum PurchaseOrderFixture {
 	PO_B2B_CXML_VALIDATION(RequisitionFixture.REQ_B2B_CXML, 10, true, "Description", PurchaseOrderStatuses.APPDOC_PENDING_CXML),
 	PO_B2B_CXML_VALIDATION_INVALID(RequisitionFixture.REQ_B2B_CXML_INVALID, 10, true, "Description", PurchaseOrderStatuses.APPDOC_PENDING_CXML),
 	PO_NON_B2B_OPEN(RequisitionFixture.REQ_NON_B2B, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
+	PO_NON_B2B_OPEN_WITH_ITEMS(RequisitionFixture.REQ_NON_B2B_WITH_ITEMS, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
 	PO_NON_B2B_IN_PROCESS(RequisitionFixture.REQ_NON_B2B, 10, true, "Description", PurchaseOrderStatuses.APPDOC_IN_PROCESS),
 	PO_NON_B2B_OPEN_TRADE_IN_ITEMS(RequisitionFixture.REQ_NON_B2B_TRADE_IN_ITEMS, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),;
 
