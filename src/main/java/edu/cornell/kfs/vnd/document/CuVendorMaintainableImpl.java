@@ -57,11 +57,9 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         } catch (WorkflowException e) {
             LOG.debug("Vendor doc could not find doc to answerSplitNodeQuestion " + e.getMessage());
         }
- 
-        Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);  
-        
+         
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
-            return !StringUtils.equalsIgnoreCase(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId(), systemUser.getPrincipalId());
+            return true;
         }
         return super.answerSplitNodeQuestion(nodeName);
     }
