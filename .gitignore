@@ -1,2 +1,11 @@
 target/
+
+# Ignore this, it's generated for running unit tests
+overlays/
+
+# Ignore these, they're used for Eclipse projects
 .classpath
+
+# Ignore these, they're used for intelliJ IDEA projects
+.idea
+cu-kfs.iml
