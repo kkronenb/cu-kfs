@@ -66,6 +66,7 @@
     <property name="control">
       <ref bean="TenCharacterTextControl" />
    </property>
+     <property name="forceUppercase" value="true" />
    </bean>
   <bean id="FavoriteAccount-organizationReferenceId" parent="FavoriteAccount-organizationReferenceId-parentBean"/>
 
