@@ -19,14 +19,12 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="AdvanceDeposit-saveDocumentValidation" parent="AdvanceDeposit-saveDocumentValidation-parentBean" scope="prototype" />
-
-    <bean id="AdvanceDeposit-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+    <bean id="AdvanceDeposit-saveDocumentValidation" parent="AdvanceDeposit-saveDocumentValidation-parentBean"  scope="prototype">
         <property name="validations">
             <list>
                 <bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
                 <bean parent="AccountingDocument-oneSidedRequiredAccountingLinesCountValidation" scope="prototype">
-                    <property name="requiredMinimumCount" value="0" />
+                    <property name="requiredMinimumCount" value="0" /> <!-- KFSPTS-3481: This is the key difference in our implementation that fixes the issue. -->
                     <property name="parameterProperties">
                         <list>
                             <bean parent="accountingDocumentFieldConversion" />
@@ -37,24 +35,5 @@
             </list>
         </property>
     </bean>
-
-    <!-- This seems like a reasonable alternative...
-        <bean id="AdvanceDeposit-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
-        <property name="validations">
-            <list>
-                <bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
-                <bean parent="AccountingDocument-optionalOneSidedDocumentAccountingLinesCountValidation" scope="prototype">
-                    <property name="parameterProperties">
-                        <list>
-                            <bean parent="accountingDocumentFieldConversion" />
-                        </list>
-                    </property>
-                </bean>
-                <bean parent="AdvanceDeposit-saveValidation-advanceDepositsValidation" scope="prototype" />
-            </list>
-        </property>
-    </bean>
-
-    -->
 
 </beans>
