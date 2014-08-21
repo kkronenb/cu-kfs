@@ -23,7 +23,8 @@ cknotts,
 // Accounting Hierarchy Reviewer
 jrichard,
 ccs1,
-mo14;
+mo14,
+nja3;
 
 static {
 // Assert.assertEquals(KualiUser.SYSTEM_USER, kuluser.toString());

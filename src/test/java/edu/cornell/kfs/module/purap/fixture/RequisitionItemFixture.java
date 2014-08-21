@@ -13,6 +13,16 @@ public enum RequisitionItemFixture {
 			new BigDecimal(1), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE,
 			false),
 
+	REQ_ITEM2(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
+			new KualiDecimal(4), new KualiDecimal(1), "80141605",
+			new BigDecimal(4), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE2,
+			false),
+
+	REQ_ITEM3(new Integer(2), "EA", "1234567", "item desc", "ITEM", "Punchout",
+			new KualiDecimal(2), new KualiDecimal(1), "80141605",
+			new BigDecimal(2), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3,
+			false),
+
 	REQ_ITEM_INACTIVE_COMM_CD(new Integer(1), "EA", "1234567", "item desc",
 			"ITEM", "Punchout", new KualiDecimal(1), new KualiDecimal(1),
 			"24112404", new BigDecimal(1),
