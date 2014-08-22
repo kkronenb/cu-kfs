@@ -12,7 +12,6 @@ import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.service.NoteService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
@@ -21,59 +20,71 @@ import edu.cornell.kfs.sys.service.impl.fixture.IndirectCostAdjustmentDocumentFi
 @ConfigureContext(session = ccs1)
 public class CuFinancialSystemDocumentServiceImplTest extends KualiTestBase {
     private CUFinancialSystemDocumentService cUFinancialSystemDocumentService;
+    IndirectCostAdjustmentDocument icaDocument;
+    IndirectCostAdjustmentDocument copied;   
+    List<Note> savedNotes ;
+    List<Note> originalNotes ;
     @Override
     protected void setUp() throws Exception {
         // TODO Auto-generated method stub
         super.setUp();
         cUFinancialSystemDocumentService = SpringContext.getBean(CUFinancialSystemDocumentService.class);
-        }
-
-    /*
-     * test get user primary favorite account
-     * 
-     */
-    public void testAddNoteForAccountingLineChange() {
         try {
-            IndirectCostAdjustmentDocument icaDocument = IndirectCostAdjustmentDocumentFixture.ICA_GOOD.createIndirectCostAdjustmentDocument();
+            icaDocument = IndirectCostAdjustmentDocumentFixture.ICA_GOOD.createIndirectCostAdjustmentDocument();
             AccountingDocumentTestUtils.routeDocument(icaDocument, SpringContext.getBean(DocumentService.class));
-            String documentId = icaDocument.getDocumentNumber();
         // switch user to FO
             changeCurrentUser(UserNameFixture.kan2);
             // icaDocument, and the 'saveDoc' in cUFinancialSystemDocumentService are the same instance.
             // So, need a copied
-            IndirectCostAdjustmentDocument copied = (IndirectCostAdjustmentDocument)ObjectUtils.deepCopy(icaDocument);         
-            List<Note> savedNotes = copied.getNotes();
-            List<Note> originalNotes = icaDocument.getNotes();
-            cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
-            assertTrue("Should have no New note added", savedNotes.size() == originalNotes.size());
-            
-            copied.getSourceAccountingLine(0).setOrganizationReferenceId("changed");
-            cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
-            // Note is only created, but not saved yet.
-            assertTrue("Should have new note added for Source referenceid change ", savedNotes.size() > originalNotes.size());
-            assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
-            copied.getSourceAccountingLine(0).setOrganizationReferenceId("");
-            copied.getTargetAccountingLine(0).setOrganizationReferenceId("changed");
-            savedNotes.clear();
-            cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
-            assertTrue("Should have new note added for Target referenceid change ", savedNotes.size() > originalNotes.size());
-            assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
-            copied.getTargetAccountingLine(0).setOrganizationReferenceId("");
-            copied.getSourceAccountingLine(0).setAccountNumber("G254700");
-            savedNotes.clear();
-            cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
-            assertTrue("Should have new note added for Source Account Number change ", savedNotes.size() > originalNotes.size());
-            assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
-            copied.getSourceAccountingLine(0).setAccountNumber("G264700");
-            copied.getTargetAccountingLine(0).setAccountNumber("G264700");
-            savedNotes.clear();
-            cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
-            // Note is only created, but not saved yet.
-            assertTrue("Should have new note added for Target Account Number change ", savedNotes.size() > originalNotes.size());
-            assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
+            copied = (IndirectCostAdjustmentDocument)ObjectUtils.deepCopy(icaDocument);         
+            savedNotes = copied.getNotes();
+            originalNotes = icaDocument.getNotes();
         } catch (Exception e) {
-            assertTrue("should not get Exception " + e.getMessage(), false);
         }
-   }
+    }
+
+    /*
+     * test Add note for accounting line change
+     * 
+     */
+    public void testAddNoteForAccountingLineChange() {
+        cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
+        assertTrue("Should have no New note added", savedNotes.size() == originalNotes.size());
+        
+        copied.getSourceAccountingLine(0).setOrganizationReferenceId("changed");
+        cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
+        // Note is only created, but not saved yet.
+        assertTrue("Should have new note added for Source referenceid change ", savedNotes.size() > originalNotes.size());
+        assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
+        copied.getSourceAccountingLine(0).setOrganizationReferenceId("");
+        copied.getTargetAccountingLine(0).setOrganizationReferenceId("changed");
+        savedNotes.clear();
+        cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
+        assertTrue("Should have new note added for Target referenceid change ", savedNotes.size() > originalNotes.size());
+        assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
+        copied.getTargetAccountingLine(0).setOrganizationReferenceId("");
+        copied.getSourceAccountingLine(0).setAccountNumber("G254700");
+        savedNotes.clear();
+        cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
+        assertTrue("Should have new note added for Source Account Number change ", savedNotes.size() > originalNotes.size());
+        assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
+        copied.getSourceAccountingLine(0).setAccountNumber("G264700");
+        copied.getTargetAccountingLine(0).setAccountNumber("G264700");
+        savedNotes.clear();
+        cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
+        // Note is only created, but not saved yet.
+        assertTrue("Should have new note added for Target Account Number change ", savedNotes.size() > originalNotes.size());
+        assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
+    }
     
+    /*
+     * test no note being added for no accounting line change
+     * 
+     */
+    public void testNotAddNoteForNoAccountingLineChange() {
+        cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
+        assertTrue("Should have no New note added", savedNotes.size() == originalNotes.size());
+            
+    }
+
 }
