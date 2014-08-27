@@ -15,29 +15,40 @@
  */
 package edu.cornell.kfs.coa.document.validation.impl;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.kuali.kfs.coa.businessobject.FundGroup;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.AccountReversionGlobal;
 import edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount;
 import edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail;
+import edu.cornell.kfs.coa.businessobject.Reversion;
 import edu.cornell.kfs.coa.businessobject.options.ReversionCodeValuesFinder;
 import edu.cornell.kfs.coa.document.AccountReversionGlobalMaintainableImpl;
 import edu.cornell.kfs.coa.service.AccountReversionService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 /**
  * 
@@ -180,6 +191,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
 
         success &= checkBudgetReversionAccountPair(globalAcctRev);
         success &= checkCashReversionAccountPair(globalAcctRev);
+        success &= validateAccountFundGroup(globalAcctRev);
 
         success &= areAllDetailsValid(globalAcctRev);
         success &= areAllAccountsValid(globalAcctRev);
@@ -369,6 +381,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
                 success &= checkAccountValidity(acct);
                 success &= checkAccountChartValidity(acct);
                 success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
+                success &= validateAccountFundGroup( acct);
                 GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
             }
         }
@@ -480,6 +493,82 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         }
         return containingSame;
     }
+    
+    protected boolean validateAccountFundGroup(AccountReversionGlobalAccount acctRev){
+    	boolean valid = true;
+    	Collection<String> fundGroups  = SpringContext.getBean(ParameterService.class).getSubParameterValuesAsString(Reversion.class, CUKFSConstants.Reversion.SELECTION_1, "account.subFundGroup.fundGroupCode");
+    	
+    	String accountFundGroupCode = acctRev.getAccount().getSubFundGroup().getFundGroupCode();
+
+    	
+    	//GlobalVariables.getMessageMap().addToErrorPath("document.newMaintainableObject");
+    	
+    	if(!fundGroups.contains(accountFundGroupCode)){
+    		valid = false;
+    		GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER,
+    				RiceKeyConstants.ERROR_DOCUMENT_INVALID_VALUE_ALLOWED_VALUES_PARAMETER, 					new String[] {
+    				getDataDictionaryService().getAttributeLabel( AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER) + " " + getDataDictionaryService().getAttributeLabel( FundGroup.class, KFSPropertyConstants.CODE),
+					accountFundGroupCode,
+					toStringForMessage(),
+					getParameterValuesForMessage(fundGroups),
+					getDataDictionaryService().getAttributeLabel( AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER),
+					} );
+    	}
+    	
+    	
+//    	GlobalVariables.getMessageMap().removeFromErrorPath("document.newMaintainableObject");
+    	return valid;
+    }
+    
+    protected boolean validateAccountFundGroup(AccountReversionGlobal globalAcctRev){
+    	boolean valid = true;
+    	String fundGroups  = SpringContext.getBean(ParameterService.class).getParameterValueAsString(Reversion.class, CUKFSConstants.Reversion.SELECTION_1);
+        String propertyName = StringUtils.substringBefore(fundGroups, "=");
+        List<String> ruleValues = Arrays.asList(StringUtils.substringAfter(fundGroups, "=").split(";"));
+        
+    	String budgetAccountFundGroupCode = globalAcctRev.getBudgetReversionAccount().getSubFundGroup().getFundGroupCode();
+    	String cashAccountFundGroupCode = globalAcctRev.getCashReversionAccount().getSubFundGroup().getFundGroupCode();
+  	
+    	if(!ruleValues.contains(budgetAccountFundGroupCode)){
+    		valid = false;
+    		GlobalVariables.getMessageMap().putError(MAINTAINABLE_ERROR_PREFIX + CUKFSPropertyConstants.ACCT_REVERSION_BUDGET_REVERSION_ACCT_NUMBER, RiceKeyConstants.ERROR_DOCUMENT_INVALID_VALUE_ALLOWED_VALUES_PARAMETER, 					new String[] {
+					getDataDictionaryService().getAttributeLabel( AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_BUDGET_REVERSION_ACCT_NUMBER) + " " + getDataDictionaryService().getAttributeLabel( FundGroup.class, KFSPropertyConstants.CODE),
+					budgetAccountFundGroupCode,
+					toStringForMessage(),
+					getParameterValuesForMessage(ruleValues),
+					getDataDictionaryService().getAttributeLabel( AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_BUDGET_REVERSION_ACCT_NUMBER) 
+					} );
+    	}
+    	
+    	if(!ruleValues.contains(cashAccountFundGroupCode)){
+    		valid = false;
+    		GlobalVariables.getMessageMap().putError(MAINTAINABLE_ERROR_PREFIX + CUKFSPropertyConstants.ACCT_REVERSION_CASH_REVERSION_ACCT_NUMBER, RiceKeyConstants.ERROR_DOCUMENT_INVALID_VALUE_ALLOWED_VALUES_PARAMETER, 					new String[] {
+					getDataDictionaryService().getAttributeLabel( AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_CASH_REVERSION_ACCT_NUMBER) + " " + getDataDictionaryService().getAttributeLabel( FundGroup.class, KFSPropertyConstants.CODE),
+					cashAccountFundGroupCode,
+					toStringForMessage(),
+					getParameterValuesForMessage(ruleValues),
+					getDataDictionaryService().getAttributeLabel( AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_CASH_REVERSION_ACCT_NUMBER) 
+					} );
+    	}
+    	
+    	return valid;
+    }
+    
+	public String getParameterValuesForMessage(Collection<String> fundGroups) {
+		String result = KFSConstants.EMPTY_STRING;
+		for(String fundGroup : fundGroups){
+			result += fundGroup + ",";
+		}
+		result = result.substring(0, result.length() - 1);
+		return result;
+	}
+    
+	private String toStringForMessage() {
+		return new StringBuffer("parameter: ").append(CUKFSConstants.Reversion.SELECTION_1)
+				.append(", module: ").append("KFS-COA")
+				.append(", component: ").append("Reversion")
+				.toString();
+	}
 
     public void setAccountReversionService(AccountReversionService accountReversionService) {
         this.accountReversionService = accountReversionService;
