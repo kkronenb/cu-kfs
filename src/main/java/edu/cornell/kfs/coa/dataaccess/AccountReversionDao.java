@@ -38,6 +38,10 @@ public interface AccountReversionDao {
      * @return {@link AccountReversion} based on primary key
      */
     public AccountReversion getByPrimaryId(Integer universityFiscalYear, String financialChartOfAccountsCode, String accountNumber);
+    
+    public List<AccountReversion> getByCashReversionAcount(Integer universityFiscalYear, String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber);
+    
+    public List<AccountReversion> getByBudgetReversionAcount(Integer universityFiscalYear, String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber);
 
     /**
      * Get all the categories {@link OrganizationReversionCategory}
