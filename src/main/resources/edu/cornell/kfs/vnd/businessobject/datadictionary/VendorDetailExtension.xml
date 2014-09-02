@@ -93,6 +93,7 @@
     <property name="name" value="generalLiabilityCoverageAmount"/>
     <property name="label" value="General Liability Coverage Amount"/>
     <property name="shortLabel" value="General Liability Coverage Amount"/>
+    <property name="maxLength" value="14"/>
   </bean>
 
   <bean id="VendorDetailExtension-generalLiabilityExpiration" parent="VendorDetailExtension-generalLiabilityExpiration-parentBean"/>
@@ -109,6 +110,7 @@
     <property name="name" value="automobileLiabilityCoverageAmount"/>
     <property name="label" value="Automobile Liability Coverage Amount"/>
     <property name="shortLabel" value="Automobile Liability Coverage Amount"/>
+    <property name="maxLength" value="14"/>
   </bean>
 
   <bean id="VendorDetailExtension-automobileLiabilityExpiration" parent="VendorDetailExtension-automobileLiabilityExpiration-parentBean"/>
@@ -125,6 +127,7 @@
     <property name="name" value="workmansCompCoverageAmount"/>
     <property name="label" value="Workman's Comp Coverage Amount"/>
     <property name="shortLabel" value="Workman's Comp Coverage Amount"/>
+    <property name="maxLength" value="14"/>
   </bean>
 
   <bean id="VendorDetailExtension-workmansCompExpiration" parent="VendorDetailExtension-workmansCompExpiration-parentBean"/>
@@ -141,6 +144,7 @@
     <property name="name" value="excessLiabilityUmbrellaAmount"/>
     <property name="label" value="Excess Liability Umbrella Policy Amount"/>
     <property name="shortLabel" value="Excess Liability Umbrella Policy Amount"/>
+    <property name="maxLength" value="14"/>
   </bean>
   
   <bean id="VendorDetailExtension-excessLiabilityUmbExpiration" parent="VendorDetailExtension-excessLiabilityUmbExpiration-parentBean"/>
