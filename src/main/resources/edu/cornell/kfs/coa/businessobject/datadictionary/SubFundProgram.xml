@@ -41,7 +41,7 @@
     	<property name="shortLabel" value="Sub-Fund Program Code"/>
     	<property name="maxLength" value="6"/>
     	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
+      		<bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true">
       			<property name="maxLength" value="6"/>
       		</bean>
     	</property>
