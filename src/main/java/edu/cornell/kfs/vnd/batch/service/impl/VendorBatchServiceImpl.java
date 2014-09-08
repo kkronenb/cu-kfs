@@ -26,6 +26,7 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
+import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
@@ -53,6 +54,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchAdditionalNote;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchAddress;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchContact;
+import edu.cornell.kfs.vnd.businessobject.VendorBatchContactPhoneNumber;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchDetail;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchInsuranceTracking;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchPhoneNumber;
@@ -312,13 +314,10 @@ public class VendorBatchServiceImpl implements VendorBatchService{
         	VendorDetail vDetail = (VendorDetail)vImpl.getBusinessObject();
         	
         	setupVendorDetailFields(vDetail, vendorBatch);
+            setupInsuranceTracking((VendorDetailExtension)vDetail.getExtension(), vendorBatch);
         	vDetail.setVendorAddresses(getVendorAddresses(vendorBatch.getVendorAddresses(), vDetail));
 
         	vDetail.setVendorContacts(getVendorContacts(vendorBatch.getVendorContacts()));
-
-        	
-        	vDetail.setVendorPhoneNumbers(getVendorPhoneNumbers(vendorBatch.getVendorPhoneNumbers()));
-
         	
         	VendorHeader vHeader = vDetail.getVendorHeader();
         	setupVendorHeaderFields(vHeader, vendorBatch);
@@ -490,8 +489,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
         	updateVendorAddresses(vendorBatch.getVendorAddresses(), vendor, vDetail);
 
             updateVendorContacts(vendorBatch.getVendorContacts(), vendor, vDetail);
-        	updateVendorPhoneNumbers(vendorBatch.getVendorPhoneNumbers(), vendor, vDetail);
-//
+
         	updateVendorSupplierDiversitys(vendorBatch.getVendorSupplierDiversities(), vendor, vDetail);
 
         	setupVendorHeaderFields(vDetail.getVendorHeader(), vendorBatch);
@@ -665,7 +663,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 	    	for (VendorBatchContact contact : contacts) {
 				LOG.info("updateVendor contact " + contact +  TILDA_DELIMITER + contact.getVendorContactGeneratedIdentifier() + TILDA_DELIMITER + contact.getVendorContactName());
 	        	VendorContact vContact = new VendorContact();
-	        	if (StringUtils.isNotBlank(contact.getVendorContactGeneratedIdentifier())) {
+	        	if (StringUtils.isNotBlank(contact.getVendorContactGeneratedIdentifier()) && StringUtils.isNumeric(contact.getVendorContactGeneratedIdentifier())) {
 	        		vContact = getVendorContact(vDetail, Integer.valueOf(contact.getVendorContactGeneratedIdentifier()));
 	        	}
 				setVendorContact(contact, vContact);
@@ -710,9 +708,44 @@ public class VendorBatchServiceImpl implements VendorBatchService{
     	vContact.setVendorAttentionName(contact.getVendorAttentionName());
     	vContact.setVendorAddressInternationalProvinceName(contact.getVendorAddressInternationalProvinceName());    	
     	vContact.setActive(StringUtils.equalsIgnoreCase(YES, contact.getActive()));
+    	setVendorContactPhone(contact, vContact);
 
 	}
 	
+    private void setVendorContactPhone(VendorBatchContact contact,VendorContact vContact) {
+        for (VendorBatchContactPhoneNumber contactPhoneNumber : contact.getVendorBatchContactPhoneNumbers()) {
+            updateVendorContactPhoneNumbers(contactPhoneNumber, vContact);
+        }
+        
+    }
+    
+    private void updateVendorContactPhoneNumbers(VendorBatchContactPhoneNumber batchContactPhoneNumber, VendorContact vContact) {
+
+        boolean isContactPhoneExist = false;
+        for (VendorContactPhoneNumber contactPhone : vContact.getVendorContactPhoneNumbers()) {
+            if (contactPhone.getVendorContactPhoneGeneratedIdentifier() != null && StringUtils.equals(batchContactPhoneNumber.getVendorContactPhoneGeneratedIdentifier(), contactPhone.getVendorContactPhoneGeneratedIdentifier().toString())) {
+                populateContactPhoneNumber(contactPhone,batchContactPhoneNumber);
+                isContactPhoneExist = true;
+                break;
+            }
+        
+        }
+        if (!isContactPhoneExist) {
+            VendorContactPhoneNumber vendorContactPhone = new VendorContactPhoneNumber();
+            populateContactPhoneNumber(vendorContactPhone,batchContactPhoneNumber);
+            vContact.getVendorContactPhoneNumbers().add(vendorContactPhone);
+            
+        }
+  
+    }
+    
+    private void populateContactPhoneNumber(VendorContactPhoneNumber vendorContactPhone, VendorBatchContactPhoneNumber batchContactPhoneNumber) {
+        vendorContactPhone.setVendorPhoneNumber(batchContactPhoneNumber.getVendorPhoneNumber());
+        vendorContactPhone.setVendorPhoneExtensionNumber(batchContactPhoneNumber.getVendorPhoneExtensionNumber());
+        vendorContactPhone.setVendorPhoneTypeCode(batchContactPhoneNumber.getVendorPhoneTypeCode());
+        vendorContactPhone.setActive(StringUtils.equalsIgnoreCase(YES, batchContactPhoneNumber.getActive()));
+   }
+    
 	/*
 	 * convert list of vendor batch contacts to vendor contacts
 	 */
