@@ -27,6 +27,8 @@ public class VendorBatchDetail {
 	private String defaultB2BPaymentMethodCode;
 	private String taxable;
 	private String eInvoice;
+    private String w9ReceivedIndicator;
+    private String w9ReceivedDate;
 	private String addresses;
 	private String contacts;
 	private String phoneNumbers;
@@ -238,5 +240,17 @@ public class VendorBatchDetail {
 	public void setLegalLastName(String legalLastName) {
 		this.legalLastName = legalLastName;
 	}
+    public String getW9ReceivedIndicator() {
+        return w9ReceivedIndicator;
+    }
+    public void setW9ReceivedIndicator(String w9ReceivedIndicator) {
+        this.w9ReceivedIndicator = w9ReceivedIndicator;
+    }
+    public String getW9ReceivedDate() {
+        return w9ReceivedDate;
+    }
+    public void setW9ReceivedDate(String w9ReceivedDate) {
+        this.w9ReceivedDate = w9ReceivedDate;
+    }
 
 }
