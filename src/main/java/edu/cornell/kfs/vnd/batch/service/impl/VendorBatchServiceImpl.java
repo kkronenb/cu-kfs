@@ -112,7 +112,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
                     result &= false;
                 }
             } catch (Exception e) {
-                processResults.append("Faild request : Failed to load file: " + e.getMessage());
+                processResults.append("Faild request : Failed to load file: " + e.getMessage() + NEW_LINE);
                 result &= false;                              
             }
         }
@@ -338,7 +338,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
         	if (e instanceof ValidationException) {
         		return "Failed request : "+ e.getMessage() + " - " +  getValidationErrorMessage();
         	} else {
-        	    return "Failed request : "+ e.getCause() + " - " + e.getMessage();
+        	    return "Failed request : "+ e.getCause() + " - " + e.getMessage() != null ? e.getMessage() : e.getClass().getName();
         	}
         }      
 	}    
@@ -516,7 +516,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
         	if (e instanceof ValidationException) {
         		return "Failed request : "+ e.getMessage() + " - " +  getValidationErrorMessage();
         	} else {
-        	    return "Failed request : "+ e.getCause() + " - " + e.getMessage();
+        	    return "Failed request : "+ e.getCause() + " - " + e.getMessage() != null ? e.getMessage() : e.getClass().getName();
         	}
 		}
 	}	
