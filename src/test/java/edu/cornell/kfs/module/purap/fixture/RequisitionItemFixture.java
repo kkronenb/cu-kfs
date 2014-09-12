@@ -2,9 +2,8 @@ package edu.cornell.kfs.module.purap.fixture;
 
 import java.math.BigDecimal;
 
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 public enum RequisitionItemFixture {
@@ -80,6 +79,7 @@ public enum RequisitionItemFixture {
 	public RequisitionItem createRequisitionItem() {
 		// item
 		RequisitionItem item = new RequisitionItem();
+		item.setItemIdentifier(new Integer(SpringContext.getBean(org.kuali.rice.krad.service.SequenceAccessorService.class).getNextAvailableSequenceNumber("REQS_ITM_ID").toString()));
 		item.setItemLineNumber(itemLineNumber);
 		item.setItemUnitOfMeasureCode(itemUnitOfMeasureCode);
 		item.setItemCatalogNumber(itemCatalogNumber);
@@ -92,15 +92,8 @@ public enum RequisitionItemFixture {
 		item.setItemUnitPrice(itemUnitPrice);
 		item.setItemAssignedToTradeInIndicator(itemAssignedToTradeInIndicator);
 
-		PurApAccountingLine purapAcctLine = new RequisitionAccount();
-		purapAcctLine.setAccountLinePercent(new BigDecimal(100));
-		purapAcctLine.setAccountNumber("1000710");
-		purapAcctLine.setChartOfAccountsCode("IT");
-		purapAcctLine.setFinancialObjectCode("6100");
-		purapAcctLine.setAmount(new KualiDecimal(1));
-
 		item.getSourceAccountingLines().add(
-				accountingLineFixture.createRequisitionAccount());
+				accountingLineFixture.createRequisitionAccount(item.getItemIdentifier()));
 		item.refreshNonUpdateableReferences();
 
 		return item;

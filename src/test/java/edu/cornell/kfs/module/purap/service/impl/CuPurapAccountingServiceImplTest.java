@@ -65,7 +65,7 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition();
 		requisitionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(new KualiDecimal(200));
 		RequisitionItem item = RequisitionItemFixture.REQ_ITEM3.createRequisitionItem();
-		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount());
+		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount(item.getItemIdentifier()));
 		item.refreshNonUpdateableReferences();
 
 		requisitionDocument.addItem(item);
@@ -112,7 +112,7 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition();
 		requisitionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(new KualiDecimal(200));
 		RequisitionItem item = RequisitionItemFixture.REQ_ITEM3.createRequisitionItem();
-		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount());
+		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount(item.getItemIdentifier()));
 		item.refreshNonUpdateableReferences();
 
 		requisitionDocument.addItem(item);
