@@ -671,10 +671,12 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 	    	for (VendorBatchContact contact : contacts) {
 				LOG.info("updateVendor contact " + contact +  TILDA_DELIMITER + contact.getVendorContactGeneratedIdentifier() + TILDA_DELIMITER + contact.getVendorContactName());
 	        	VendorContact vContact = new VendorContact();
-	        	if (StringUtils.isNotBlank(contact.getVendorContactGeneratedIdentifier()) && StringUtils.isNumeric(contact.getVendorContactGeneratedIdentifier())) {
-	        		vContact = getVendorContact(vDetail, Integer.valueOf(contact.getVendorContactGeneratedIdentifier()));
+                VendorContact vOldContact = new VendorContact();
+                if (StringUtils.isNotBlank(contact.getVendorContactGeneratedIdentifier()) && StringUtils.isNumeric(contact.getVendorContactGeneratedIdentifier())) {
+                    vContact = getVendorContact(vDetail, Integer.valueOf(contact.getVendorContactGeneratedIdentifier()));
+                    vOldContact = getVendorContact(oldVendorDetail, Integer.valueOf(contact.getVendorContactGeneratedIdentifier()));
 	        	}
-				setVendorContact(contact, vContact);
+				setVendorContact(contact, vContact, vOldContact);
 	        	if (vContact.getVendorContactGeneratedIdentifier() == null) {
 	            	vDetail.getVendorContacts().add(vContact);
 				    oldVendorDetail.getVendorContacts().add(new VendorContact());
@@ -702,7 +704,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
     /*
      * populate vendor batch contact data to vendor contact
      */
-	private void setVendorContact(VendorBatchContact contact,VendorContact vContact) {
+	private void setVendorContact(VendorBatchContact contact,VendorContact vContact, VendorContact vOldContact) {
     	vContact.setVendorContactTypeCode(contact.getVendorContactTypeCode());
     	vContact.setVendorContactName(contact.getVendorContactName());
     	vContact.setVendorContactEmailAddress(contact.getVendorContactEmailAddress());
@@ -716,18 +718,18 @@ public class VendorBatchServiceImpl implements VendorBatchService{
     	vContact.setVendorAttentionName(contact.getVendorAttentionName());
     	vContact.setVendorAddressInternationalProvinceName(contact.getVendorAddressInternationalProvinceName());    	
     	vContact.setActive(StringUtils.equalsIgnoreCase(YES, contact.getActive()));
-    	setVendorContactPhone(contact, vContact);
+        setVendorContactPhone(contact, vContact, vOldContact);
 
 	}
 	
-    private void setVendorContactPhone(VendorBatchContact contact,VendorContact vContact) {
+    private void setVendorContactPhone(VendorBatchContact contact,VendorContact vContact,VendorContact vOldContact) {
         for (VendorBatchContactPhoneNumber contactPhoneNumber : contact.getVendorBatchContactPhoneNumbers()) {
-            updateVendorContactPhoneNumbers(contactPhoneNumber, vContact);
+            updateVendorContactPhoneNumbers(contactPhoneNumber, vContact, vOldContact);
         }
         
     }
     
-    private void updateVendorContactPhoneNumbers(VendorBatchContactPhoneNumber batchContactPhoneNumber, VendorContact vContact) {
+    private void updateVendorContactPhoneNumbers(VendorBatchContactPhoneNumber batchContactPhoneNumber, VendorContact vContact, VendorContact vOldContact) {
 
         boolean isContactPhoneExist = false;
         for (VendorContactPhoneNumber contactPhone : vContact.getVendorContactPhoneNumbers()) {
@@ -742,6 +744,9 @@ public class VendorBatchServiceImpl implements VendorBatchService{
             VendorContactPhoneNumber vendorContactPhone = new VendorContactPhoneNumber();
             populateContactPhoneNumber(vendorContactPhone,batchContactPhoneNumber);
             vContact.getVendorContactPhoneNumbers().add(vendorContactPhone);
+            if (vOldContact.getVendorContactGeneratedIdentifier() != null) {
+                vOldContact.getVendorContactPhoneNumbers().add(new VendorContactPhoneNumber());                
+            }
             
         }
   
@@ -763,7 +768,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 			for (VendorBatchContact contact : contacts) {
 				LOG.info("addVendor contact " + contact);
 				VendorContact vContact = new VendorContact();
-				setVendorContact(contact, vContact);
+				setVendorContact(contact, vContact, new VendorContact());
 				vendorContacts.add(vContact);
 			}
     	}
