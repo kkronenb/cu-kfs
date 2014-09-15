@@ -187,7 +187,6 @@ public class CuPaymentRequestServiceImplTest extends KualiTestBase {
 		AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
 				SpringContext.getBean(DocumentService.class));
 
-<<<<<<< HEAD
 		paymentRequestService.requestCancelOnPaymentRequest(
 				paymentRequestDocument, "test");
 
