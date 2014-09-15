@@ -187,7 +187,7 @@ public class CuPaymentRequestServiceImplTest extends KualiTestBase {
 		AccountingDocumentTestUtils.saveDocument(paymentRequestDocument,
 				SpringContext.getBean(DocumentService.class));
 
-		paymentRequestService.requestCancelOnPaymentRequest(
+		paymentRequestService.removeRequestCancelOnPaymentRequest(
 				paymentRequestDocument, "test");
 
 		assertFalse(paymentRequestDocument.isPaymentRequestedCancelIndicator());
@@ -270,6 +270,7 @@ public class CuPaymentRequestServiceImplTest extends KualiTestBase {
 				.createPaymentRequestDocument(po.getPurapDocumentIdentifier());
 		paymentRequestDocument.initiateDocument();
 		paymentRequestDocument.populatePaymentRequestFromPurchaseOrder(po);
+		paymentRequestDocument.setPaymentPaidTimestamp(null);
 
 		paymentRequestDocument.prepareForSave();
 
@@ -279,7 +280,7 @@ public class CuPaymentRequestServiceImplTest extends KualiTestBase {
 		paymentRequestService.markPaid(paymentRequestDocument, SpringContext
 				.getBean(DateTimeService.class).getCurrentSqlDate());
 
-		assertNull(paymentRequestDocument.getPaymentPaidTimestamp());
+		assertNotNull(paymentRequestDocument.getPaymentPaidTimestamp());
 	}
 
 	public void testPopulatePaymentRequest() throws Exception {
