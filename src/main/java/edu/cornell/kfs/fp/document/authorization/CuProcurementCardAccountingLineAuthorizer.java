@@ -26,7 +26,7 @@ public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAc
                 && nodeNames.contains(PurapWorkflowConstants.DOC_ADHOC_NODE_NAME);
         if (!isAddHocRoute) {
             for (ActionRequest actionRequest : actionRequests) {
-                isAddHocRoute = StringUtils.startsWith(actionRequest.getAnnotation(), "Ad Hoc Routed by")
+                isAddHocRoute = actionRequest.getActionTaken() == null && StringUtils.startsWith(actionRequest.getAnnotation(), "Ad Hoc Routed by")
                         && StringUtils.equals(actionRequest.getPrincipalId(), currentUser.getPrincipalId());
                 if (isAddHocRoute) {
                     return false;
