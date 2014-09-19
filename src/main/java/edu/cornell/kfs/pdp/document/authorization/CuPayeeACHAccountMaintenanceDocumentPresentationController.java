@@ -26,11 +26,10 @@ public class CuPayeeACHAccountMaintenanceDocumentPresentationController extends 
         // make name and email address readOnly if payee type is Employee or Entity
         if (StringUtils.equalsIgnoreCase(payeeIdTypeCode, PayeeIdTypeCodes.EMPLOYEE) ||
                 StringUtils.equalsIgnoreCase(payeeIdTypeCode, PayeeIdTypeCodes.ENTITY)) {
-            readOnlyPropertyNames.add(PdpPropertyConstants.PAYEE_NAME);
-        }
-        // make name readOnly if payee type is Vendor
-        else if (StringUtils.equalsIgnoreCase(payeeIdTypeCode, PayeeIdTypeCodes.VENDOR_ID)) {
-            readOnlyPropertyNames.add(PdpPropertyConstants.PAYEE_NAME);
+            
+            if(readOnlyPropertyNames.contains(PdpPropertyConstants.PAYEE_EMAIL_ADDRESS)){
+                readOnlyPropertyNames.remove(PdpPropertyConstants.PAYEE_EMAIL_ADDRESS);
+            }
         }
         
         return readOnlyPropertyNames;                
