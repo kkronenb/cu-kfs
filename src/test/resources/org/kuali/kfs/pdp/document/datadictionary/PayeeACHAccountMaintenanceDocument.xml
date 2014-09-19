@@ -22,7 +22,7 @@
     <property name="maintainableClass" value="org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl"/>
     <property name="documentTypeName" value="PAAT"/>
     <property name="businessRulesClass" value="org.kuali.kfs.pdp.document.validation.impl.PayeeAchAccountRule"/>
-    <property name="documentPresentationControllerClass" value="org.kuali.kfs.pdp.document.authorization.PayeeACHAccountMaintenanceDocumentPresentationController"/>        
+    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
     <property name="documentAuthorizerClass" value="org.kuali.kfs.pdp.document.authorization.PayeeACHAccountMaintenanceDocumentAuthorizer"/>        
     <property name="encryptDocumentDataInPersistentSessionStorage" value="true"/>
     <property name="maintainableSections">
