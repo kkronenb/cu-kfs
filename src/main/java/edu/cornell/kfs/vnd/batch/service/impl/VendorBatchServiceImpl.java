@@ -70,6 +70,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
     private static final String VENDOR_DOCUMENT_TYPE_NAME = "PVEN";
     private static final String TILDA_DELIMITER = "~";
     private static final String COLLECTION_FIELD_DELIMITER = "\\|";
+    private static final Integer DOC_DESC_LENGTH = 40;
     private BatchInputFileService batchInputFileService;    
     private List<BatchInputFileType> batchInputFileTypes;
     private AttachmentService attachmentService;
@@ -308,7 +309,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
         	
             MaintenanceDocument vendorDoc = (MaintenanceDocument)documentService.getNewDocument(VENDOR_DOCUMENT_TYPE_NAME);
             
-            vendorDoc.getDocumentHeader().setDocumentDescription("New vendor from Procurement tool");
+            vendorDoc.getDocumentHeader().setDocumentDescription(getDocumentDescription(vendorBatch, true));
                         
         	VendorMaintainableImpl vImpl = (VendorMaintainableImpl)vendorDoc.getNewMaintainableObject();
 
@@ -343,6 +344,23 @@ public class VendorBatchServiceImpl implements VendorBatchService{
         }      
 	}    
 
+	private String getDocumentDescription(VendorBatchDetail vendorBatch, boolean isNewVendor) {
+	    StringBuffer sb = new StringBuffer();
+	    if (StringUtils.isNotBlank(vendorBatch.getVendorName())) {
+	        sb.append(vendorBatch.getVendorName());
+	    } else {
+	        sb.append(vendorBatch.getLegalLastName()).append(", ").append(vendorBatch.getLegalFirstName());
+	    }
+	    if (isNewVendor) {
+	        sb.append("--new vendor");
+	    }
+	    if (sb.toString().length() > DOC_DESC_LENGTH) {
+	        return sb.toString().substring(0, DOC_DESC_LENGTH);	    
+	    } else {
+	        return sb.toString();
+	    }
+	}
+	
 	private void setupVendorHeaderFields (VendorHeader vHeader, VendorBatchDetail vendorBatch) {
 		
     	vHeader.setVendorTypeCode(vendorBatch.getVendorTypeCode());
@@ -470,7 +488,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 
 			MaintenanceDocument vendorDoc = (MaintenanceDocument) documentService.getNewDocument(VENDOR_DOCUMENT_TYPE_NAME);
 
-			vendorDoc.getDocumentHeader().setDocumentDescription("Update vendor from Procurement tool");
+			vendorDoc.getDocumentHeader().setDocumentDescription(getDocumentDescription(vendorBatch, false));
 
 			LOG.info("updateVendor " + vendorBatch.getLogData());
 			VendorDetail vendor = cuVendorService.getByVendorNumber(vendorBatch.getVendorNumber());
