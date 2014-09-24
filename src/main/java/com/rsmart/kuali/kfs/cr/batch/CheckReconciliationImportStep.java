@@ -522,21 +522,9 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             throw new Exception("'" + prop + "' is not a folder.");
         }
 
-//        // Create Folder Today
-//        File datedFolder = new File(prop + System.getProperty("file.separator") + ARCHIVE_DATEFORMAT.format(new Date()));
-//
-//        if (!datedFolder.exists()) {
-//            LOG.info("Creating archive folder : " + datedFolder.getAbsoluteFile());
-//            datedFolder.mkdir();
-//        }
-
-        // Move file to dated folder
-       // boolean success = file.renameTo(new File(datedFolder, file.getName()));
+        // Add timestamp to the file name and save it in the archive folder
         addTimeStampToFileName(file, file.getName(), prop);
         
-//        if (!success) {
-//            throw new Exception("Unable to archive check file.");
-//        }
     }
 
     /**
