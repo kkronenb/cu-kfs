@@ -75,10 +75,5 @@ public class ProcurementCardSummaryFeedServiceImplTest  extends KualiTestBase {
 		assertEquals(1, summaryResults3.size());
        
     }
-
-	private void assertLessthan(int i, int size) {
-		// TODO Auto-generated method stub
-		
-	}
     
 }
