@@ -1,11 +1,12 @@
+# Deployment
 target/
-
-# Ignore this, it's generated for running unit tests
 overlays/
 
-# Ignore these, they're used for Eclipse projects
+# Workspace junk
 .classpath
-
-# Ignore these, they're used for intelliJ IDEA projects
-.idea
+.settings/
 *.iml
+.idea/
+
+# Other junk
+.DS_Store
