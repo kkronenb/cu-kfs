@@ -17,7 +17,6 @@ package edu.cornell.kfs.coa.dataaccess;
 
 import java.util.List;
 
-import org.kuali.kfs.coa.businessobject.OrganizationReversion;
 import org.kuali.kfs.coa.businessobject.OrganizationReversionCategory;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
@@ -39,9 +38,25 @@ public interface AccountReversionDao {
      */
     public AccountReversion getByPrimaryId(Integer universityFiscalYear, String financialChartOfAccountsCode, String accountNumber);
     
-    public List<AccountReversion> getByCashReversionAcount(Integer universityFiscalYear, String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber);
+    /**
+     * Retrieves all AccountReversion entries that have the given CashReversionAcount.
+     * 
+     * @param universityFiscalYear
+     * @param cashReversionFinancialChartOfAccountsCode
+     * @param cashReversionAccountNumber
+     * @return a list of all AccountReversion entries that have the given CashReversionAcount
+     */
+    public List<AccountReversion> getAccountReversionsByCashReversionAcount(Integer universityFiscalYear, String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber);
     
-    public List<AccountReversion> getByBudgetReversionAcount(Integer universityFiscalYear, String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber);
+    /**
+     * Retrieves all AccountReversion entries that have the given BudgetReversionAccount.
+     * 
+     * @param universityFiscalYear
+     * @param budgetReversionChartOfAccountsCode
+     * @param budgetReversionAccountNumber
+     * @return a list of all AccountReversion entries that have the given BudgetReversionAccount
+     */
+    public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(Integer universityFiscalYear, String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber);
 
     /**
      * Get all the categories {@link OrganizationReversionCategory}

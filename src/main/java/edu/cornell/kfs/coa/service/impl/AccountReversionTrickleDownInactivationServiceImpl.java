@@ -3,17 +3,12 @@ package edu.cornell.kfs.coa.service.impl;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.businessobject.SubAccount;
-import org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kns.maintenance.Maintainable;
@@ -48,12 +43,10 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
     protected UniversityDateService universityDateService;
     
     /**
-     * Will generate Maintenance Locks for all (active or not) sub-accounts in the system related to the inactivated account using the sub-account
-     * maintainable registered for the sub-account maintenance document
+     * Will generate Maintenance Locks for all (active or not) AccountReversions in the system related to the inactivated account using the AccountReversion
+     * maintainable registered for the AccountReversion maintenance document
      * 
-     * This version of the method assumes that the sub-account maintainable only requires that the SubAccount BOClass, document number, and SubAccount
-     * instance only needs to be passed into it
-     * @see org.kuali.kfs.gl.service.SubAccountTrickleDownInactivationService#generateTrickleDownMaintenanceLocks(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
+     * @see edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService#generateTrickleDownMaintenanceLocks(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
      */
     public List<MaintenanceLock> generateTrickleDownMaintenanceLocks(Account inactivatedAccount, String documentNumber) {
         List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
@@ -76,13 +69,13 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
             accountReversionRules.add(accountReversionRule);
         }
         
-        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getAccountReversionsByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(cashAccountReversionRules) && cashAccountReversionRules.size() > 0){
             accountReversionRules.addAll(cashAccountReversionRules);
         }
         
-        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getAccountReversionsByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(budgetAccountReversionRules) && budgetAccountReversionRules.size() > 0){
             accountReversionRules.addAll(budgetAccountReversionRules);
@@ -97,6 +90,11 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         return maintenanceLocks;
     }
     
+    /**
+     * Inactivates all related AccountReversion rules.
+     * 
+     * @see edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService#trickleDownInactivateAccountReversions(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
+     */
     public void trickleDownInactivateAccountReversions(Account inactivatedAccount, String documentNumber) {
         List<AccountReversion> inactivatedAccountReversions = new ArrayList<AccountReversion>();
         Map<AccountReversion, String> alreadyLockedAccountReversions = new HashMap<AccountReversion, String>();
@@ -121,13 +119,13 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
             accountReversionRules.add(accountReversionRule);
         }
         
-        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getAccountReversionsByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(cashAccountReversionRules) && cashAccountReversionRules.size() > 0){
             accountReversionRules.addAll(cashAccountReversionRules);
         }
         
-        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getAccountReversionsByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(budgetAccountReversionRules) && budgetAccountReversionRules.size() > 0){
             accountReversionRules.addAll(budgetAccountReversionRules);
@@ -142,7 +140,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
                     
                     MaintenanceLock failedLock = verifyAllLocksFromThisDocument(accountReversionLocks, documentNumber);
                     if (failedLock != null) {
-                        // another document has locked this sub account, so we don't try to inactivate the account
+                        // another document has locked this AccountReversion, so we don't try to inactivate the account
                         alreadyLockedAccountReversions.put(accountReversion, failedLock.getDocumentNumber());
                     }
                     else {
@@ -165,9 +163,17 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         }
     }
 
+    /**
+     * Adds notes about inactivated AccountReversions, any errors while persisting inactivated account reversions or account reversions that were loccked.
+     * 
+     * @param documentNumber
+     * @param inactivatedAccountReversions
+     * @param alreadyLockedAccountReversions
+     * @param errorPersistingAccountReversions
+     */
     protected void addNotesToDocument(String documentNumber, List<AccountReversion> inactivatedAccountReversions, Map<AccountReversion, String> alreadyLockedAccountReversions, List<AccountReversion> errorPersistingAccountReversions) {
         if (inactivatedAccountReversions.isEmpty() && alreadyLockedAccountReversions.isEmpty() && errorPersistingAccountReversions.isEmpty()) {
-            // if we didn't try to inactivate any sub-accounts, then don't bother
+            // if we didn't try to inactivate any AccountReversions, then don't bother
             return;
         }
         DocumentHeader noteParent = documentHeaderService.getDocumentHeaderById(documentNumber);
@@ -178,6 +184,15 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         addMaintenanceLockedNotes(documentNumber, alreadyLockedAccountReversions, CUKFSKeyConstants.ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED, noteParent, newNote);
     }
     
+    /**
+     * Adds notes about any maintence locks on Account Reversions.
+     * 
+     * @param documentNumber
+     * @param lockedAccountReversions
+     * @param messageKey
+     * @param noteParent
+     * @param noteTemplate
+     */
     protected void addMaintenanceLockedNotes(String documentNumber, Map<AccountReversion, String> lockedAccountReversions, String messageKey, PersistableBusinessObject noteParent, Note noteTemplate) {
         for (Map.Entry<AccountReversion, String> entry : lockedAccountReversions.entrySet()) {
             try {
@@ -198,10 +213,19 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         }
     }
 
+    /**
+     * Adds notes for the given account reversions.
+     * 
+     * @param documentNumber
+     * @param listOfAccountReversions
+     * @param messageKey
+     * @param noteParent
+     * @param noteTemplate
+     */
     protected void addNotes(String documentNumber, List<AccountReversion> listOfAccountReversions, String messageKey, PersistableBusinessObject noteParent, Note noteTemplate) {
-        for (int i = 0; i < listOfAccountReversions.size(); i += getNumSubAccountsPerNote()) {
+        for (int i = 0; i < listOfAccountReversions.size(); i += getNumAccountReversionsPerNote()) {
             try {
-                String accountReversionString = createAccountReversionChunk(listOfAccountReversions, i, i + getNumSubAccountsPerNote());
+                String accountReversionString = createAccountReversionChunk(listOfAccountReversions, i, i + getNumAccountReversionsPerNote());
                 if (StringUtils.isNotBlank(accountReversionString)) {
                     String noteTextTemplate = kualiConfigurationService.getPropertyValueAsString(messageKey);
                     String noteText = MessageFormat.format(noteTextTemplate, accountReversionString);
@@ -218,6 +242,14 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         }
     }
     
+    /**
+     * Creates a String for the given account reversions.
+     * 
+     * @param listOfAccountReversions
+     * @param startIndex
+     * @param endIndex
+     * @return
+     */
     protected String createAccountReversionChunk(List<AccountReversion> listOfAccountReversions, int startIndex, int endIndex) {
         StringBuilder buf = new StringBuilder(); 
         for (int i = startIndex; i < endIndex && i < listOfAccountReversions.size(); i++) {
@@ -231,10 +263,22 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         return buf.toString();
     }
     
-    protected int getNumSubAccountsPerNote() {
+    /**
+     * Returns the number of account reversions to be included in one note.
+     * 
+     * @return
+     */
+    protected int getNumAccountReversionsPerNote() {
         return 20;
     }
     
+    /**
+     * Verify if a lock exists.
+     * 
+     * @param maintenanceLocks
+     * @param documentNumber
+     * @return the maintenance lock
+     */
     protected MaintenanceLock verifyAllLocksFromThisDocument(List<MaintenanceLock> maintenanceLocks, String documentNumber) {
         for (MaintenanceLock maintenanceLock : maintenanceLocks) {
             String lockingDocNumber = maintenanceDocumentDao.getLockingDocumentNumber(maintenanceLock.getLockingRepresentation(), documentNumber);
@@ -245,42 +289,83 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         return null;
     }
 
+    /**
+     * Sets the maintenanceDocumentDictionaryService.
+     * 
+     * @param maintenanceDocumentDictionaryService
+     */
     public void setMaintenanceDocumentDictionaryService(MaintenanceDocumentDictionaryService maintenanceDocumentDictionaryService) {
         this.maintenanceDocumentDictionaryService = maintenanceDocumentDictionaryService;
     }
 
-
-
+    /**
+     * Sets the maintenanceDocumentDao.
+     * 
+     * @param maintenanceDocumentDao
+     */
     public void setMaintenanceDocumentDao(MaintenanceDocumentDao maintenanceDocumentDao) {
         this.maintenanceDocumentDao = maintenanceDocumentDao;
     }
 
-
-
+    /**
+     * Sets the noteService.
+     * 
+     * @param noteService
+     */
     public void setNoteService(NoteService noteService) {
         this.noteService = noteService;
     }
 
+    /**
+     * Sets the kualiConfigurationService.
+     * 
+     * @param kualiConfigurationService
+     */
     public void setConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 
+    /**
+     * Sets the documentHeaderService.
+     * 
+     * @param documentHeaderService
+     */
     public void setDocumentHeaderService(DocumentHeaderService documentHeaderService) {
         this.documentHeaderService = documentHeaderService;
     }
 
+    /**
+     * Gets the accountReversionDao.
+     * 
+     * @return accountReversionDao
+     */
     public AccountReversionDao getAccountReversionDao() {
         return accountReversionDao;
     }
 
+    /**
+     * Sets the accountReversionDao.
+     * 
+     * @param accountReversionDao
+     */
     public void setAccountReversionDao(AccountReversionDao accountReversionDao) {
         this.accountReversionDao = accountReversionDao;
     }
 
+    /**
+     * Gets the universityDateService.
+     * 
+     * @return universityDateService
+     */
     public UniversityDateService getUniversityDateService() {
         return universityDateService;
     }
 
+    /**
+     * Sets the universityDateService.
+     * 
+     * @param universityDateService
+     */
     public void setUniversityDateService(UniversityDateService universityDateService) {
         this.universityDateService = universityDateService;
     }
