@@ -30,6 +30,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     private UnitTestSqlDao unitTestSqlDao;
 	
 	private static String transAmt = "SELECT * FROM FP_PRCRMNT_CARD_TRN_MT";
+	private static String delTable1 = "DELETE FROM FP_PRCRMNT_CARD_TRN_MT";
 
     
     private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/fp/batch/service/fixture/fp_pcdo_usbank_2014267.data";    
@@ -68,11 +69,11 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     
     public void testCanLoadFiles() {        
        
-    	List summaryResults1 =  unitTestSqlDao.sqlSelect(transAmt);
+    	unitTestSqlDao.sqlCommand(delTable1);
     	assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
-    	List summaryResults2 =  unitTestSqlDao.sqlSelect(transAmt);
+    	List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
     	
-    	assertEquals(summaryResults1.size()+1, summaryResults2.size());
+    	assertEquals(1, summaryResults.size());
     }
 
 	

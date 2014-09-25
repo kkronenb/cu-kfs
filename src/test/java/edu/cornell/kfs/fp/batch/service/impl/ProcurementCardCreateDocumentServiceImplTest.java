@@ -32,8 +32,12 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     
     private UnitTestSqlDao unitTestSqlDao;
 	
-    private static String delTable = "DELETE FROM FP_PRCRMNT_CARD_TRN_MT";
-	private static String transAmt = "SELECT * FROM FP_PRCRMNT_TRN_DTL_T";
+    private static String delTable1 = "DELETE FROM FP_PRCRMNT_CARD_TRN_MT";
+    private static String alter1 = "alter table FP_PRCRMNT_TRN_DTL_T disable constraint FP_PRCRMNT_TRN_DTL_TR1";
+    private static String alter2 = "alter table FP_PRCRMNT_TRN_DTL_T disable constraint FP_PRCRMNT_TRN_DTL_TR2";
+    private static String alter3 = "alter table FP_PRCRMNT_ACCT_LINES_T disable constraint FP_PRCRMNT_ACCT_LINES_TR8";
+    private static String delTable2 =  "delete from FP_PRCRMNT_TRN_DTL_T";
+    private static String transAmt = "SELECT * FROM FP_PRCRMNT_TRN_DTL_T";
 
     
     private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/fp/batch/service/fixture/fp_pcdo_usbank_2014267.data";    
@@ -72,15 +76,18 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
         
     }
     
-    public void testCanLoadFiles() {        
+    public void testCreateDocs() {        
        
-    	unitTestSqlDao.sqlCommand(delTable);
-    	List summaryResults1 =  unitTestSqlDao.sqlSelect(transAmt);
+    	unitTestSqlDao.sqlCommand(delTable1);
+    	unitTestSqlDao.sqlCommand(alter1);
+    	unitTestSqlDao.sqlCommand(alter2);
+    	unitTestSqlDao.sqlCommand(alter3);
+    	unitTestSqlDao.sqlCommand(delTable2);
     	assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
     	assertTrue(procurementCardCreateDocumentService.createProcurementCardDocuments());
-    	List summaryResults2 =  unitTestSqlDao.sqlSelect(transAmt);
+    	List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
     	
-    	assertEquals(summaryResults1.size()+1, summaryResults2.size());
+    	assertEquals(1, summaryResults.size());
     }
 
 	
