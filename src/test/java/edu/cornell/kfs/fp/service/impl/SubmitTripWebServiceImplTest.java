@@ -27,21 +27,30 @@ public class SubmitTripWebServiceImplTest extends KualiTestBase {
 	}
                   
 	public void test(){
-		String trip = "";
+		String tripDI = "";
+		String tripDV = "";
 		Boolean docExists;
 		
-		double d = -1.01;	
+		double di = -1.01;
+		double dv = 1.01;
 		try {
-			trip	= submitTripWebService.submitTrip("New trip", "Training", "12345", "cab379", "ccs1", d, "Check Sub Text");
+			tripDI	= submitTripWebService.submitTrip("New trip", "Training", "12345", "cab379", "ccs1", di, "Check Sub Text");
 		}
 		catch (Exception e)
 		{
 			
-		}		
+		}
 		
-		docExists = documentService.documentExists(trip);
-		
-		assertTrue(docExists);
+		try {
+			tripDV	= submitTripWebService.submitTrip("New trip", "Training", "12345", "cab379", "ccs1", dv, "Check Sub Text");
+		}
+		catch (Exception e)
+		{
+			
+		}
+				
+		assertTrue(documentService.documentExists(tripDI));
+		assertTrue(documentService.documentExists(tripDV));
 	}
     
 
