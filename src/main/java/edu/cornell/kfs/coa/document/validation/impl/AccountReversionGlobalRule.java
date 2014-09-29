@@ -193,6 +193,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         success &= checkBudgetReversionAccountPair(globalAcctRev);
         success &= checkCashReversionAccountPair(globalAcctRev);
         success &= validateAccountFundGroup(globalAcctRev);
+        success &= validateAccountSubFundGroup(globalAcctRev);
 
         success &= areAllDetailsValid(globalAcctRev);
         success &= areAllAccountsValid(globalAcctRev);
@@ -525,7 +526,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
 
     /**
      * Validates that the sub fund group code on the reversion account is valid as defined by the allowed values in
-     * SELECTION_$ system parameter.
+     * SELECTION_4 system parameter.
      * 
      * @param acctRev
      * @return true if valid, false otherwise
@@ -553,7 +554,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
 
     /**
      * Validates that the fund group code on the sub fund group on the cash and budget accounts is valid as defined by the
-     * allowed values in SELECTION_4 system parameter.
+     * allowed values in SELECTION_1 system parameter.
      * 
      * @param globalAcctRev
      * @return
