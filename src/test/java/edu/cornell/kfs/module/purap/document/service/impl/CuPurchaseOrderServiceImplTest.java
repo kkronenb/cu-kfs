@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.io.ByteArrayOutputStream;
 
+import org.junit.Ignore;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.dataaccess.PurchaseOrderDao;
@@ -70,7 +71,7 @@ public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testCompletePurchaseOrderAmendment_NonB2B() throws Exception {
+	/*public void testCompletePurchaseOrderAmendment_NonB2B() throws Exception {
 		PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_IN_PROCESS.createPurchaseOrderdDocument(documentService);
 
 		purchaseOrderService.completePurchaseOrderAmendment(po);
@@ -78,7 +79,7 @@ public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 		assertTrue(po.isPurchaseOrderCurrentIndicator());
 		assertFalse(po.isPendingActionIndicator());
 
-	}
+	}*/
 
 	/**
 	 * Tests that the PurchaseOrderService would do the completePurchaseOrder
