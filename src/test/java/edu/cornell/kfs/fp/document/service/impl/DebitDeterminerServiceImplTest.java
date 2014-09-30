@@ -1,4 +1,4 @@
-package edu.cornell.kfs.fp.service.impl;
+package edu.cornell.kfs.sys.document.service.impl;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -27,6 +27,9 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.document.GeneralLedgerPendingEntrySource;
 import org.kuali.kfs.sys.document.service.DebitDeterminerService;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.document.service.VendorService;
 
 import com.rsmart.kuali.kfs.fp.FPPropertyConstants;
 
@@ -60,51 +63,54 @@ public class DebitDeterminerServiceImplTest extends KualiTestBase {
 		
         if(dv != null) {
 			dv.getDocumentHeader().setDocumentDescription("Test Document Description");
-			dv.getDocumentHeader().setExplanation("Stuff");
-			dv.getDocumentHeader().setOrganizationDocumentNumber("12345");
+			dv.getDocumentHeader().setExplanation("Stuff");			
 			
-			dv.initiateDocument();
+			dv.initiateDocument();			
+
+			VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail("13366-0");
+			VendorAddress vendoraddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier(),
+					"RM", "");
 			
-			Person traveler = SpringContext.getBean(PersonService.class).getPersonByPrincipalName("cab379");
-			dv.templateEmployee(traveler);
+			System.out.println(vendoraddress.getVendorCityName()+"\n");
+			
+			dv.templateVendor(vendor, vendoraddress);
+			
 			dv.setPayeeAssigned(true);
 			
-			dv.getDvPayeeDetail().setDisbVchrPaymentReasonCode("J");
+			dv.getDvPayeeDetail().setDisbVchrPaymentReasonCode("S");
 			
-			dv.setDisbVchrCheckTotalAmount(new KualiDecimal(11.00));
+			dv.setDisbVchrCheckTotalAmount(new KualiDecimal(86.00));
 			dv.setDisbVchrPaymentMethodCode("P");
 
 			dv.setDisbVchrCheckStubText("check text");
 			
 			SourceAccountingLine accountingLine = new SourceAccountingLine();								 
+						
 			
-			Account account = new Account();
-			Chart chart = new Chart();
-			ObjectCode objectCode = new ObjectCode();
+			accountingLine.setChartOfAccountsCode("IT");
+			accountingLine.setAccountNumber("G081040");
+			accountingLine.setFinancialObjectCode("2045");
+			accountingLine.setAmount((new KualiDecimal(-14.00)));
 			
-			//account.setAccountNumber("1000710");
-			//chart.setCode("IT");
-			//objectCode.setCode("6750");
 			
-			Map<String, String> pkValues = new HashMap<String, String>();
-	        pkValues.put("accountNumber", "1000710");
-	        pkValues.put("chartOfAccountsCode", "IT");
-			
-	        Map<String, String> pkValuesObj = new HashMap<String, String>();
-	        pkValuesObj.put("financialObjectCode", "6750");
-	        pkValuesObj.put("chartOfAccountsCode", "IT");
-	        pkValuesObj.put("universityFiscalYear", "14");
-	        
-			account = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class, pkValues); 
-			chart = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(Chart.class, "IT");
-			objectCode = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(ObjectCode.class, pkValuesObj); 
-			
-			accountingLine.setAccount(account);
-			accountingLine.setChart(chart);
-			accountingLine.setObjectCode(objectCode);
-			accountingLine.setAmount((new KualiDecimal(11.00)));
-			
+			 accountingLine.setPostingYear(dv.getPostingYear());
+			 accountingLine.setDocumentNumber(dv.getDocumentNumber());
+
+		
 			dv.addSourceAccountingLine(accountingLine);
+						
+			SourceAccountingLine accountingLine2 = new SourceAccountingLine();	
+			
+			accountingLine2.setChartOfAccountsCode("IT");
+			accountingLine2.setAccountNumber("1453611");
+			accountingLine2.setFinancialObjectCode("8462");
+			accountingLine2.setAmount((new KualiDecimal(100.00)));
+			
+			
+			 accountingLine2.setPostingYear(dv.getPostingYear());
+			 accountingLine2.setDocumentNumber(dv.getDocumentNumber());
+			
+			 dv.addSourceAccountingLine(accountingLine2);
 			
 			try {
 			documentService.saveDocument(dv);
@@ -118,16 +124,13 @@ public class DebitDeterminerServiceImplTest extends KualiTestBase {
 			
 		}			        
 		
-		List<GeneralLedgerPendingEntry> glpe = dv.getGeneralLedgerPendingEntries();
-		List<GeneralLedgerPendingEntrySourceDetail> glpeS = dv.getGeneralLedgerPendingEntrySourceDetails();
-		
-		GeneralLedgerPendingEntry poster = glpe.get(0);
+		List<GeneralLedgerPendingEntrySourceDetail> glpeS = dv.getGeneralLedgerPendingEntrySourceDetails();		
 		GeneralLedgerPendingEntrySourceDetail postable = glpeS.get(0);
 		
-		System.out.println(poster.toString());
-		System.out.println(postable.toString());
+
+		System.out.println("GL Detail"+postable.toString()+"\n");
 		
-		debitDeterminerService.isDebitConsideringNothingPositiveOnly((GeneralLedgerPendingEntrySource) poster, postable);
+		assertFalse(debitDeterminerService.isDebitConsideringNothingPositiveOnly(dv, postable));
 		
 	}
     
