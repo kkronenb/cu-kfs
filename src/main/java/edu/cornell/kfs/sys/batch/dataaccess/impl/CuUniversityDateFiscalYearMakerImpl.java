@@ -65,7 +65,7 @@ public class CuUniversityDateFiscalYearMakerImpl extends UniversityDateFiscalYea
 
             UniversityDate universityDate = null;
 
-            // check if the university date exists and if it does update the record, otherwise create a new one
+            // check if the university date exists and if it does and we are in replace mode then update the record, otherwise create a new one
             Map<String, Date> fields = new HashMap<String, Date>();
             fields.put(KFSPropertyConstants.UNIVERSITY_DATE, new Date(univPeriodDate.getTimeInMillis()));
 
