@@ -516,7 +516,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
 
                 if (!ruleValues.contains(accountFundGroupCode)) {
                     valid = false;
-                    GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, RiceKeyConstants.ERROR_DOCUMENT_INVALID_VALUE_ALLOWED_VALUES_PARAMETER, new String[]{getDataDictionaryService().getAttributeLabel(FundGroup.class, KFSPropertyConstants.CODE), accountFundGroupCode, getParameterAsStringForMessage(CUKFSConstants.Reversion.SELECTION_1), getParameterValuesForMessage(ruleValues), getDataDictionaryService().getAttributeLabel(AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER),});
+                    GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, RiceKeyConstants.ERROR_DOCUMENT_INVALID_VALUE_ALLOWED_VALUES_PARAMETER, new String[]{getDataDictionaryService().getAttributeLabel(FundGroup.class, KFSPropertyConstants.CODE), accountFundGroupCode, getParameterAsStringForMessage(CUKFSConstants.Reversion.SELECTION_1), getParameterValuesForMessage(ruleValues), getDataDictionaryService().getAttributeLabel(AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER)});
                 }
             }
         }
@@ -544,7 +544,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
 
                 if (ruleValues != null && ruleValues.size() > 0 && ruleValues.contains(accountSubFundGroupCode)) {
                     valid = false;
-                    GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, RiceKeyConstants.ERROR_DOCUMENT_INVALID_VALUE_DENIED_VALUES_PARAMETER, new String[]{getDataDictionaryService().getAttributeLabel(SubFundGroup.class, KFSPropertyConstants.SUB_FUND_GROUP_CODE), accountSubFundGroupCode, getParameterAsStringForMessage(CUKFSConstants.Reversion.SELECTION_4), getParameterValuesForMessage(ruleValues), getDataDictionaryService().getAttributeLabel(AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER),});
+                    GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, RiceKeyConstants.ERROR_DOCUMENT_INVALID_VALUE_DENIED_VALUES_PARAMETER, new String[]{getDataDictionaryService().getAttributeLabel(SubFundGroup.class, KFSPropertyConstants.SUB_FUND_GROUP_CODE), accountSubFundGroupCode, getParameterAsStringForMessage(CUKFSConstants.Reversion.SELECTION_4), getParameterValuesForMessage(ruleValues), getDataDictionaryService().getAttributeLabel(AccountReversion.class, CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER)});
                 }
             }
         }
@@ -636,12 +636,16 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
      * @return
      */
     public String getParameterValuesForMessage(Collection<String> values) {
-        String result = KFSConstants.EMPTY_STRING;
-        for (String value : values) {
-            result += value + ",";
+        StringBuilder result = new StringBuilder();
+        if (ObjectUtils.isNotNull(values) && values.size() > 0) {
+            for (String value : values) {
+                result.append(value);
+                result.append(",");
+            }
+            result.replace(result.lastIndexOf(","), result.length(), KFSConstants.EMPTY_STRING);
         }
-        result = result.substring(0, result.length() - 1);
-        return result;
+
+        return result.toString();
     }
 
     /**
@@ -650,7 +654,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
      * @return a String
      */
     private String getParameterAsStringForMessage(String selectionParamName) {
-        return new StringBuffer("parameter: ").append(selectionParamName).append(", module: ").append("KFS-COA").append(", component: ").append("Reversion").toString();
+        return new StringBuilder("parameter: ").append(selectionParamName).append(", module: ").append("KFS-COA").append(", component: ").append("Reversion").toString();
     }
 
     public void setAccountReversionService(AccountReversionService accountReversionService) {
