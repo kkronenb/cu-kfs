@@ -97,6 +97,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         checkEmptyValues();
         checkGeneralRules(document);
         checkOrganizationValidity(newAccountGlobal);
+        checkContractsAndGrants();
         checkExpirationDate(document);
         checkOnlyOneChartErrorWrapper(newAccountGlobal.getAccountGlobalDetails());
         // checkFundGroup(document);
@@ -123,6 +124,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         success &= checkEmptyValues();
         success &= checkGeneralRules(document);
+        success &= checkContractsAndGrants();
         success &= checkExpirationDate(document);
         success &= checkAccountDetails(document, newAccountGlobal.getAccountGlobalDetails());
         // success &= checkFundGroup(document);
@@ -683,10 +685,6 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         LOG.info("checkContractsAndGrants called");
 
         boolean success = true;
-
-        // Income Stream account is required if this account is CG fund group,
-        // or GF (general fund) fund group (with some exceptions)
-        success &= checkCgIncomeStreamRequired(newAccountGlobal);
 
         return success;
     }
