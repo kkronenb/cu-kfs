@@ -1,22 +1,18 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
-import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
-import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl;
-
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+
+import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
 
 
 @ConfigureContext(session = ccs1)
