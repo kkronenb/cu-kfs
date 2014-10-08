@@ -27,8 +27,16 @@
           <requests name="OrganizationHierarchy" nextNode="Award"/>
           <requests name="Award" nextNode="SubFund"/>
           <requests name="SubFund" nextNode="AccountSupervisor"/>
-          <requests name="AccountSupervisor" nextNode="InitiatorFYI"/>
-          <requests name="InitiatorFYI"/>
+          <requests name="AccountSupervisor" nextNode="InitiatorFYISplit"/>
+          <split name="InitiatorFYISplit">
+            <branch name="True">
+              <requests name="InitiatorFYI" nextNode="InitiatorFYIJoin"/>
+            </branch>
+            <branch name="False">
+              <simple name="InitiatorFYIDoNothing" nextNode="InitiatorFYIJoin"/>
+            </branch>
+            <join name="InitiatorFYIJoin"/>
+          </split>
         </routePath>
       </routePaths>
       <routeNodes>
@@ -57,6 +65,13 @@
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+        <split name="InitiatorFYISplit">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        <simple name="InitiatorFYIDoNothing">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <join name="InitiatorFYIJoin"/>
       </routeNodes>
     </documentType>
   </documentTypes>
