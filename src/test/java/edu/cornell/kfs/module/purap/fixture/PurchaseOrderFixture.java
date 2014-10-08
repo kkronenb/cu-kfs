@@ -57,7 +57,6 @@ public enum PurchaseOrderFixture {
 		PurchaseOrderDocument purchaseOrderDocument = this.createPurchaseOrderdDocument(true);
 
 		//purchaseOrderDocument.refreshNonUpdateableReferences();
-
 		purchaseOrderDocument.prepareForSave();
 		AccountingDocumentTestUtils.saveDocument(purchaseOrderDocument, documentService);
 
