@@ -18,5 +18,16 @@
 	<bean id="PaymentSourceWireTransfer-bankName" parent="PaymentSourceWireTransfer-bankName-parentBean">
 		<property name="maxLength" value="55"/>
 	</bean>
+	
+	<bean id="PaymentSourceWireTransfer-bankRoutingNumber" parent="PaymentSourceWireTransfer-bankRoutingNumber-parentBean">	    
+    <property name="attributeSecurity">
+		<bean parent="AttributeSecurity">
+  			<property name="mask" value="true" /> 
+			<property name="maskFormatter">
+  			<bean parent="MaskFormatterLiteral" p:literal="Not Displayed" /> 
+  			</property>
+  		</bean>
+  	</property>  
+	</bean>
 
 </beans>
