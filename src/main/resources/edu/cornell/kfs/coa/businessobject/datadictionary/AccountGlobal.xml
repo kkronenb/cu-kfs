@@ -1,15 +1,35 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:p="http://www.springframework.org/schema/p"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:dd="http://rice.kuali.org/dd"
+    xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
 
   <bean id="AccountGlobal" parent="AccountGlobal-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountGlobal"/>
     <property name="objectLabel" value="Account Global"/>
     <property name="attributes">
       <list merge = "true">
+        <ref bean="AccountGlobal-extension-programCode"/>
+        <ref bean="AccountGlobal-extension-appropriationAccountNumber"/>
         <ref bean="AccountGlobal-majorReportingCategoryCode"/>
+      </list>
+    </property>
+    <property name="relationships">
+      <list merge = "true">
+        <dd:relationship objectAttribute="extension.subFundProgram">
+            <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
+        </dd:relationship>
+        <dd:relationship objectAttribute="extension">
+            <dd:primitiveAttribute source="documentNumber" target="documentNumber"/>
+            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
+            <dd:supportAttribute source="extension.programCode" target="subFundProgram.programCode"/>
+            <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
+        </dd:relationship>
+        <dd:relationship objectAttribute="extension.appropriationAccount">
+            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
+        </dd:relationship>
       </list>
     </property>
   </bean>
@@ -20,4 +40,14 @@
     <property name="required" value="false"/>
   </bean>
   
+    <bean id="AccountGlobal-extension-programCode" parent="AccountGlobal-extension-programCode-parentBean"/>
+  <bean id="AccountGlobal-extension-programCode-parentBean" abstract="true" parent="AccountGlobalExtendedAttribute-programCode" >
+    <property name="name" value="extension.programCode"/>
+  </bean>
+
+  <bean id="AccountGlobal-extension-appropriationAccountNumber" parent="AccountGlobal-extension-appropriationAccountNumber-parentBean"/>
+  <bean id="AccountGlobal-extension-appropriationAccountNumber-parentBean" abstract="true" parent="AccountGlobalExtendedAttribute-appropriationAccountNumber" >
+    <property name="name" value="extension.appropriationAccountNumber"/>
+  </bean>
+ 
 </beans>

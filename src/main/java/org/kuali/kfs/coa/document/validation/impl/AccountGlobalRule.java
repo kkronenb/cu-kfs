@@ -37,6 +37,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
@@ -50,7 +51,11 @@ import org.kuali.rice.krad.service.ModuleService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.coa.businessobject.AccountGlobalExtendedAttribute;
+import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
+import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
  * This class represents the business rules for the maintenance of {@link AccountGlobal} business objects
@@ -58,12 +63,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class AccountGlobalRule extends GlobalDocumentRuleBase {
     protected static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountGlobalRule.class);
 
-    // These constants should not be here - need to be in system parameters
-    @Deprecated
-    protected static final String GENERAL_FUND_CD = "GF";
-    @Deprecated
-    protected static final String SUB_FUND_GROUP_MEDICAL_PRACTICE_FUNDS = "MPRACT";
-
+    private static final String WHEN_FUND_PREFIX = "When Fund Group Code is ";
+    private static final String AND_SUB_FUND = " and Sub-Fund Group Code is ";
     protected AccountGlobal newAccountGlobal;
     protected Timestamp today;
 
@@ -100,6 +101,8 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         checkContractsAndGrants();
         checkExpirationDate(document);
         checkOnlyOneChartErrorWrapper(newAccountGlobal.getAccountGlobalDetails());
+        checkSubFundProgram(document);
+        checkAppropriationAccount(document);
         // checkFundGroup(document);
         // checkSubFundGroup(document);
 
@@ -127,6 +130,8 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         success &= checkContractsAndGrants();
         success &= checkExpirationDate(document);
         success &= checkAccountDetails(document, newAccountGlobal.getAccountGlobalDetails());
+        success &= checkSubFundProgram(document);
+        success &= checkAppropriationAccount(document);
         // success &= checkFundGroup(document);
         // success &= checkSubFundGroup(document);
 
@@ -686,8 +691,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         boolean success = true;
 
-        // Income Stream account is required if this account is CG fund group,
-        // or GF (general fund) fund group (with some exceptions)
+        // Income Stream account is required based the fund/subfund group set up in income stream parameters 
         success &= checkCgIncomeStreamRequired(newAccountGlobal);
 
         return success;
@@ -713,17 +717,9 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         String subFundGroupCode = accountGlobals.getSubFundGroupCode().trim();
         String fundGroupCode = accountGlobals.getSubFundGroup().getFundGroupCode().trim();
 
-        // if this is a CG fund group, then its required
-        if (SpringContext.getBean(SubFundGroupService.class).isForContractsAndGrants(accountGlobals.getSubFundGroup())) {
+        // changed foundation code.  Now, it is using similar 'income stream account' validation rule for 'Account'
+        if (isIncomeStreamAccountRequired(fundGroupCode, subFundGroupCode)) {
             required = true;
-        }
-
-        // if this is a general fund group, then its required
-        else if (GENERAL_FUND_CD.equalsIgnoreCase(fundGroupCode)) {
-            // unless its part of the MPRACT subfundgroup
-            if (!SUB_FUND_GROUP_MEDICAL_PRACTICE_FUNDS.equalsIgnoreCase(subFundGroupCode)) {
-                required = true;
-            }
         }
 
         // if the income stream account is not required, then we're done
@@ -732,11 +728,12 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         }
 
         // make sure both coaCode and accountNumber are filled out
-        result &= checkEmptyBOField("incomeStreamAccountNumber", accountGlobals.getIncomeStreamAccountNumber(), "When Fund Group is CG or GF, Income Stream Account Number");
-        result &= checkEmptyBOField("incomeStreamFinancialCoaCode", accountGlobals.getIncomeStreamFinancialCoaCode(), "When Fund Group is CG or GF, Income Stream Chart Of Accounts Code");
+        String error_message_prefix =  WHEN_FUND_PREFIX + fundGroupCode + AND_SUB_FUND + subFundGroupCode;
+        result &= checkEmptyBOField("incomeStreamAccountNumber", accountGlobals.getIncomeStreamAccountNumber(), error_message_prefix + ", Income Stream Account Number");
+        result &= checkEmptyBOField("incomeStreamFinancialCoaCode", accountGlobals.getIncomeStreamFinancialCoaCode(), error_message_prefix + ", Income Stream Chart Of Accounts Code");
 
         // if both fields arent present, then we're done
-        if (result == false) {
+        if (!result) {
             return result;
         }
 
@@ -744,7 +741,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         DictionaryValidationService dvService = super.getDictionaryValidationService();
         boolean referenceExists = dvService.validateReferenceExists(accountGlobals, "incomeStreamAccount");
         if (!referenceExists) {
-            putFieldError("incomeStreamAccount", KFSKeyConstants.ERROR_EXISTENCE, "Income Stream Account: " + accountGlobals.getIncomeStreamFinancialCoaCode() + "-" + accountGlobals.getIncomeStreamAccountNumber());
+            putFieldError("incomeStreamAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, "Income Stream Account: " + accountGlobals.getIncomeStreamFinancialCoaCode() + "-" + accountGlobals.getIncomeStreamAccountNumber());
             result &= false;
         }
 
@@ -853,5 +850,105 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         return result;
     }
+    
+    /*
+     * Check if the fund/subfund matched the income stream account required parameters.
+     * CU changed this to match the income stream account requirement validation in 'AccountRule'.
+     */
+    private boolean isIncomeStreamAccountRequired(String fundGroupCode, String subFundGroupCode) {
+
+        boolean required = false;
+
+        if (StringUtils.isNotBlank(fundGroupCode) && StringUtils.isNotBlank(subFundGroupCode)) {
+            if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_FUND_GROUPS, fundGroupCode).evaluationSucceeds()) {
+                if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_SUB_FUND_GROUPS, subFundGroupCode).evaluationSucceeds()) {
+                    required = true;
+                }
+            }
+
+        }
+
+        return required;
+    }
+
+    /*
+     * Validate sub-fund program code.  This is from AccountExtensionRule
+     */
+    protected boolean checkSubFundProgram(MaintenanceDocument document) {
+        boolean success = true;
+
+        String subFundGroupCode = newAccountGlobal.getSubFundGroupCode();
+        String subFundProg = ((AccountGlobalExtendedAttribute) newAccountGlobal.getExtension()).getProgramCode();
+        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+
+        if (!StringUtils.isBlank(subFundProg)) {
+            // TODO : this need more clarification.  if GACC does not have subfundgrp, then should we validate against each accts
+            // or if grogramcd exist, then subfundcd must exist ?
+            Map<String, String> fieldValues = new HashMap<String, String>();
+            fieldValues.put("subFundGroupCode", subFundGroupCode);
+            fieldValues.put("programCode", subFundProg);
+            
+            Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
+            
+            if (retVals.isEmpty()) {
+                success = false;
+                putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, subFundGroupCode});
+            } else {
+                for (SubFundProgram sfp : retVals) {
+                    if (!sfp.isActive()) {
+                        putFieldError("extension.programCode", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.programCode"));
+                        success = false;
+                    }
+                }
+            }
+            
+        } else {
+            Map<String, String> fieldValues = new HashMap<String, String>();
+            fieldValues.put("subFundGroupCode", subFundGroupCode);
+            Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
+            if (!retVals.isEmpty()) {
+                success = false;
+                putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
+            }
+        }
+        return success; 
+    }
+    
+    /*
+     * Validate appropriation account number.  This is from AccountExtensionRule
+     */
+    protected boolean checkAppropriationAccount(MaintenanceDocument document) {
+        boolean success = true;
+
+        String subFundGroupCode = newAccountGlobal.getSubFundGroupCode();
+        String appropriationAccountNumber = ((AccountGlobalExtendedAttribute)newAccountGlobal.getExtension()).getAppropriationAccountNumber();
+        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+
+        if (!StringUtils.isBlank(appropriationAccountNumber)) {
+            Map<String, String> fieldValues = new HashMap<String, String>();
+            fieldValues.put("subFundGroupCode", subFundGroupCode);
+            fieldValues.put("appropriationAccountNumber", appropriationAccountNumber);
+            
+            Collection<AppropriationAccount> retVals = bos.findMatching(AppropriationAccount.class, fieldValues);
+            
+            if (retVals.isEmpty()) {
+                success = false;
+                putFieldError("extension.appropriationAccountNumber", 
+                        CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE, 
+                        new String[] {appropriationAccountNumber, subFundGroupCode});
+            } else {
+                for (AppropriationAccount sfp : retVals) {
+                    if (!sfp.isActive()) {
+                        putFieldError("extension.appropriationAccountNumber", 
+                                KFSKeyConstants.ERROR_INACTIVE, 
+                                getFieldLabel(AccountGlobal.class, "extension.appropriationAccountNumber"));
+                        success = false;
+                    }
+                }
+            }
+        }
+        return success;
+    }
+
 }
 

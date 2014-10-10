@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd"> 
+ 
+  <bean id="AccountGlobalExtendedAttribute" parent="AccountGlobalExtendedAttribute-parentBean"/> 
+  <bean id="AccountGlobalExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"> 
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountGlobalExtendedAttribute"/> 
+    <property name="objectLabel" value="AccountGlobalExtendedAttribute"/> 
+ 
+    <property name="attributes"> 
+      <list> 
+            <ref bean="AccountGlobalExtendedAttribute-documentNumber"/> 
+            <ref bean="AccountGlobalExtendedAttribute-subFundGroupCode"/>  
+            <ref bean="AccountGlobalExtendedAttribute-programCode"/> 
+            <ref bean="AccountGlobalExtendedAttribute-appropriationAccountNumber"/> 
+      </list> 
+    </property> 
+    </bean> 
+  
+     
+    <dd:boAttributeRef id="AccountGlobalExtendedAttribute-documentNumber" parent="AccountGlobal-documentNumber"/>
+      
+    <dd:boAttributeRef id="AccountGlobalExtendedAttribute-subFundGroupCode" parent="SubFundGroup-subFundGroupCode"/> 
+     
+    <dd:boAttributeRef id="AccountGlobalExtendedAttribute-programCode" parent="SubFundProgram-programCode"/>
+     
+    <dd:boAttributeRef id="AccountGlobalExtendedAttribute-appropriationAccountNumber" parent="AppropriationAccount-appropriationAccountNumber"/>
+        
+ 
+</beans> 

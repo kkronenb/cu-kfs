@@ -138,6 +138,16 @@ public class CuAccountGlobal extends AccountGlobal {
                     ((AccountExtendedAttribute) account.getExtension()).setMajorReportingCategoryCode(majorReportingCategoryCode);
                 }
                 
+                AccountGlobalExtendedAttribute accountGlobalExtension = (AccountGlobalExtendedAttribute)getExtension();
+                // Appropriation Account Number
+                if (StringUtils.isNotBlank(accountGlobalExtension.getAppropriationAccountNumber())) {
+                    ((AccountExtendedAttribute) account.getExtension()).setAppropriationAccountNumber(accountGlobalExtension.getAppropriationAccountNumber());
+                }
+
+                // Sub-fund Program code
+                if (StringUtils.isNotBlank(accountGlobalExtension.getProgramCode())) {
+                    ((AccountExtendedAttribute) account.getExtension()).setProgramCode(accountGlobalExtension.getProgramCode());
+                }
                 
                 persistables.add(account);
     
@@ -159,6 +169,14 @@ public class CuAccountGlobal extends AccountGlobal {
     public void setMajorReportingCategory(
             MajorReportingCategory majorReportingCategory) {
         this.majorReportingCategory = majorReportingCategory;
+    }
+
+    @Override
+    protected void prePersist() {
+        super.prePersist();
+        AccountGlobalExtendedAttribute accountGlobalExtension = (AccountGlobalExtendedAttribute)getExtension();
+        accountGlobalExtension.setDocumentNumber(getDocumentNumber());
+        accountGlobalExtension.setSubFundGroupCode(getSubFundGroupCode());
     }
 
 
