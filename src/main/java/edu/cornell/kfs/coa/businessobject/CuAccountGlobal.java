@@ -176,7 +176,6 @@ public class CuAccountGlobal extends AccountGlobal {
         super.prePersist();
         AccountGlobalExtendedAttribute accountGlobalExtension = (AccountGlobalExtendedAttribute)getExtension();
         accountGlobalExtension.setDocumentNumber(getDocumentNumber());
-        accountGlobalExtension.setSubFundGroupCode(getSubFundGroupCode());
     }
 
 

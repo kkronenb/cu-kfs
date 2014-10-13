@@ -13,25 +13,6 @@
         <ref bean="AccountGlobal-majorReportingCategoryCode"/>
       </list>
     </property>
-    <property name="relationships">
-      <list merge = "true">
-        <dd:relationship objectAttribute="extension.subFundProgram">
-            <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
-        </dd:relationship>
-        <dd:relationship objectAttribute="extension">
-            <dd:primitiveAttribute source="documentNumber" target="documentNumber"/>
-            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
-            <dd:supportAttribute source="extension.programCode" target="subFundProgram.programCode"/>
-            <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="extension.appropriationAccount">
-            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
-        </dd:relationship>
-      </list>
-    </property>
   </bean>
 
   <!-- Attribute Definitions -->

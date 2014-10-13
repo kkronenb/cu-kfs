@@ -7,9 +7,13 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_COMMODITY_CODE = "message.batchUpload.title.commodityCode";
     
     public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.programCodeNotAssociatedWithGroupCode";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.programCodeNotAssociatedWithGroupCode";
     public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
             "error.document.accountMaintenance.programCodeCannotBeBlank";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
+            "error.document.accountMaintenance.acct.programCodeCannotBeBlank";
     public static final String ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.appropAcctNotAssociatedWithGroupCode";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.appropAcctNotAssociatedWithGroupCode";
     public static final String ERROR_DOCUMENT_ACCMAINT_MJR_RPT_CAT_CODE_NOT_EXIST = 
             "error.document.accountMaintenance.majorRptgCatCodeEnteredDoesNotExist";
     public static final String ERROR_DOCUMENT_BA_ACCOUNT_AMOUNTS_BALANCED = "error.document.ba.accountAmountsNotBalanced";

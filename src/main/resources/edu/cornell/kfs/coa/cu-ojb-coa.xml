@@ -568,40 +568,15 @@
         table="CA_ACCT_CHG_DOC_TX">
         <field-descriptor name="documentNumber" column="FDOC_NBR"
             jdbc-type="VARCHAR" primarykey="true" index="true" />
-        <field-descriptor name="subFundGroupCode" column="SUB_FUND_GRP_CD"
-            jdbc-type="VARCHAR" />
         <field-descriptor name="programCode" column="PROGRAM_CD"
             jdbc-type="VARCHAR" />
         <field-descriptor name="appropriationAccountNumber"
             column="APPR_ACCT_NBR" jdbc-type="VARCHAR" />
-        <!--  field-descriptor name="majorReportingCategoryCode"
-            column="MJR_RPT_CTG_CD" jdbc-type="VARCHAR" index="true" /-->
         <field-descriptor name="objectId" column="OBJ_ID"
             jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR"
             jdbc-type="BIGINT" locking="true" />
 
-        <reference-descriptor name="subFundProgram"
-            class-ref="edu.cornell.kfs.coa.businessobject.SubFundProgram"
-            auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
-            <foreignkey field-ref="programCode" />
-            <foreignkey field-ref="subFundGroupCode" />
-        </reference-descriptor>
-
-        <reference-descriptor name="appropriationAccount"
-            class-ref="edu.cornell.kfs.coa.businessobject.AppropriationAccount"
-            auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
-            <foreignkey field-ref="appropriationAccountNumber" />
-            <foreignkey field-ref="subFundGroupCode" />
-        </reference-descriptor>
-
-<!--  
-        <reference-descriptor name="majorReportingCategory"
-            class-ref="edu.cornell.kfs.coa.businessobject.MajorReportingCategory"
-            auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
-            <foreignkey field-ref="majorReportingCategoryCode" />
-        </reference-descriptor>
-        -->
     </class-descriptor>
 
 

@@ -9,7 +9,6 @@
     <property name="attributes"> 
       <list> 
             <ref bean="AccountGlobalExtendedAttribute-documentNumber"/> 
-            <ref bean="AccountGlobalExtendedAttribute-subFundGroupCode"/>  
             <ref bean="AccountGlobalExtendedAttribute-programCode"/> 
             <ref bean="AccountGlobalExtendedAttribute-appropriationAccountNumber"/> 
       </list> 
@@ -18,9 +17,7 @@
   
      
     <dd:boAttributeRef id="AccountGlobalExtendedAttribute-documentNumber" parent="AccountGlobal-documentNumber"/>
-      
-    <dd:boAttributeRef id="AccountGlobalExtendedAttribute-subFundGroupCode" parent="SubFundGroup-subFundGroupCode"/> 
-     
+           
     <dd:boAttributeRef id="AccountGlobalExtendedAttribute-programCode" parent="SubFundProgram-programCode"/>
      
     <dd:boAttributeRef id="AccountGlobalExtendedAttribute-appropriationAccountNumber" parent="AppropriationAccount-appropriationAccountNumber"/>
