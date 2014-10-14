@@ -43,6 +43,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.service.DictionaryValidationService;
+import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
@@ -66,6 +67,8 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
     private static final String WHEN_FUND_PREFIX = "When Fund Group Code is ";
     private static final String AND_SUB_FUND = " and Sub-Fund Group Code is ";
+    private static final String EXTENSION_PROGRAM_CD = "extension.programCode";
+    private static final String EXTENSION_APPROPRIATION_ACCT_NUMBER = "extension.appropriationAccountNumber";
     protected AccountGlobal newAccountGlobal;
     protected Timestamp today;
 
@@ -189,7 +192,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         if (StringUtils.isNotBlank(dtl.getAccountNumber()) && StringUtils.isNotBlank(dtl.getChartOfAccountsCode())) {
             dtl.refreshReferenceObject("account");
             if (ObjectUtils.isNull(dtl.getAccount())) {
-                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, new String[] { dtl.getChartOfAccountsCode(), dtl.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, new String[] { dtl.getChartOfAccountsCode(), dtl.getAccountNumber() });
             }
         }
         success &= GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;
@@ -886,8 +889,6 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
         if (StringUtils.isNotBlank(subFundProg) && StringUtils.isNotBlank(subFundGroupCode)) {
-            // TODO : this need more clarification.  if GACC does not have subfundgrp, then should we validate against each accts
-            // or if grogramcd exist, then subfundcd must exist ?
             Map<String, String> fieldValues = new HashMap<String, String>();
             fieldValues.put("subFundGroupCode", subFundGroupCode);
             fieldValues.put("programCode", subFundProg);
@@ -896,26 +897,16 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
             
             if (retVals.isEmpty()) {
                 success = false;
-                putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, subFundGroupCode});
+                putFieldError(EXTENSION_PROGRAM_CD, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, subFundGroupCode});
             } else {
                 for (SubFundProgram sfp : retVals) {
                     if (!sfp.isActive()) {
-                        putFieldError("extension.programCode", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.programCode"));
+                        putFieldError(EXTENSION_PROGRAM_CD, KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, EXTENSION_PROGRAM_CD));
                         success = false;
                     }
                 }
-            }
-            
+            }            
         }
-//        else {
-//            Map<String, String> fieldValues = new HashMap<String, String>();
-//            fieldValues.put("subFundGroupCode", subFundGroupCode);
-//            Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
-//            if (!retVals.isEmpty()) {
-//                success = false;
-//                putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
-//            }
-//        }
         return success; 
     }
     
@@ -938,15 +929,13 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
             
             if (retVals.isEmpty()) {
                 success = false;
-                putFieldError("extension.appropriationAccountNumber", 
-                        CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE, 
+                putFieldError(EXTENSION_APPROPRIATION_ACCT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE, 
                         new String[] {appropriationAccountNumber, subFundGroupCode});
             } else {
                 for (AppropriationAccount sfp : retVals) {
                     if (!sfp.isActive()) {
-                        putFieldError("extension.appropriationAccountNumber", 
-                                KFSKeyConstants.ERROR_INACTIVE, 
-                                getFieldLabel(AccountGlobal.class, "extension.appropriationAccountNumber"));
+                        putFieldError(EXTENSION_APPROPRIATION_ACCT_NUMBER, KFSKeyConstants.ERROR_INACTIVE, 
+                                getFieldLabel(AccountGlobal.class, EXTENSION_APPROPRIATION_ACCT_NUMBER));
                         success = false;
                     }
                 }
@@ -955,92 +944,112 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         return success;
     }
 
-    public boolean checkAccountExtensions(AccountGlobalDetail dtl) {
+    private boolean checkAccountExtensions(AccountGlobalDetail dtl) {
         boolean success = true;
         String subFundGroupCode = newAccountGlobal.getSubFundGroupCode();
         String appropriationAccountNumber = ((AccountGlobalExtendedAttribute)newAccountGlobal.getExtension()).getAppropriationAccountNumber();
         String subFundProg = ((AccountGlobalExtendedAttribute) newAccountGlobal.getExtension()).getProgramCode();
         dtl.refreshReferenceObject("account");
         if (ObjectUtils.isNotNull(dtl.getAccount())) {
-            Account account = dtl.getAccount();
-            if (StringUtils.isBlank(subFundGroupCode)) {
-                if (StringUtils.isNotBlank(subFundProg)) {
-                        Collection<SubFundProgram> retVals = getSubPrograms(account.getSubFundGroupCode(), subFundProg);                  
-                        if (retVals.isEmpty()) {
-                            success = false;
-                            GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, account.getSubFundGroupCode(), account.getAccountNumber()});
-                        } else {
-                            for (SubFundProgram sfp : retVals) {
-                                if (!sfp.isActive()) {
-                                    GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.programCode"));
-                                    success = false;
-                                }
-                            }
-                        }
-                }
-                if (StringUtils.isNotBlank(appropriationAccountNumber)) {                    
-                    AppropriationAccount appropriationAcct = getAppropriationAccount(account.getSubFundGroupCode(), appropriationAccountNumber);
-                    if (appropriationAcct == null) {
-                        success = false;
-                        GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE, 
-                                    new String[] {appropriationAccountNumber, account.getSubFundGroupCode(), account.getAccountNumber()});
-                    } else {
-                            if (!appropriationAcct.isActive()) {
-                                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_INACTIVE, 
-                                        getFieldLabel(AccountGlobal.class, "extension.appropriationAccountNumber"));
-                                success = false;
-                            }
-                    }
-                
-                }            
-            } else {
-                if (StringUtils.isBlank(subFundProg)) {
-                        AccountExtendedAttribute accountExtension = (AccountExtendedAttribute)account.getExtension(); 
-                        if (StringUtils.isBlank(accountExtension.getProgramCode())) {
-                            Collection<SubFundProgram> retVals = getSubPrograms(subFundGroupCode, accountExtension.getProgramCode());
-                            if (!retVals.isEmpty()) {
-                                success = false;
-                                GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode, account.getAccountNumber()});
-                            }         
-                        } else {
-                            Collection<SubFundProgram> retVals = getSubPrograms(subFundGroupCode, accountExtension.getProgramCode());
-                            if (retVals.isEmpty()) {
-                                success = false;
-                                GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] 
-                                        {accountExtension.getProgramCode(), subFundGroupCode, account.getAccountNumber()});
-                            }         
-                        }
-                        if (StringUtils.isNotBlank(accountExtension.getAppropriationAccountNumber())) {
-                            AppropriationAccount appropriationAcct = getAppropriationAccount(subFundGroupCode, accountExtension.getAppropriationAccountNumber());
-                            if (appropriationAcct == null) {
-                                success = false;
-                                GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE, 
-                                            new String[] {accountExtension.getAppropriationAccountNumber(), subFundGroupCode, account.getAccountNumber()});
-                            }                           
-                        }
-                }
-            }        
+            success &= checkAccountExtensionProgramCd(dtl.getAccount(), subFundGroupCode, subFundProg);      
+            success &= checkAccountExtensionApprAcct(dtl.getAccount(), subFundGroupCode, appropriationAccountNumber);      
         }
         return success;
     }
 
 
-    private Collection<SubFundProgram> getSubPrograms(String subFundGroupCode, String subFundProg) {
-        Map<String, String> fieldValues = new HashMap<String, String>();
-        fieldValues.put("subFundGroupCode", subFundGroupCode);
-        if (StringUtils.isNotBlank(subFundProg)) {
-            fieldValues.put("programCode", subFundProg);
-        }
-        
-        return getBoService().findMatching(SubFundProgram.class, fieldValues);
+    private boolean checkAccountExtensionProgramCd(Account account, String subFundGroupCode, String subFundProg) {
+        boolean success = true;
+        if (StringUtils.isBlank(subFundGroupCode)) {
+            if (StringUtils.isNotBlank(subFundProg)) {
+                SubFundProgram subFundProgram = getMatchedRecord(SubFundProgram.class, account.getSubFundGroupCode(), "programCode", subFundProg);                  
+                if (subFundProgram == null) {
+                    success = false;
+                    GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, account.getSubFundGroupCode(), account.getAccountNumber()});
+                } else {
+                    if (!subFundProgram.isActive()) {
+                        putFieldError(EXTENSION_PROGRAM_CD, KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, EXTENSION_PROGRAM_CD));
+                        success = false;
+                    }
+                }
+            }
+        } else {
+            AccountExtendedAttribute accountExtension = (AccountExtendedAttribute)account.getExtension(); 
+            if (StringUtils.isBlank(subFundProg)) {
+                if (StringUtils.isBlank(accountExtension.getProgramCode())) {
+                    SubFundProgram subFundProgram = getMatchedRecord(SubFundProgram.class, subFundGroupCode, "programCode", accountExtension.getProgramCode());
+                    if (subFundProgram != null) {
+                        success = false;
+                        GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode, account.getAccountNumber()});
+                    }         
+                } else {
+                    SubFundProgram subFundProgram = getMatchedRecord(SubFundProgram.class, subFundGroupCode, "programCode", accountExtension.getProgramCode());
+                    if (subFundProgram == null) {
+                        success = false;
+                        GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] 
+                                {accountExtension.getProgramCode(), subFundGroupCode, account.getAccountNumber()});
+                    }         
+                }
+            }
+        }                
+        return success;
     }
+
+    private boolean checkAccountExtensionApprAcct(Account account, String subFundGroupCode, String appropriationAccountNumber) {
+        boolean success = true;
+        if (StringUtils.isBlank(subFundGroupCode)) {
+            if (StringUtils.isNotBlank(appropriationAccountNumber)) {                    
+                AppropriationAccount appropriationAcct = getMatchedRecord(AppropriationAccount.class, account.getSubFundGroupCode(), "appropriationAccountNumber", appropriationAccountNumber);
+                if (appropriationAcct == null) {
+                    success = false;
+                    GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE, 
+                                new String[] {appropriationAccountNumber, account.getSubFundGroupCode(), account.getAccountNumber()});
+                } else {
+                    if (!appropriationAcct.isActive()) {
+                        putFieldError(EXTENSION_APPROPRIATION_ACCT_NUMBER, KFSKeyConstants.ERROR_INACTIVE, 
+                                getFieldLabel(AccountGlobal.class, EXTENSION_APPROPRIATION_ACCT_NUMBER));
+                        success = false;
+                    }
+                }                
+            }            
+        } else {
+            AccountExtendedAttribute accountExtension = (AccountExtendedAttribute)account.getExtension(); 
+            if (StringUtils.isBlank(appropriationAccountNumber)) {
+                if (StringUtils.isNotBlank(accountExtension.getAppropriationAccountNumber())) {
+                    AppropriationAccount appropriationAcct = getMatchedRecord(AppropriationAccount.class, subFundGroupCode, "appropriationAccountNumber", accountExtension.getAppropriationAccountNumber());
+                    if (appropriationAcct == null) {
+                        success = false;
+                        GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE, 
+                                    new String[] {accountExtension.getAppropriationAccountNumber(), subFundGroupCode, account.getAccountNumber()});
+                    }                           
+                }
+            }
+        }        
+        return success;
+    }
+
+//    private SubFundProgram getSubProgram(String subFundGroupCode, String subFundProg) {
+//        Map<String, String> fieldValues = new HashMap<String, String>();
+//        fieldValues.put("subFundGroupCode", subFundGroupCode);
+//        fieldValues.put("programCode", subFundProg);
+//        
+//        return getBoService().findByPrimaryKey(SubFundProgram.class, fieldValues);
+//    }
+//    
+//    private AppropriationAccount getAppropriationAccount(String subFundGroupCode, String appropriationAccountNumber) {
+//        Map<String, String> fieldValues = new HashMap<String, String>();
+//        fieldValues.put("subFundGroupCode", subFundGroupCode);
+//        fieldValues.put("appropriationAccountNumber", appropriationAccountNumber);
+//        
+//        return getBoService().findByPrimaryKey(AppropriationAccount.class, fieldValues);
+//    }
     
-    private AppropriationAccount getAppropriationAccount(String subFundGroupCode, String appropriationAccountNumber) {
+    private <T extends BusinessObject> T getMatchedRecord(Class<T> clazz, String subFundGroupCode, String propertyName, String propertyValue) {
         Map<String, String> fieldValues = new HashMap<String, String>();
         fieldValues.put("subFundGroupCode", subFundGroupCode);
-        fieldValues.put("appropriationAccountNumber", appropriationAccountNumber);
+        fieldValues.put(propertyName, propertyValue);
         
-        return getBoService().findByPrimaryKey(AppropriationAccount.class, fieldValues);
+        return getBoService().findByPrimaryKey(clazz, fieldValues);
 
     }
 
