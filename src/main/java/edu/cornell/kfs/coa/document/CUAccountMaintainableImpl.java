@@ -21,13 +21,6 @@ import org.kuali.rice.krad.util.KRADConstants;
  * @author kwk43
  *
  */
-
-/**
- * This is a description of what this class does - danielabalmus don't forget to fill this in. 
- * 
- * @author Kuali Rice Team (kuali-rice@googlegroups.com)
- *
- */
 @SuppressWarnings("deprecation")
 public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
 
