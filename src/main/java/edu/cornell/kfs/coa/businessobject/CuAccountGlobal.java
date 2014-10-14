@@ -11,14 +11,45 @@ import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.location.framework.campus.CampusEbo;
 
 public class CuAccountGlobal extends AccountGlobal {
     
     private static final long serialVersionUID = 1L;
 
     protected String majorReportingCategoryCode;
-    protected MajorReportingCategory majorReportingCategory;
+    protected String accountPhysicalCampusCode;
     
+    protected MajorReportingCategory majorReportingCategory;
+    protected CampusEbo accountPhysicalCampus;
+    protected Date accountEffectiveDate;
+    protected boolean accountOffCampusIndicator;
+    protected boolean closed;
+    protected String accountTypeCode;
+    protected String appropriationAccountNumber;
+    protected boolean accountsFringesBnftIndicator;
+    protected String reportsToChartOfAccountsCode;
+    protected String reportsToAccountNumber;
+    protected String accountRestrictedStatusCode;
+    protected Date accountRestrictedStatusDate;
+    protected String endowmentIncomeAcctFinCoaCd;
+    protected String endowmentIncomeAccountNumber;
+    protected String programCode;
+    protected String budgetRecordingLevelCode;
+    protected boolean extrnlFinEncumSufficntFndIndicator;
+    protected boolean intrnlFinEncumSufficntFndIndicator;
+    protected boolean finPreencumSufficientFundIndicator;
+    protected boolean financialObjectivePrsctrlIndicator;
+    protected String contractControlFinCoaCode;
+    protected String contractControlAccountNumber;
+    protected String acctIndirectCostRcvyTypeCd;
+    protected Integer contractsAndGrantsAccountResponsibilityId;
+    protected String invoiceFrequencyCode;
+    protected String invoiceTypeCode;
+    protected Long costShareForProjectNumber;
+    
+
     @Override
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
 
@@ -138,7 +169,122 @@ public class CuAccountGlobal extends AccountGlobal {
                     ((AccountExtendedAttribute) account.getExtension()).setMajorReportingCategoryCode(majorReportingCategoryCode);
                 }
                 
+                // CAMPUS CODE 
+                if (StringUtils.isNotBlank(accountPhysicalCampusCode)) {
+                    account.setAccountPhysicalCampusCode(accountPhysicalCampusCode);
+                }
                 
+                // EFFECTIVE DATE
+                if (ObjectUtils.isNotNull(accountEffectiveDate)) {
+                    account.setAccountEffectiveDate(accountEffectiveDate);
+                }
+                
+                // ACCOUNT OFF CAMPUS INDICATOR
+                account.setAccountOffCampusIndicator(accountOffCampusIndicator);
+                
+                // CLOSED
+                account.setClosed(closed);
+                
+                // ACCOUNT TYPE CODE 
+                if (StringUtils.isNotBlank(accountTypeCode)) {
+                    account.setAccountTypeCode(accountTypeCode);
+                }
+                
+                // APPROPRIATION ACCOUNT NUMBER
+                if (StringUtils.isNotBlank(appropriationAccountNumber)) {
+                    ((AccountExtendedAttribute) account.getExtension()).setAppropriationAccountNumber(appropriationAccountNumber);
+                }
+                
+                // ACCOUNT FRINGE BENEFIT INDICATOR
+                account.setAccountsFringesBnftIndicator(accountsFringesBnftIndicator);
+                
+                // FRINGE BENEFITS CHART OF ACCOUNTS CODE
+                if (StringUtils.isNotBlank(reportsToChartOfAccountsCode)) {
+                    account.setReportsToChartOfAccountsCode(reportsToChartOfAccountsCode);
+                }
+                
+                // FRINGE BENEFITS ACCOUNTS NUMBER
+                if (StringUtils.isNotBlank(reportsToAccountNumber)) {
+                    account.setReportsToAccountNumber(reportsToAccountNumber);
+                }
+                
+                // ACCOUNT RESTRICTED STATUS CODE
+                if (StringUtils.isNotBlank(accountRestrictedStatusCode)) {
+                    account.setAccountRestrictedStatusCode(accountRestrictedStatusCode);
+                }
+
+                // ACCOUNT RESTRICTED STATUS DATE
+                if (ObjectUtils.isNotNull(accountRestrictedStatusDate)) {
+                    account.setAccountRestrictedStatusDate(accountRestrictedStatusDate);
+                }
+
+                // ENDOWMENT CHART OF ACCOUNTS CODE
+                if (StringUtils.isNotBlank(endowmentIncomeAcctFinCoaCd)) {
+                    account.setEndowmentIncomeAcctFinCoaCd(endowmentIncomeAcctFinCoaCd);
+                }
+                
+                // ENDOWMENT ACCOUNTS NUMBER
+                if (StringUtils.isNotBlank(endowmentIncomeAccountNumber)) {
+                    account.setEndowmentIncomeAccountNumber(endowmentIncomeAccountNumber);
+                }    
+                
+                // SUB FUND PROGRAM CODE
+                if (StringUtils.isNotBlank(programCode)) {
+                    ((AccountExtendedAttribute) account.getExtension()).setProgramCode(programCode);
+                }
+                
+                // BUDGET RECORD LEVEL CODE
+                if (StringUtils.isNotBlank(budgetRecordingLevelCode)) {
+                    account.setBudgetRecordingLevelCode(budgetRecordingLevelCode);
+                }
+                
+                // EXTERNAL ENCUMBRANCE SUFFICIENT FUNDS INDICATOR
+                account.setExtrnlFinEncumSufficntFndIndicator(extrnlFinEncumSufficntFndIndicator); 
+                
+                // INTERNAL ENCUMBRANCE SUFFICIENT FUNDS INDICATOR
+                account.setIntrnlFinEncumSufficntFndIndicator(intrnlFinEncumSufficntFndIndicator);
+                
+                // PRE-ENCUMBRANCE SUFFICIENT FUNDS INDICATOR
+                account.setFinPreencumSufficientFundIndicator(finPreencumSufficientFundIndicator); 
+                
+                // OBJECT PRESENCE CONTROL INDICATOR
+                account.setFinancialObjectivePrsctrlIndicator(financialObjectivePrsctrlIndicator);
+                
+                // CONTRACT CONTROL CHART OF ACCOUNTS CODE
+                if (StringUtils.isNotBlank(contractControlFinCoaCode)) {
+                    account.setContractControlFinCoaCode(contractControlFinCoaCode);
+                }
+                
+                // CONTRACT CONTROL CHART OF ACCOUNTS NUMBER
+                if (StringUtils.isNotBlank(contractControlAccountNumber)) {
+                    account.setContractControlAccountNumber(contractControlAccountNumber);
+                }
+                
+                // INDIRECT COST RECOVERY TYPE
+                if (StringUtils.isNotBlank(acctIndirectCostRcvyTypeCd)) {
+                    account.setAcctIndirectCostRcvyTypeCd(acctIndirectCostRcvyTypeCd);
+                }
+                
+                // CG ACCOUNT RESPONSIBILITY ID
+                if (ObjectUtils.isNotNull(contractsAndGrantsAccountResponsibilityId)) {
+                    account.setContractsAndGrantsAccountResponsibilityId(contractsAndGrantsAccountResponsibilityId);
+                }
+                
+                // INVOICE FREQUENCY CODE
+                if (StringUtils.isNotBlank(invoiceFrequencyCode)) {
+                    ((AccountExtendedAttribute) account.getExtension()).setInvoiceFrequencyCode(invoiceFrequencyCode);
+                }
+                
+                // INVOICE TYPE CODE
+                if (StringUtils.isNotBlank(invoiceTypeCode)) {
+                    ((AccountExtendedAttribute) account.getExtension()).setInvoiceTypeCode(invoiceTypeCode);
+                }
+                
+                // COST SHARE FOR PROJECT NUMBER
+                if (ObjectUtils.isNotNull(costShareForProjectNumber)) {
+                    ((AccountExtendedAttribute) account.getExtension()).setCostShareForProjectNumber(costShareForProjectNumber);
+                }
+
                 persistables.add(account);
     
             }
@@ -159,6 +305,222 @@ public class CuAccountGlobal extends AccountGlobal {
     public void setMajorReportingCategory(
             MajorReportingCategory majorReportingCategory) {
         this.majorReportingCategory = majorReportingCategory;
+    }
+
+    public String getAccountPhysicalCampusCode() {
+        return accountPhysicalCampusCode;
+    }
+
+    public void setAccountPhysicalCampusCode(String accountPhysicalCampusCode) {
+        this.accountPhysicalCampusCode = accountPhysicalCampusCode;
+    }
+
+    public CampusEbo getAccountPhysicalCampus() {
+        return accountPhysicalCampus;
+    }
+
+    public void setAccountPhysicalCampus(CampusEbo accountPhysicalCampus) {
+        this.accountPhysicalCampus = accountPhysicalCampus;
+    }
+    
+    public Date getAccountEffectiveDate() {
+        return accountEffectiveDate;
+    }
+
+    public void setAccountEffectiveDate(Date accountEffectiveDate) {
+        this.accountEffectiveDate = accountEffectiveDate;
+    }
+
+    public boolean isAccountOffCampusIndicator() {
+        return accountOffCampusIndicator;
+    }
+
+    public void setAccountOffCampusIndicator(boolean accountOffCampusIndicator) {
+        this.accountOffCampusIndicator = accountOffCampusIndicator;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    public String getAccountTypeCode() {
+        return accountTypeCode;
+    }
+
+    public void setAccountTypeCode(String accountTypeCode) {
+        this.accountTypeCode = accountTypeCode;
+    }
+
+    public String getAppropriationAccountNumber() {
+        return appropriationAccountNumber;
+    }
+
+    public void setAppropriationAccountNumber(String appropriationAccountNumber) {
+        this.appropriationAccountNumber = appropriationAccountNumber;
+    }
+
+    public boolean isAccountsFringesBnftIndicator() {
+        return accountsFringesBnftIndicator;
+    }
+
+    public void setAccountsFringesBnftIndicator(boolean accountsFringesBnftIndicator) {
+        this.accountsFringesBnftIndicator = accountsFringesBnftIndicator;
+    }
+
+    public String getReportsToChartOfAccountsCode() {
+        return reportsToChartOfAccountsCode;
+    }
+
+    public void setReportsToChartOfAccountsCode(String reportsToChartOfAccountsCode) {
+        this.reportsToChartOfAccountsCode = reportsToChartOfAccountsCode;
+    }
+
+    public String getReportsToAccountNumber() {
+        return reportsToAccountNumber;
+    }
+
+    public void setReportsToAccountNumber(String reportsToAccountNumber) {
+        this.reportsToAccountNumber = reportsToAccountNumber;
+    }
+
+    public String getAccountRestrictedStatusCode() {
+        return accountRestrictedStatusCode;
+    }
+
+    public void setAccountRestrictedStatusCode(String accountRestrictedStatusCode) {
+        this.accountRestrictedStatusCode = accountRestrictedStatusCode;
+    }
+
+    public Date getAccountRestrictedStatusDate() {
+        return accountRestrictedStatusDate;
+    }
+
+    public void setAccountRestrictedStatusDate(Date accountRestrictedStatusDate) {
+        this.accountRestrictedStatusDate = accountRestrictedStatusDate;
+    }
+
+    public String getEndowmentIncomeAcctFinCoaCd() {
+        return endowmentIncomeAcctFinCoaCd;
+    }
+
+    public void setEndowmentIncomeAcctFinCoaCd(String endowmentIncomeAcctFinCoaCd) {
+        this.endowmentIncomeAcctFinCoaCd = endowmentIncomeAcctFinCoaCd;
+    }
+
+    public String getEndowmentIncomeAccountNumber() {
+        return endowmentIncomeAccountNumber;
+    }
+
+    public void setEndowmentIncomeAccountNumber(String endowmentIncomeAccountNumber) {
+        this.endowmentIncomeAccountNumber = endowmentIncomeAccountNumber;
+    }
+
+    public String getProgramCode() {
+        return programCode;
+    }
+
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
+    }
+
+    public String getBudgetRecordingLevelCode() {
+        return budgetRecordingLevelCode;
+    }
+
+    public void setBudgetRecordingLevelCode(String budgetRecordingLevelCode) {
+        this.budgetRecordingLevelCode = budgetRecordingLevelCode;
+    }
+
+    public boolean isExtrnlFinEncumSufficntFndIndicator() {
+        return extrnlFinEncumSufficntFndIndicator;
+    }
+
+    public void setExtrnlFinEncumSufficntFndIndicator(boolean extrnlFinEncumSufficntFndIndicator) {
+        this.extrnlFinEncumSufficntFndIndicator = extrnlFinEncumSufficntFndIndicator;
+    }
+
+    public boolean isIntrnlFinEncumSufficntFndIndicator() {
+        return intrnlFinEncumSufficntFndIndicator;
+    }
+
+    public void setIntrnlFinEncumSufficntFndIndicator(boolean intrnlFinEncumSufficntFndIndicator) {
+        this.intrnlFinEncumSufficntFndIndicator = intrnlFinEncumSufficntFndIndicator;
+    }
+
+    public boolean isFinPreencumSufficientFundIndicator() {
+        return finPreencumSufficientFundIndicator;
+    }
+
+    public void setFinPreencumSufficientFundIndicator(boolean finPreencumSufficientFundIndicator) {
+        this.finPreencumSufficientFundIndicator = finPreencumSufficientFundIndicator;
+    }
+
+    public boolean isFinancialObjectivePrsctrlIndicator() {
+        return financialObjectivePrsctrlIndicator;
+    }
+
+    public void setFinancialObjectivePrsctrlIndicator(boolean financialObjectivePrsctrlIndicator) {
+        this.financialObjectivePrsctrlIndicator = financialObjectivePrsctrlIndicator;
+    }
+
+    public String getContractControlFinCoaCode() {
+        return contractControlFinCoaCode;
+    }
+
+    public void setContractControlFinCoaCode(String contractControlFinCoaCode) {
+        this.contractControlFinCoaCode = contractControlFinCoaCode;
+    }
+
+    public String getContractControlAccountNumber() {
+        return contractControlAccountNumber;
+    }
+
+    public void setContractControlAccountNumber(String contractControlAccountNumber) {
+        this.contractControlAccountNumber = contractControlAccountNumber;
+    }
+
+    public String getAcctIndirectCostRcvyTypeCd() {
+        return acctIndirectCostRcvyTypeCd;
+    }
+
+    public void setAcctIndirectCostRcvyTypeCd(String acctIndirectCostRcvyTypeCd) {
+        this.acctIndirectCostRcvyTypeCd = acctIndirectCostRcvyTypeCd;
+    }
+
+    public Integer getContractsAndGrantsAccountResponsibilityId() {
+        return contractsAndGrantsAccountResponsibilityId;
+    }
+
+    public void setContractsAndGrantsAccountResponsibilityId(Integer contractsAndGrantsAccountResponsibilityId) {
+        this.contractsAndGrantsAccountResponsibilityId = contractsAndGrantsAccountResponsibilityId;
+    }
+
+    public String getInvoiceFrequencyCode() {
+        return invoiceFrequencyCode;
+    }
+
+    public void setInvoiceFrequencyCode(String invoiceFrequencyCode) {
+        this.invoiceFrequencyCode = invoiceFrequencyCode;
+    }
+
+    public String getInvoiceTypeCode() {
+        return invoiceTypeCode;
+    }
+
+    public void setInvoiceTypeCode(String invoiceTypeCode) {
+        this.invoiceTypeCode = invoiceTypeCode;
+    }
+
+    public Long getCostShareForProjectNumber() {
+        return costShareForProjectNumber;
+    }
+
+    public void setCostShareForProjectNumber(Long costShareForProjectNumber) {
+        this.costShareForProjectNumber = costShareForProjectNumber;
     }
 
 
