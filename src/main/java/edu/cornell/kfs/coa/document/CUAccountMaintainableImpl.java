@@ -33,7 +33,7 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
 
     private static final long serialVersionUID = 1L;
     private static final String SUB_FUND_GROUP_CODE = "subFundGroupCode";
-    protected static final String INITIATOR_FYI_SPLIT_NODE = "InitiatorFYISplit";
+    protected static final String INITIATOR_ACCOUNT_FYI_SPLIT_NODE = "InitiatorAccountFYISplit";
     
     @Override
     public void saveBusinessObject() {
@@ -70,7 +70,7 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
      */
     @Override
     protected boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        if (nodeName.equals(INITIATOR_FYI_SPLIT_NODE)) {
+        if (nodeName.equals(INITIATOR_ACCOUNT_FYI_SPLIT_NODE)) {
             return isNewAccount();
         }
         // this is not a node we recognize

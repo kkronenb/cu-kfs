@@ -27,15 +27,15 @@
           <requests name="OrganizationHierarchy" nextNode="Award"/>
           <requests name="Award" nextNode="SubFund"/>
           <requests name="SubFund" nextNode="AccountSupervisor"/>
-          <requests name="AccountSupervisor" nextNode="InitiatorFYISplit"/>
-          <split name="InitiatorFYISplit">
+          <requests name="AccountSupervisor" nextNode="InitiatorAccountFYISplit"/>
+          <split name="InitiatorAccountFYISplit">
             <branch name="True">
-              <requests name="InitiatorFYI" nextNode="InitiatorFYIJoin"/>
+              <requests name="InitiatorAccountFYI" nextNode="InitiatorAccountFYIJoin"/>
             </branch>
             <branch name="False">
-              <simple name="InitiatorFYIDoNothing" nextNode="InitiatorFYIJoin"/>
+              <simple name="InitiatorAccountFYIDoNothing" nextNode="InitiatorAccountFYIJoin"/>
             </branch>
-            <join name="InitiatorFYIJoin"/>
+            <join name="InitiatorAccountFYIJoin"/>
           </split>
         </routePath>
       </routePaths>
@@ -61,17 +61,17 @@
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-        <role name="InitiatorFYI">
+        <role name="InitiatorAccountFYI">
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-        <split name="InitiatorFYISplit">
+        <split name="InitiatorAccountFYISplit">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
-        <simple name="InitiatorFYIDoNothing">
+        <simple name="InitiatorAccountFYIDoNothing">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
-        <join name="InitiatorFYIJoin"/>
+        <join name="InitiatorAccountFYIJoin"/>
       </routeNodes>
     </documentType>
   </documentTypes>
