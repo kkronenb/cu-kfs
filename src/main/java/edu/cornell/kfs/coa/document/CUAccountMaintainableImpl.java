@@ -3,18 +3,19 @@
  */
 package edu.cornell.kfs.coa.document;
 
-import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
-import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
-import edu.cornell.kfs.coa.businessobject.SubFundProgram;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.document.KualiAccountMaintainableImpl;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.service.BusinessObjectService;
+
+import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
+import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
+import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 
 /**
  * @author kwk43
@@ -47,6 +48,11 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
         AppropriationAccount aan = (AppropriationAccount) bos.findByPrimaryKey(AppropriationAccount.class, keys);
         aea.setAppropriationAccount(aan);
         
+        if (account.isClosed() && aea.getAccountClosedDate() == null) {
+            aea.setAccountClosedDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+        } else if (!account.isClosed() && aea.getAccountClosedDate() != null) {
+            aea.setAccountClosedDate(null);           
+        }
         super.saveBusinessObject();
     }
 

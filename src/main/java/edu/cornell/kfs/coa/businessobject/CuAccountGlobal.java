@@ -9,6 +9,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
@@ -18,6 +19,9 @@ public class CuAccountGlobal extends AccountGlobal {
 
     protected String majorReportingCategoryCode;
     protected MajorReportingCategory majorReportingCategory;
+    // TODO : This is just for local testing before KFSPTS-3599 implemented this property
+    // DO NOT merge to develop
+    private boolean closed;
     
     @Override
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
@@ -138,7 +142,13 @@ public class CuAccountGlobal extends AccountGlobal {
                     ((AccountExtendedAttribute) account.getExtension()).setMajorReportingCategoryCode(majorReportingCategoryCode);
                 }
                 
-                
+                AccountExtendedAttribute aea = (AccountExtendedAttribute) (account.getExtension());
+                if (this.isClosed() && aea.getAccountClosedDate() == null) {
+                    aea.setAccountClosedDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+                } else if (!this.isClosed() && aea.getAccountClosedDate() != null) {
+                    aea.setAccountClosedDate(null);           
+                }
+
                 persistables.add(account);
     
             }
@@ -159,6 +169,14 @@ public class CuAccountGlobal extends AccountGlobal {
     public void setMajorReportingCategory(
             MajorReportingCategory majorReportingCategory) {
         this.majorReportingCategory = majorReportingCategory;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 
 
