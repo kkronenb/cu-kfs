@@ -4,15 +4,14 @@
 
 package edu.cornell.kfs.vnd.batch.service.impl;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,35 +20,40 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.krad.service.AttachmentService;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
-import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;
 import edu.cornell.kfs.vnd.batch.service.VendorInactivateConvertBatchService;
+import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
+import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 public class VendorInactivateConvertBatchServiceImpl implements VendorInactivateConvertBatchService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VendorInactivateConvertBatchServiceImpl.class);
     
     private BatchInputFileService batchInputFileService;    
-    private DateTimeService dateTimeService;
     private List<BatchInputFileType> batchInputFileTypes;
-    private AttachmentService attachmentService;
     private NoteService noteService;
-
+    private CUVendorService cuVendorService;
 	private String reportsDirectoryPath;
+	private BusinessObjectService businessObjectService;
 
     
     public VendorInactivateConvertBatchServiceImpl() {
     }
     
     /**
-     * @see org.kuali.kfs.module.ar.batch.service.ReceiptLoadService#loadFiles()
+     *
      */
     public boolean processVendorUpdates() {
         
-        LOG.info("Beginning processing of all available files for Receipt Batch Upload.");
+        LOG.info("Beginning processing of all available files for InactivateConvert Batch Upload.");
         boolean result = true;
                      
         //  create a list of the files to process
@@ -62,7 +66,7 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
             
             LOG.info("Beginning processing of filename: " + inputFileName + ".");
    
-            if (attachFiles(inputFileName, fileNamesToLoad.get(inputFileName))) {
+            if (inactivateConvert(inputFileName, fileNamesToLoad.get(inputFileName))) {
                 result &= true;
                 LOG.info("Successfully loaded csv file");
                 processedFiles.add(inputFileName);
@@ -127,7 +131,7 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
 
     /**
     */
-    public boolean attachFiles(String fileName, BatchInputFileType batchInputFileType) {
+    public boolean inactivateConvert(String fileName, BatchInputFileType batchInputFileType) {
         
         boolean result = true;
         
@@ -150,43 +154,89 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
             String errorMessage = "Parsed file was not of the expected type.  Expected [" + List.class + "] but got [" + parsedObject.getClass() + "].";
             criticalError(errorMessage);
         }
-        
-        
-        
-        StringBuilder processResults = new StringBuilder();
-        processResults.append("\"cardHolder\",\"amount\",\"purchasedate\",\"SharePointPath\",\"filename\",\"Success\"\n");        
+                              
        
-        List<ReceiptProcessing> receipts =  ((List<ReceiptProcessing>) parsedObject);
+        List<VendorInactivateConvertBatch> vendors =  ((List<VendorInactivateConvertBatch>) parsedObject);
 
+        for (VendorInactivateConvertBatch vendor : vendors) {
+            String[] vendorId = vendor.getVendorId().split("-");
+            
+            Collection<VendorDetail> vendorDets = businessObjectService.findMatching(VendorDetail.class,
+                    Collections.singletonMap("vendorHeaderGeneratedIdentifier", vendorId[0]));
+            
+            GlobalVariables.setUserSession(new UserSession("kfs"));
+            
+            VendorDetail vnd = cuVendorService.getByVendorNumber(vendor.getVendorId());
+            VendorDetail vndNm = cuVendorService.getVendorByVendorName(vendor.getVendorName());
+            VendorHeader vHead = businessObjectService.findBySinglePrimaryKey(VendorHeader.class, vnd.getVendorHeaderGeneratedIdentifier());
+            
+           
+            if ((vnd != null && vndNm != null)) {
+                if (vendor.getAction().equalsIgnoreCase("inactivate") && (vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName()) && (vendorDets.size() == 1))) {
+                      inactivateVendor(vnd);
+                }
+                else if (vendor.getAction().equalsIgnoreCase("convert") && (vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName())) && (vendorDets.size() == 1)) {
+                     convertVendor(vHead, vnd);
+                }
+                else if (vendor.getChildren().equalsIgnoreCase("true") && (vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName()))) {
+                    for (VendorDetail vd : vendorDets) {
+                        inactivateVendor(vd);
+                    }      
+                }                
+                else if ((vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName()))) {
+                    
+                    String errorMessage = "Failed to process vendor, vendor name " + vendor.getVendorName() + " and number " + vendor.getVendorId() + " do not match ";
+                    criticalError(errorMessage);
+                }
+                else {
+                    String errorMessage = "Failed to parse vendor action  expected inacativate or convert but recevied " + vendor.getAction();
+                    criticalError(errorMessage);
+                }
+            }
+               
+        }
         
                
-        String outputCsv = processResults.toString();
-        getcsvWriter(outputCsv);       
+       
                 
         return result;
     }  
     
     
-    protected void getcsvWriter(String csvDoc) {
+    private void inactivateVendor (VendorDetail vnd) {
         
+        vnd.setActiveIndicator(false);
+        
+        
+        Note newNote = new Note();
+        newNote.setNoteText("Vendor has been inactivated via Inactivate vendor batch job");
+        newNote.setNotePostedTimestampToCurrent();
+        LOG.info("Inactivating "+vnd.getVendorName());
 
-        String fileName = "CIT_OUT_" +
-            new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(dateTimeService.getCurrentDate()) + ".csv";
+        Note tmpNote = noteService.createNote(newNote, vnd, GlobalVariables.getUserSession().getPrincipalId());
+        LOG.info("save note");
+
+        SpringContext.getBean(NoteService.class).save(tmpNote);
         
-         //  setup the writer
-         File reportFile = new File(fileName);
-         BufferedWriter writer = null;
-         try {
-             writer = new BufferedWriter(new FileWriter(reportFile));
-             writer.write(csvDoc);
-             writer.close();
-         } catch (IOException e1) {
-             LOG.error("IOException when trying to write report file");
-             e1.printStackTrace();
-         }
-         
-                         
-     }
+        businessObjectService.save(vnd);
+    }
+    
+private void convertVendor (VendorHeader vHead, VendorDetail vnd) {
+    vHead.setVendorTypeCode("SP");
+    
+    Note newNote = new Note();
+    newNote.setNoteText("Vendor Type has been converted to SP via the convert vendor batch job");
+    newNote.setNotePostedTimestampToCurrent();
+    LOG.info("Converting "+vnd.getVendorName());
+
+    Note tmpNote = noteService.createNote(newNote, vnd, GlobalVariables.getUserSession().getPrincipalId());
+    LOG.info("save note");
+
+    SpringContext.getBean(NoteService.class).save(tmpNote);
+    
+    businessObjectService.save(vHead);
+}
+    
     
  
     protected byte[] safelyLoadFileBytes(String fileName) {
@@ -228,13 +278,6 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
         this.batchInputFileService = batchInputFileService;
     }
     
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
-    }    
-    
-    public void setAttachmentService(AttachmentService attachmentService) {
-        this.attachmentService = attachmentService;
-    }
              
     public NoteService getNoteService() {
         return noteService;
@@ -246,6 +289,22 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
 
     public void setNoteService(NoteService noteService) {
         this.noteService = noteService;
+    }
+
+    public CUVendorService getCuVendorService() {
+        return cuVendorService;
+    }
+
+    public void setCuVendorService(CUVendorService cuVendorService) {
+        this.cuVendorService = cuVendorService;
+    }
+
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
            
               

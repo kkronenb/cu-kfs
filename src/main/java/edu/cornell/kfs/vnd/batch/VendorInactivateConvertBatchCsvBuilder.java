@@ -60,7 +60,9 @@ public class VendorInactivateConvertBatchCsvBuilder {
     	VendorInactivateConvertBatch vendorUpdate = new VendorInactivateConvertBatch();
     	vendorUpdate.setVendorId(rowDataMap.get(VendorInactivateConvertBatchCsv.vendorID.name()));        
     	vendorUpdate.setAction(rowDataMap.get(VendorInactivateConvertBatchCsv.action.name()));        
-        return vendorUpdate;
+    	vendorUpdate.setVendorName(rowDataMap.get(VendorInactivateConvertBatchCsv.vendorName.name()));
+    	vendorUpdate.setChildren(rowDataMap.get(VendorInactivateConvertBatchCsv.children.name()));
+    	return vendorUpdate;
     }
 
 }
