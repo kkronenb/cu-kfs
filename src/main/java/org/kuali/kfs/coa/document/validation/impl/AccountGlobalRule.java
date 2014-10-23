@@ -559,7 +559,13 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
             }
 
             // acct_expiration_dt can not be before acct_effect_dt
-            Date effectiveDate = account.getAccountEffectiveDate();
+			Date effectiveDate = null;
+			if (ObjectUtils.isNotNull(newAccountGlobal.getAccountEffectiveDate())) {
+				effectiveDate = newAccountGlobal.getAccountEffectiveDate();
+			} else {
+				effectiveDate = account.getAccountEffectiveDate();
+			}
+            
             if (ObjectUtils.isNotNull(effectiveDate) && ObjectUtils.isNotNull(newExpDate)) {
                 if (newExpDate.before(effectiveDate)) {
                     putGlobalError(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE);

@@ -77,6 +77,7 @@
                 </property>
                 <property name="insertAfter">
                     <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="accountOffCampusIndicator" />
                        <bean parent="MaintainableFieldDefinition" p:name="closed" />
                        <bean parent="MaintainableFieldDefinition" p:name="accountTypeCode" />
                        <bean parent="MaintainableFieldDefinition" p:name="appropriationAccountNumber" />
