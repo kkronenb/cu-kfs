@@ -106,6 +106,10 @@
 			<property name="maskFormatter">
   			<bean parent="MaskFormatterLiteral" p:literal="*****************"/>
   			</property>
+  			<property name="partialMask" value="true"/> 
+  			<property name="partialMaskFormatter">
+  			<bean parent="MaskFormatterSubString" p:maskLength="5"/> 
+  			</property>
   		</bean>
   	</property>
   </bean>
@@ -188,11 +192,6 @@
   			<property name="mask" value="true"/> 
 			<property name="maskFormatter">
   			<bean parent="MaskFormatterLiteral" p:literal="*****************"/> 
-  			</property>
-  			<property name="partialMask" value="true"/> 
-  			<property name="partialMaskFormatter">
-  			<bean parent="MaskFormatterSubString" p:maskLength="5"/> 
-  			</property>
   		</bean>
   	</property>
   </bean>
