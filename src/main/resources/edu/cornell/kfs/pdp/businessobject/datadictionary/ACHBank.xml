@@ -21,7 +21,7 @@
 		<bean parent="AttributeSecurity">
   			<property name="mask" value="true" /> 
 			<property name="maskFormatter">
-  			<<bean parent="MaskFormatterLiteral" p:literal="*****************"/>
+  			<bean parent="MaskFormatterLiteral" p:literal="*****************" />
   			</property>
   		</bean>
 </property>
