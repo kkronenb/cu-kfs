@@ -9,12 +9,13 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.krad.bo.GlobalBusinessObject;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.location.framework.campus.CampusEbo;
 
-public class CuAccountGlobal extends AccountGlobal {
+public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObject{
     
     private static final long serialVersionUID = 1L;
 

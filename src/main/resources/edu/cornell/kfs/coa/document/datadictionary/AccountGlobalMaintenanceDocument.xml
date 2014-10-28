@@ -170,6 +170,9 @@
                        <bean parent="MaintainableFieldDefinition" p:name="contractControlAccountNumber" />
                        <bean parent="MaintainableFieldDefinition" p:name="acctIndirectCostRcvyTypeCd" />
                        <bean parent="MaintainableFieldDefinition" p:name="contractsAndGrantsAccountResponsibilityId" />
+                       <bean parent="MaintainableFieldDefinition" p:name="invoiceFrequencyCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="invoiceTypeCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="costShareForProjectNumber" />    
                     </list>
                 </property>
             </bean>
