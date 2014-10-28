@@ -10,9 +10,11 @@ public class VendorInactivateConvertBatch  {
      */
     
     private String vendorId;
-    private String vendorName;
     private String action;
-    private String children;
+    private String reason;
+    private String note;
+    private String convertType;
+    
     
 	public String getVendorId() {
 		return vendorId;
@@ -26,20 +28,25 @@ public class VendorInactivateConvertBatch  {
 	public void setAction(String action) {
 		this.action = action;
 	}
-    public String getVendorName() {
-        return vendorName;
-    }
-    public void setVendorName(String vendorName) {
-        this.vendorName = vendorName;
-    }
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
+	public String getReason() {
+		return reason;
+	}
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+	public String getConvertType() {
+		return convertType;
+	}
+	public void setConvertType(String convertType) {
+		this.convertType = convertType;
+	}
     
-    public String getChildren() {
-        return children;
-    }
-    public void setChildren(String children) {
-        this.children = children;
-    }
-   
         
 
     

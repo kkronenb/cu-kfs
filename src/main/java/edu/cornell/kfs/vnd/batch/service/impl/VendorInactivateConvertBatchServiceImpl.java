@@ -24,6 +24,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
+import org.kuali.kfs.vnd.businessobject.VendorInactiveReason;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -167,29 +168,24 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
             GlobalVariables.setUserSession(new UserSession("kfs"));
             
             VendorDetail vnd = cuVendorService.getByVendorNumber(vendor.getVendorId());
-            VendorDetail vndNm = cuVendorService.getVendorByVendorName(vendor.getVendorName());
             VendorHeader vHead = businessObjectService.findBySinglePrimaryKey(VendorHeader.class, vnd.getVendorHeaderGeneratedIdentifier());
             
            
-            if ((vnd != null && vndNm != null)) {
-                if (vendor.getAction().equalsIgnoreCase("inactivate") && (vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName()) && (vendorDets.size() == 1))) {
-                      inactivateVendor(vnd);
+            if ((vnd != null)) {
+                if (vendor.getAction().equalsIgnoreCase("inactivate") && (vendorDets.size() == 1)) {
+                      inactivateVendor(vnd, vendor.getNote(), vendor.getReason());
                 }
-                else if (vendor.getAction().equalsIgnoreCase("convert") && (vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName())) && (vendorDets.size() == 1)) {
-                     convertVendor(vHead, vnd);
+                else if (vendor.getAction().equalsIgnoreCase("activate") && (vendorDets.size() == 1)) {
+                    activateVendor(vnd, vendor.getNote(), vendor.getReason());
                 }
-                else if (vendor.getChildren().equalsIgnoreCase("true") && (vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName()))) {
-                    for (VendorDetail vd : vendorDets) {
-                        inactivateVendor(vd);
-                    }      
-                }                
-                else if ((vnd.getVendorName().equalsIgnoreCase(vndNm.getVendorName()))) {
-                    
-                    String errorMessage = "Failed to process vendor, vendor name " + vendor.getVendorName() + " and number " + vendor.getVendorId() + " do not match ";
-                    criticalError(errorMessage);
+                else if (vendor.getAction().equalsIgnoreCase("convert") && (vendorDets.size() == 1)) {
+                     convertVendor(vHead, vnd, vendor.getNote(), vendor.getConvertType());
                 }
+                else if (vendorDets.size() > 1) {
+                	LOG.info("failed to process for "+vnd.getVendorNumber()+", This vendor has child records. These must be processed through the application");
+                }                           
                 else {
-                    String errorMessage = "Failed to parse vendor action  expected inacativate or convert but recevied " + vendor.getAction();
+                    String errorMessage = "Failed to parse vendor action expected inactivate or convert but recevied " + vendor.getAction();
                     criticalError(errorMessage);
                 }
             }
@@ -202,32 +198,70 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
         return result;
     }  
     
+    private boolean checkReasonCd (String reasonCd) {
+    	
+    	Collection<VendorInactiveReason> reasonCodes = businessObjectService.findAll(VendorInactiveReason.class);
+		
+    	for ( VendorInactiveReason reasonCode : reasonCodes) {
+    		if (reasonCode.getVendorInactiveReasonCode().equalsIgnoreCase(reasonCd)) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
     
-    private void inactivateVendor (VendorDetail vnd) {
-        
-        vnd.setActiveIndicator(false);
-        
-        
+    private void activateVendor(VendorDetail vnd, String note, String reasonCd) {
+    	
+    	vnd.setActiveIndicator(true);
+        vnd.setVendorInactiveReasonCode(null);
+        vnd.setVendorInactiveReason(null);
+         
         Note newNote = new Note();
-        newNote.setNoteText("Vendor has been inactivated via Inactivate vendor batch job");
+        newNote.setNoteText("Vendor has been activated via the activate batch job for the following reason: "+note);
         newNote.setNotePostedTimestampToCurrent();
-        LOG.info("Inactivating "+vnd.getVendorName());
+        LOG.info("activating "+vnd.getVendorNumber());
 
         Note tmpNote = noteService.createNote(newNote, vnd, GlobalVariables.getUserSession().getPrincipalId());
         LOG.info("save note");
 
         SpringContext.getBean(NoteService.class).save(tmpNote);
-        
+         
         businessObjectService.save(vnd);
+    	    	
+		
+	}
+
+	private void inactivateVendor (VendorDetail vnd, String note, String reasonCd) {
+		if (checkReasonCd(reasonCd)) { 
+	        vnd.setActiveIndicator(false);
+	        vnd.setVendorInactiveReasonCode(reasonCd);
+	        
+	        Note newNote = new Note();
+	        newNote.setNoteText("Vendor has been inactivated via inactivate vendor batch job for reason: "+note);
+	        newNote.setNotePostedTimestampToCurrent();
+	        LOG.info("Inactivating "+vnd.getVendorNumber());
+	
+	        Note tmpNote = noteService.createNote(newNote, vnd, GlobalVariables.getUserSession().getPrincipalId());
+	        LOG.info("save note");
+	
+	        SpringContext.getBean(NoteService.class).save(tmpNote);
+	        
+	        businessObjectService.save(vnd);
+		}
+		else {
+			LOG.info("Invalid reason code for vendor: "+vnd.getVendorName()+". This vendor was not deactivated");
+					
+		}
     }
     
-private void convertVendor (VendorHeader vHead, VendorDetail vnd) {
-    vHead.setVendorTypeCode("SP");
+private void convertVendor (VendorHeader vHead, VendorDetail vnd, String note, String vndTypeCd) {
+    vHead.setVendorTypeCode(vndTypeCd);
     
     Note newNote = new Note();
-    newNote.setNoteText("Vendor Type has been converted to SP via the convert vendor batch job");
+    newNote.setNoteText("Vendor Type has been converted to "+vndTypeCd+" via the convert vendor batch job for the following reason: "+note);
     newNote.setNotePostedTimestampToCurrent();
-    LOG.info("Converting "+vnd.getVendorName());
+    LOG.info("Converting "+vnd.getVendorNumber());
 
     Note tmpNote = noteService.createNote(newNote, vnd, GlobalVariables.getUserSession().getPrincipalId());
     LOG.info("save note");
