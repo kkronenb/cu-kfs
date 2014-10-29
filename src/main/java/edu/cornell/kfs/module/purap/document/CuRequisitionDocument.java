@@ -106,14 +106,14 @@ public class CuRequisitionDocument extends RequisitionDocument {
         KualiDecimal autoPOAmount = new KualiDecimal(autoPOAmountString);
         // KFSPTS-1625
         
-        boolean checkSuperUser = true;
-        if (this.getDocumentHeader().getWorkflowDocument().isSaved()) {
-        	checkSuperUser = false;
+        String routedBy = getRoutedByPrincipalId();
+        if (StringUtils.isBlank(routedBy)) {
+        	routedBy = this.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         }
-        
-        if (checkSuperUser && KimApiServiceLocator.getPermissionService().hasPermission(
-                getRoutedByPrincipalId(), CUKFSConstants.ParameterNamespaces.PURCHASING, CUPurapConstants.B2B_HIGHER_LIMIT_PERMISSION)) {
-            String paramVal = parameterService.getParameterValueAsString(RequisitionDocument.class,
+        if (KimApiServiceLocator.getPermissionService().hasPermission( routedBy,
+                CUKFSConstants.ParameterNamespaces.PURCHASING, CUPurapConstants.B2B_HIGHER_LIMIT_PERMISSION)) {
+            
+        	String paramVal = parameterService.getParameterValueAsString(RequisitionDocument.class,
                     CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO);
             if (StringUtils.isNotBlank(paramVal)) {
                 autoPOAmount = new KualiDecimal(paramVal);
