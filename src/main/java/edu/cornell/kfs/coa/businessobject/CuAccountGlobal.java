@@ -8,6 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
+import org.kuali.kfs.coa.businessobject.AccountType;
+import org.kuali.kfs.coa.businessobject.BudgetRecordingLevel;
+import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType;
+import org.kuali.kfs.coa.businessobject.RestrictedStatus;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.krad.bo.GlobalBusinessObject;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
@@ -15,15 +20,15 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.location.framework.campus.CampusEbo;
 
+import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
+import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
+
 public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObject{
     
     private static final long serialVersionUID = 1L;
 
     protected String majorReportingCategoryCode;
     protected String accountPhysicalCampusCode;
-    
-    protected MajorReportingCategory majorReportingCategory;
-    protected CampusEbo accountPhysicalCampus;
     protected Date accountEffectiveDate;
     protected boolean accountOffCampusIndicator;
     protected boolean closed;
@@ -50,8 +55,25 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
     protected String invoiceTypeCode;
     protected Long costShareForProjectNumber;
     
+	protected MajorReportingCategory majorReportingCategory;
+    protected CampusEbo accountPhysicalCampus;
+    
+    protected Account contractControlAccount;
+    protected Chart contractControlChartOfAccounts;
+    protected IndirectCostRecoveryType acctIndirectCostRcvyType;
+    private InvoiceFrequency invoiceFrequency;
+    private InvoiceType invoiceType;
+    protected AccountType accountType;
+    private AppropriationAccount appropriationAccount;
+    protected Chart fringeBenefitsChartOfAccount;
+    protected Account reportsToAccount;
+    protected RestrictedStatus accountRestrictedStatus;
+    protected Chart endowmentIncomeChartOfAccounts;
+    protected Account endowmentIncomeAccount;
+    protected BudgetRecordingLevel budgetRecordingLevel;
+    
 
-    @Override
+	@Override
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
 
         // the list of persist-ready BOs
@@ -523,6 +545,113 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
     public void setCostShareForProjectNumber(Long costShareForProjectNumber) {
         this.costShareForProjectNumber = costShareForProjectNumber;
     }
+    
+    public Account getContractControlAccount() {
+		return contractControlAccount;
+	}
+
+	public void setContractControlAccount(Account contractControlAccount) {
+		this.contractControlAccount = contractControlAccount;
+	}
+	
+    public Chart getContractControlChartOfAccounts() {
+		return contractControlChartOfAccounts;
+	}
+
+	public void setContractControlChartOfAccounts(
+			Chart contractControlChartOfAccounts) {
+		this.contractControlChartOfAccounts = contractControlChartOfAccounts;
+	}
+
+	public IndirectCostRecoveryType getAcctIndirectCostRcvyType() {
+		return acctIndirectCostRcvyType;
+	}
+
+	public void setAcctIndirectCostRcvyType(
+			IndirectCostRecoveryType acctIndirectCostRcvyType) {
+		this.acctIndirectCostRcvyType = acctIndirectCostRcvyType;
+	}
+
+	public InvoiceFrequency getInvoiceFrequency() {
+		return invoiceFrequency;
+	}
+
+	public void setInvoiceFrequency(InvoiceFrequency invoiceFrequency) {
+		this.invoiceFrequency = invoiceFrequency;
+	}
+
+	public AccountType getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
+	}
+
+	public AppropriationAccount getAppropriationAccount() {
+		return appropriationAccount;
+	}
+
+	public void setAppropriationAccount(AppropriationAccount appropriationAccount) {
+		this.appropriationAccount = appropriationAccount;
+	}
+
+	public Chart getFringeBenefitsChartOfAccount() {
+		return fringeBenefitsChartOfAccount;
+	}
+
+	public void setFringeBenefitsChartOfAccount(Chart fringeBenefitsChartOfAccount) {
+		this.fringeBenefitsChartOfAccount = fringeBenefitsChartOfAccount;
+	}
+
+	public Account getReportsToAccount() {
+		return reportsToAccount;
+	}
+
+	public void setReportsToAccount(Account reportsToAccount) {
+		this.reportsToAccount = reportsToAccount;
+	}
+
+	public RestrictedStatus getAccountRestrictedStatus() {
+		return accountRestrictedStatus;
+	}
+
+	public void setAccountRestrictedStatus(RestrictedStatus accountRestrictedStatus) {
+		this.accountRestrictedStatus = accountRestrictedStatus;
+	}
+
+	public Chart getEndowmentIncomeChartOfAccounts() {
+		return endowmentIncomeChartOfAccounts;
+	}
+
+	public void setEndowmentIncomeChartOfAccounts(
+			Chart endowmentIncomeChartOfAccounts) {
+		this.endowmentIncomeChartOfAccounts = endowmentIncomeChartOfAccounts;
+	}
+
+	public Account getEndowmentIncomeAccount() {
+		return endowmentIncomeAccount;
+	}
+
+	public void setEndowmentIncomeAccount(Account endowmentIncomeAccount) {
+		this.endowmentIncomeAccount = endowmentIncomeAccount;
+	}
+
+	public BudgetRecordingLevel getBudgetRecordingLevel() {
+		return budgetRecordingLevel;
+	}
+
+	public void setBudgetRecordingLevel(BudgetRecordingLevel budgetRecordingLevel) {
+		this.budgetRecordingLevel = budgetRecordingLevel;
+	}
+
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
 
 
 }

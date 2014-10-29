@@ -85,11 +85,14 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 	protected GeneralLedgerPendingEntryService generalLedgerPendingEntryService;
     protected BalanceService balanceService;
     protected AccountService accountService;
+    protected static SubFundGroupService subFundGroupService;
+    protected ContractsAndGrantsModuleService contractsAndGrantsModuleService;
     
     public AccountGlobalRule() {
         this.setGeneralLedgerPendingEntryService(SpringContext.getBean(GeneralLedgerPendingEntryService.class));
         this.setBalanceService(SpringContext.getBean(BalanceService.class));
         this.setAccountService(SpringContext.getBean(AccountService.class));
+        this.setContractsAndGrantsModuleService(SpringContext.getBean(ContractsAndGrantsModuleService.class));
 	}
 
     /**
@@ -741,6 +744,17 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         // Income Stream account is required based the fund/subfund group set up in income stream parameters 
         success &= checkCgIncomeStreamRequired(newAccountGlobal);
+        
+        // check if the new account has a valid responsibility id
+        if (ObjectUtils.isNotNull(newAccountGlobal.getContractsAndGrantsAccountResponsibilityId())) {
+        	Account tmpAcct = new Account();
+        	tmpAcct.setContractsAndGrantsAccountResponsibilityId(newAccountGlobal.getContractsAndGrantsAccountResponsibilityId());
+            final boolean hasValidAccountResponsibility = contractsAndGrantsModuleService.hasValidAccountReponsiblityIdIfNotNull(tmpAcct);
+            if (!hasValidAccountResponsibility) {
+                success &= hasValidAccountResponsibility;
+                putFieldError("contractsAndGrantsAccountResponsibilityId", CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_INVALID_CG_RESPONSIBILITY , new String[] { newAccountGlobal.getContractsAndGrantsAccountResponsibilityId().toString() });
+            }
+        }
 
         return success;
     }
@@ -1129,51 +1143,51 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         boolean result = true;
 
-//        // if this account is selected as a Fringe Benefit Account, then we have nothing
-//        // to test, so exit
-//        if (newAccount.isAccountsFringesBnftIndicator()) {
-//            return true;
-//        }
-//
-//        // if fringe benefit is not selected ... continue processing
-//
-//        // fringe benefit account number is required
-//        if (StringUtils.isBlank(newAccount.getReportsToAccountNumber())) {
-//            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGEBENEFIT_FALSE);
-//            result &= false;
-//        }
-//
-//        // fringe benefit chart of accounts code is required
-//        if (StringUtils.isBlank(newAccount.getReportsToChartOfAccountsCode())) {
-//            putFieldError("reportsToChartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGEBENEFIT_FALSE);
-//            result &= false;
-//        }
-//
-//        // if either of the fringe benefit account fields are not present, then we're done
-//        if (result == false) {
-//            return result;
-//        }
-//
-//        // attempt to load the fringe benefit account
-//        Account fringeBenefitAccount = accountService.getByPrimaryId(newAccount.getReportsToChartOfAccountsCode(), newAccount.getReportsToAccountNumber());
-//
-//        // fringe benefit account must exist
-//        if (fringeBenefitAccount == null) {
-//            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, getFieldLabel(Account.class, "reportsToAccountNumber"));
-//            return false;
-//        }
-//
-//        // fringe benefit account must be active
-//        if (!fringeBenefitAccount.isActive()) {
-//            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "reportsToAccountNumber"));
-//            result &= false;
-//        }
-//
-//        // make sure the fringe benefit account specified is set to fringe benefits = Y
-//        if (!fringeBenefitAccount.isAccountsFringesBnftIndicator()) {
-//            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_MUST_BE_FLAGGED_FRINGEBENEFIT, fringeBenefitAccount.getChartOfAccountsCode() + "-" + fringeBenefitAccount.getAccountNumber());
-//            result &= false;
-//        }
+        // if this account is selected as a Fringe Benefit Account, then we have nothing
+        // to test, so exit
+        if (newAccount.isAccountsFringesBnftIndicator()) {
+            return true;
+        }
+
+        // if fringe benefit is not selected ... continue processing
+
+        // fringe benefit account number is required
+        if (StringUtils.isBlank(newAccount.getReportsToAccountNumber())) {
+            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGEBENEFIT_FALSE);
+            result &= false;
+        }
+
+        // fringe benefit chart of accounts code is required
+        if (StringUtils.isBlank(newAccount.getReportsToChartOfAccountsCode())) {
+            putFieldError("reportsToChartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGEBENEFIT_FALSE);
+            result &= false;
+        }
+
+        // if either of the fringe benefit account fields are not present, then we're done
+        if (result == false) {
+            return result;
+        }
+
+        // attempt to load the fringe benefit account
+        Account fringeBenefitAccount = accountService.getByPrimaryId(newAccount.getReportsToChartOfAccountsCode(), newAccount.getReportsToAccountNumber());
+
+        // fringe benefit account must exist
+        if (fringeBenefitAccount == null) {
+            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, getFieldLabel(Account.class, "reportsToAccountNumber"));
+            return false;
+        }
+
+        // fringe benefit account must be active
+        if (!fringeBenefitAccount.isActive()) {
+            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "reportsToAccountNumber"));
+            result &= false;
+        }
+
+        // make sure the fringe benefit account specified is set to fringe benefits = Y
+        if (!fringeBenefitAccount.isAccountsFringesBnftIndicator()) {
+            putFieldError("reportsToAccountNumber", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_MUST_BE_FLAGGED_FRINGEBENEFIT, fringeBenefitAccount.getChartOfAccountsCode() + "-" + fringeBenefitAccount.getAccountNumber());
+            result &= false;
+        }
 
         return result;
     }
@@ -1189,8 +1203,41 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         // Certain C&G fields are required if the Account belongs to the CG Fund Group
         if (ObjectUtils.isNotNull(newAccount.getSubFundGroup())) {
+        	if (getSubFundGroupService().isForContractsAndGrants(newAccount.getSubFundGroup())) {
+        		result &= checkEmptyBOField("acctIndirectCostRcvyTypeCd", newAccount.getAcctIndirectCostRcvyTypeCd(), replaceTokens(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_TYPE_CODE_CANNOT_BE_EMPTY));
                 result &= checkContractControlAccountNumberRequired(newAccount);
+        	}
         }
+        else{
+        	if(ObjectUtils.isNotNull(newAccount.getAccountGlobalDetails()) && newAccount.getAccountGlobalDetails().size() >0){
+        		for(AccountGlobalDetail accountGlobalDetail : newAccount.getAccountGlobalDetails()){
+        			if (ObjectUtils.isNotNull(accountGlobalDetail.getAccount().getSubFundGroup())) {
+        				if (getSubFundGroupService().isForContractsAndGrants(accountGlobalDetail.getAccount().getSubFundGroup())) {
+        					result &= checkContractControlAccountNumberRequired(newAccount, accountGlobalDetail.getAccount());
+                        
+        					if(result == false){
+        						break;
+        					}
+        				}
+                	}
+        		}
+        	}
+        }
+        return result;
+    }
+    
+    /**
+     * This method is a helper method that replaces error tokens with values for contracts and grants labels
+     *
+     * @param errorConstant
+     * @return error string that has had tokens "{0}" and "{1}" replaced
+     */
+    protected String replaceTokens(String errorConstant) {
+        String cngLabel = getSubFundGroupService().getContractsAndGrantsDenotingAttributeLabel();
+        String cngValue = getSubFundGroupService().getContractsAndGrantsDenotingValueForMessage();
+        String result = getConfigService().getPropertyValueAsString(errorConstant);
+        result = StringUtils.replace(result, "{0}", cngLabel);
+        result = StringUtils.replace(result, "{1}", cngValue);
         return result;
     }
     
@@ -1205,26 +1252,64 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         boolean result = true;
 
-//        // Contract Control account must either exist or be the same as account being maintained
-//
-//        if (ObjectUtils.isNull(newAccount.getContractControlFinCoaCode())) {
-//            return result;
-//        }
-//        if (ObjectUtils.isNull(newAccount.getContractControlAccountNumber())) {
-//            return result;
-//        }
-//        //TODO need to go over all Account Details and check that they match
-//        if ((newAccount.getContractControlFinCoaCode().equals(newAccount.getChartOfAccountsCode())) && (newAccount.getContractControlAccountNumber().equals(newAccount.getAccountNumber()))) {
-//            return result;
-//        }
-//
-//        // do an existence/active test
-//        DictionaryValidationService dvService = super.getDictionaryValidationService();
-//        boolean referenceExists = dvService.validateReferenceExists(newAccount, "contractControlAccount");
-//        if (!referenceExists) {
-//            putFieldError("contractControlAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, "Contract Control Account: " + newAccount.getContractControlFinCoaCode() + "-" + newAccount.getContractControlAccountNumber());
-//            result &= false;
-//        }
+        // Contract Control account must either exist or be the same as account being maintained
+
+        if (ObjectUtils.isNull(newAccount.getContractControlFinCoaCode())) {
+            return result;
+        }
+        if (ObjectUtils.isNull(newAccount.getContractControlAccountNumber())) {
+            return result;
+        }
+        
+        //if no account global details exist then don't validate
+        if(ObjectUtils.isNull(newAccount.getAccountGlobalDetails()) || (ObjectUtils.isNotNull(newAccount.getAccountGlobalDetails()) && newAccount.getAccountGlobalDetails().size() == 0)){
+        	return true;
+        }
+        	
+        if(ObjectUtils.isNotNull(newAccount.getAccountGlobalDetails()) && newAccount.getAccountGlobalDetails().size() == 1){
+        if ((newAccount.getContractControlFinCoaCode().equals(newAccount.getChartOfAccountsCode())) && (newAccount.getContractControlAccountNumber().equals(newAccount.getAccountGlobalDetails().get(0).getAccountNumber()))) {
+            return true;
+        }
+        }
+
+        // do an existence/active test
+        DictionaryValidationService dvService = super.getDictionaryValidationService();
+        boolean referenceExists = dvService.validateReferenceExists(newAccount, "contractControlAccount");
+        if (!referenceExists) {
+            putFieldError("contractControlAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, "Contract Control Account: " + newAccount.getContractControlFinCoaCode() + "-" + newAccount.getContractControlAccountNumber());
+            result &= false;
+        }
+
+        return result;
+    }
+    
+    /**
+     * This method checks to make sure that if the contract control account exists it is the same as the Account that we are working
+     * on
+     *
+     * @param newAccount
+     * @return false if the contract control account is entered and is not the same as the account we are maintaining
+     */
+    protected boolean checkContractControlAccountNumberRequired(CuAccountGlobal newAccount, Account oldAccount) {
+
+        boolean result = true;
+
+        // Contract Control account must either exist or be the same as account being maintained
+
+        if (ObjectUtils.isNull(newAccount.getContractControlFinCoaCode())) {
+            return result;
+        }
+        if (ObjectUtils.isNull(newAccount.getContractControlAccountNumber())) {
+            return result;
+        }
+
+        // do an existence/active test
+        DictionaryValidationService dvService = super.getDictionaryValidationService();
+        boolean referenceExists = dvService.validateReferenceExists(newAccount, "contractControlAccount");
+        if (!referenceExists) {
+            putFieldError("contractControlAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, "Contract Control Account: " + newAccount.getContractControlFinCoaCode() + "-" + newAccount.getContractControlAccountNumber());
+            result &= false;
+        }
 
         return result;
     }
@@ -1373,6 +1458,21 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 	public void setAccountService(AccountService accountService) {
 		this.accountService = accountService;
 	}
+	
+    public SubFundGroupService getSubFundGroupService() {
+        if ( subFundGroupService == null ) {
+            subFundGroupService = SpringContext.getBean(SubFundGroupService.class);
+        }
+        return subFundGroupService;
+    }
+    
+    /**
+     * Sets the contractsAndGrantsModuleService attribute value.
+     * @param contractsAndGrantsModuleService The contractsAndGrantsModuleService to set.
+     */
+    public void setContractsAndGrantsModuleService(ContractsAndGrantsModuleService contractsAndGrantsModuleService) {
+        this.contractsAndGrantsModuleService = contractsAndGrantsModuleService;
+    }
 
 }
 

@@ -105,5 +105,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 	    // KFSUPGRADE-779
 	    public static final String QUESTION_CLEAR_UNNEEDED_WIRW_TAB = "question.preq.clearUnneededTab";
 	    public static final String QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB = "question.cm.clearUnneededTab";
+	
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INVALID_CG_RESPONSIBILITY = "error.document.accountGlobalMaintenance.invalidContractsAndGrantsResponsibility";
 
 }
