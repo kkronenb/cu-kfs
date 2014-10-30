@@ -39,7 +39,19 @@
 
       </list>
     </property>
+    <property name="relationships">
+      <list merge="true">
+        <bean parent="RelationshipDefinition" p:objectAttributeName="accountPhysicalCampus">
+			<property name="primitiveAttributes">
+		    	<list>
+		        	<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountPhysicalCampusCode" p:targetName="code" />
+		        </list>
+		    </property>
+		</bean> 
+      </list>
+      </property>
   </bean>
+  
 
   <!-- Attribute Definitions -->
   <bean id="AccountGlobal-majorReportingCategoryCode" parent="AccountGlobal-majorReportingCategoryCode-parentBean"/>

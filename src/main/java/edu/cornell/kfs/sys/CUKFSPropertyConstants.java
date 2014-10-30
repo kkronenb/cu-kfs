@@ -28,6 +28,9 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     
     // KFSUPGRADE-779
     public static final String DOC_HDR_FINANCIAL_DOCUMENT_STATUS_CODE = "documentHeader.financialDocumentStatusCode";
+    
+    public static final String PROGRAM_CODE = "programCode";
+    public static final String APPROPRIATION_ACCT_NUMBER = "appropriationAccountNumber";
 
 }
 

@@ -616,6 +616,12 @@
 			<foreignkey field-ref="majorReportingCategoryCode" />
 		</reference-descriptor>
 		
+		<reference-descriptor name="accountType"
+			class-ref="org.kuali.kfs.coa.businessobject.AccountType"
+			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+			<foreignkey field-ref="accountTypeCode" />
+		</reference-descriptor>
+		
 		<reference-descriptor name="contractControlChartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         	<foreignkey field-ref="contractControlFinCoaCode" />
     	</reference-descriptor>
