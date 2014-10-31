@@ -23,7 +23,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.CsvBatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
 
 
@@ -33,7 +35,9 @@ public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInput
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VendorInactivateConvertBatchCsvInputFileType.class);
 
     private static final String FILE_NAME_DELIM = "_";
-           
+    protected static final String FILE_NAME_PREFIX = "vendorInactivateConvertBatch_";
+
+	private DateTimeService dateTimeService;       
     
     /**
      * 
@@ -41,7 +45,17 @@ public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInput
      *  but we do not need this method for anything in this class
      */
     public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifer) {
-        return "";
+    	 String fileName = FILE_NAME_PREFIX;
+         fileName += principalName;
+         if (org.apache.commons.lang.StringUtils.isNotBlank(fileUserIdentifer)) {
+             fileName += "_" + fileUserIdentifer;
+         }
+         fileName += "_" + dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate());
+
+         // remove spaces in filename
+         fileName = org.apache.commons.lang.StringUtils.remove(fileName, " ");
+
+         return fileName;
     }
 
     /**
@@ -49,7 +63,7 @@ public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInput
      * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
      */
     public String getFileTypeIdentifer() {
-        return "vendorInactivateConvertBatch_kfs";
+        return "vendorInactivateConvertInputFileType";
     }
 
     
@@ -106,7 +120,15 @@ public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInput
 
     public String getTitleKey() {
         
-        return "Vendor (CSV format) Batch Attachement Upload";
+        return CUKFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_INACTIVATE_CONVERT_CODE;
+    }
+    
+    /**
+	 * 
+	 * @param dateTimeService
+	 */
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
     
 

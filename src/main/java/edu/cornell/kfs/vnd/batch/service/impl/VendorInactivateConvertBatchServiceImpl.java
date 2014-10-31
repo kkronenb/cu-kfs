@@ -162,8 +162,12 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
         for (VendorInactivateConvertBatch vendor : vendors) {
             String[] vendorId = vendor.getVendorId().split("-");
             
+            
             Collection<VendorDetail> vendorDets = businessObjectService.findMatching(VendorDetail.class,
                     Collections.singletonMap("vendorHeaderGeneratedIdentifier", vendorId[0]));
+            
+            
+            
             
             GlobalVariables.setUserSession(new UserSession("kfs"));
             
@@ -172,13 +176,13 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
             
            
             if ((vnd != null)) {
-                if (vendor.getAction().equalsIgnoreCase("inactivate") && (vendorDets.size() == 1)) {
+                if (vendor.getAction().equalsIgnoreCase("inactivate") && (vendorDets.size() == 1) || !(vendorId[1].equalsIgnoreCase("0"))) {
                       inactivateVendor(vnd, vendor.getNote(), vendor.getReason());
                 }
-                else if (vendor.getAction().equalsIgnoreCase("activate") && (vendorDets.size() == 1)) {
+                else if (vendor.getAction().equalsIgnoreCase("activate") && (vendorDets.size() == 1) || !(vendorId[1].equalsIgnoreCase("0"))) {
                     activateVendor(vnd, vendor.getNote(), vendor.getReason());
                 }
-                else if (vendor.getAction().equalsIgnoreCase("convert") && (vendorDets.size() == 1)) {
+                else if (vendor.getAction().equalsIgnoreCase("convert") && (vendorDets.size() == 1) || !(vendorId[1].equalsIgnoreCase("0"))) {
                      convertVendor(vHead, vnd, vendor.getNote(), vendor.getConvertType());
                 }
                 else if (vendorDets.size() > 1) {
@@ -192,7 +196,7 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
                
         }
         
-               
+              
        
                 
         return result;

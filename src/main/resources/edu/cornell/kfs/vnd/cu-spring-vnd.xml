@@ -180,6 +180,9 @@
         <property name="csvEnumClass">
             <value>edu.cornell.kfs.vnd.batch.VendorInactivateConvertBatchCsv</value>
         </property>
+        <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
     </bean>
 
 	<bean id="vendorBatchService" parent="vendorBatchService-parentBean" />
