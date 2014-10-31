@@ -64,6 +64,7 @@ public class CuAdvanceDepositAccountingLineAuthorizer extends FinancialProcessin
     public boolean determineEditPermissionOnLine(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, boolean currentUserIsDocumentInitiator, boolean pageIsEditable) {
         boolean editable = super.determineEditPermissionOnLine(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUserIsDocumentInitiator, pageIsEditable);
         boolean orgReviewEditable = false;
+        
         if (isDocumentStoppedInRouteNode(RouteLevelNames.ACCOUNTING_ORGANIZATION_HIERARCHY, accountingDocument)) {
 
             if (ObjectUtils.isNull(accountingLine.getAccount()) || (ObjectUtils.isNotNull(accountingLine.getAccount()) && StringUtils.isBlank(accountingLine.getAccount().getAccountNumber()))) {
