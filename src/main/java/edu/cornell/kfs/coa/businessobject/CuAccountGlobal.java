@@ -308,6 +308,17 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
                     ((AccountExtendedAttribute) account.getExtension()).setCostShareForProjectNumber(costShareForProjectNumber);
                 }
 
+                // ACCOUNT CLOSE DATE
+                // TODO : This is part of KFSPTS-3613, but 3613 will go to prod first.
+                // 'accountClosedDate' is new attributes and it is not in KFSPTS-3599 branch yet.  So, comment out following update
+                // After merge to 'develop, then we need to uncomment following code to update accountClosedDate
+//                AccountExtendedAttribute aea = (AccountExtendedAttribute) (account.getExtension());
+//                if (this.isClosed() && aea.getAccountClosedDate() == null) {
+//                    aea.setAccountClosedDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+//                } else if (!this.isClosed() && aea.getAccountClosedDate() != null) {
+//                    aea.setAccountClosedDate(null);           
+//                }
+
                 persistables.add(account);
     
             }
