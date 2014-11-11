@@ -100,6 +100,10 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
 
     @Override 
     public List<MaintenanceLock> generateMaintenanceLocks() {
+        if (ObjectUtils.isNull(((VendorDetail) getBusinessObject()).getVendorDetailAssignedIdentifier())) {
+            return new ArrayList();
+        }
+
         List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
         
         Class dataObjectClass = this.getDataObjectClass();
