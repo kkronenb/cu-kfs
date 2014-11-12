@@ -320,14 +320,6 @@ public class GlLineServiceImpl implements GlLineService {
                 return false;
             }
         }
-        
-        //check if GL Debit matches acct line type target and Credit matches Source
-		if ((StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE) && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE))
-				|| (StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE) && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE))) {
-			// this is a match, keep going
-		} else {
-			return false;
-		}     
 
         return true;
     }
