@@ -223,6 +223,12 @@ public class GlLineServiceImpl implements GlLineService {
     }
     
 
+    /**
+     * Finds capital asset information for a given GL entry by matching also on the accounting line type.
+     * 
+     * @param entry
+     * @return matching capital asset info
+     */
     private List<CapitalAssetInformation> findCapitalAssetInformationForGLLineMatchLineType(GeneralLedgerEntry entry) {
         Map<String, String> primaryKeys = new HashMap<String, String>();
         primaryKeys.put(CabPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, entry.getDocumentNumber());
@@ -238,9 +244,11 @@ public class GlLineServiceImpl implements GlLineService {
         return matchingAssets;
     }
     
+    
     /**
      * Compares the gl line to the group accounting lines in each capital asset and
-     * when finds a match, adds the capital asset to the list of matching assets
+     * when finds a match, adds the capital asset to the list of matching assets. It also checks the accounting line type against the GL line credit/debit code.
+     * 
      * @param matchingAssets
      * @param capitalAsset
      * @param entry
@@ -254,13 +262,12 @@ public class GlLineServiceImpl implements GlLineService {
                     groupAccountLine.getChartOfAccountsCode().equals(entry.getChartOfAccountsCode()) &&
                     groupAccountLine.getAccountNumber().equals(entry.getAccountNumber()) &&
                     groupAccountLine.getFinancialObjectCode().equals(entry.getFinancialObjectCode())) {
-            	// check that debit matches target acct lines and credit matches source
-              if((StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE)) || (StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE)) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE)){
-              	matchingAssets.add(capitalAsset);
-              	 break;
+            	// check that debit matches target acct lines and credit matches source accounting lines
+            	if((StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE)) || (StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE)) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE)){
+            	  matchingAssets.add(capitalAsset);
+            	  break;
               }
-
-               
+ 
             }
         }
     }
@@ -722,33 +729,34 @@ public class GlLineServiceImpl implements GlLineService {
 
     }
     
-    /**
-     * Setup shell Capital Asset Information where it doesn't already exist (for example GL Entries
-     * from enterprise feed or Vendor Credit Memo)
-     *
-     * @param entry
-     */
-    @Override
-    public void setupMissingCapitalAssetInformation(String documentNumber) {
-        List<CapitalAccountingLines> capitalAccountingLines;
+	/**
+	 * Setup shell Capital Asset Information where it doesn't already exist (for
+	 * example for a PRNC that is in Process and has already generated some
+	 * capital asset information in a previous processing)
+	 *
+	 * @param entry
+	 */
+	@Override
+	public void setupMissingCapitalAssetInformation(String documentNumber) {
+		List<CapitalAccountingLines> capitalAccountingLines;
 
-        // get all related entries and create capital asset record for each
-        Collection<GeneralLedgerEntry> glEntries = findAllGeneralLedgerEntry(documentNumber);
-        Collection<CapitalAssetInformation> allCapitalAssetInformation = findAllCapitalAssetInformation(documentNumber); 
-        
-        int nextCapitalAssetLineNumber = allCapitalAssetInformation.size() + 1;
-        for (GeneralLedgerEntry glEntry: glEntries) {
-        	// check if it has capital Asset Info
-        	List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
-        	if(entryCapitalAssetInfo.isEmpty()){
-            capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
-            createCapitalAccountingLine(capitalAccountingLines, glEntry, null);
-            createNewCapitalAsset(capitalAccountingLines,documentNumber,null,nextCapitalAssetLineNumber);
-            nextCapitalAssetLineNumber++;
-        	}
-        }
+		// get all related entries and create capital asset record for each
+		Collection<GeneralLedgerEntry> glEntries = findAllGeneralLedgerEntry(documentNumber);
+		Collection<CapitalAssetInformation> allCapitalAssetInformation = findAllCapitalAssetInformation(documentNumber);
 
-    }
+		int nextCapitalAssetLineNumber = allCapitalAssetInformation.size() + 1;
+		for (GeneralLedgerEntry glEntry : glEntries) {
+			// check if it has capital Asset Info
+			List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
+			if (entryCapitalAssetInfo.isEmpty()) {
+				capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
+				createCapitalAccountingLine(capitalAccountingLines, glEntry, null);
+				createNewCapitalAsset(capitalAccountingLines, documentNumber, null, nextCapitalAssetLineNumber);
+				nextCapitalAssetLineNumber++;
+			}
+		}
+
+	}
     
 
     private List<CapitalAccountingLines> createCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines, GeneralLedgerEntry entry, String distributionAmountCode) {
