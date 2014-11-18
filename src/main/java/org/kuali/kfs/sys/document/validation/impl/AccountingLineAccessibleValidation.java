@@ -27,6 +27,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -365,7 +366,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         // KFSPTS-1891 : added treasury node
       return workflowDocument != null && workflowDocument.getDocument() != null && (
     		  workflowDocument.getCurrentNodeNames().contains("ContractManagement") ||
-    		  workflowDocument.getCurrentNodeNames().contains(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW));
+              workflowDocument.getCurrentNodeNames().contains(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW) ||
+              (workflowDocument.getCurrentNodeNames().contains(PurapConstants.RequisitionStatuses.NODE_SEPARATION_OF_DUTIES) && document instanceof RequisitionDocument));
     }
 
 
