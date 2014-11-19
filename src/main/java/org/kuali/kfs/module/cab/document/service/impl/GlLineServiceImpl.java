@@ -171,7 +171,7 @@ public class GlLineServiceImpl implements GlLineService {
                     assetGlobalDetail.setOffCampusAddress(extendedAttribute.getAssetLocationStreetAddress());
                     assetGlobalDetail.setOffCampusCityName(extendedAttribute.getAssetLocationCityName());
                     assetGlobalDetail.setOffCampusCountryCode(extendedAttribute.getAssetLocationCountryCode());
-                    assetGlobalDetail.setOffCampusStateCode(extendedAttribute.getAssetLocationCountryCode());
+                    assetGlobalDetail.setOffCampusStateCode(extendedAttribute.getAssetLocationStateCode());
                     assetGlobalDetail.setOffCampusZipCode(extendedAttribute.getAssetLocationZipCode());
                     
                     AssetGlobalDetail uniqueAsset = new AssetGlobalDetail();
