@@ -203,10 +203,14 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
                 }
                 
                 // ACCOUNT OFF CAMPUS INDICATOR
-                account.setAccountOffCampusIndicator(accountOffCampusIndicator);
+                if(accountOffCampusIndicator){
+                	account.setAccountOffCampusIndicator(accountOffCampusIndicator);
+                }
                 
                 // CLOSED
-                account.setClosed(closed);
+                if(closed){
+                	account.setClosed(closed);
+                }
                 
                 // ACCOUNT TYPE CODE 
                 if (StringUtils.isNotBlank(accountTypeCode)) {
@@ -219,7 +223,9 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
                 }
                 
                 // ACCOUNT FRINGE BENEFIT INDICATOR
-                account.setAccountsFringesBnftIndicator(accountsFringesBnftIndicator);
+                if(accountsFringesBnftIndicator){
+                	account.setAccountsFringesBnftIndicator(accountsFringesBnftIndicator);
+                }
                 
                 // FRINGE BENEFITS CHART OF ACCOUNTS CODE
                 if (StringUtils.isNotBlank(reportsToChartOfAccountsCode)) {
@@ -262,16 +268,24 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
                 }
                 
                 // EXTERNAL ENCUMBRANCE SUFFICIENT FUNDS INDICATOR
-                account.setExtrnlFinEncumSufficntFndIndicator(extrnlFinEncumSufficntFndIndicator); 
+                if(extrnlFinEncumSufficntFndIndicator){
+                	account.setExtrnlFinEncumSufficntFndIndicator(extrnlFinEncumSufficntFndIndicator);
+                }
                 
                 // INTERNAL ENCUMBRANCE SUFFICIENT FUNDS INDICATOR
-                account.setIntrnlFinEncumSufficntFndIndicator(intrnlFinEncumSufficntFndIndicator);
+                if(intrnlFinEncumSufficntFndIndicator){
+                	account.setIntrnlFinEncumSufficntFndIndicator(intrnlFinEncumSufficntFndIndicator);
+                }
                 
                 // PRE-ENCUMBRANCE SUFFICIENT FUNDS INDICATOR
-                account.setFinPreencumSufficientFundIndicator(finPreencumSufficientFundIndicator); 
+                if(finPreencumSufficientFundIndicator){
+                	account.setFinPreencumSufficientFundIndicator(finPreencumSufficientFundIndicator); 
+                }
                 
                 // OBJECT PRESENCE CONTROL INDICATOR
-                account.setFinancialObjectivePrsctrlIndicator(financialObjectivePrsctrlIndicator);
+                if(financialObjectivePrsctrlIndicator){
+                	account.setFinancialObjectivePrsctrlIndicator(financialObjectivePrsctrlIndicator);
+                }
                 
                 // CONTRACT CONTROL CHART OF ACCOUNTS CODE
                 if (StringUtils.isNotBlank(contractControlFinCoaCode)) {

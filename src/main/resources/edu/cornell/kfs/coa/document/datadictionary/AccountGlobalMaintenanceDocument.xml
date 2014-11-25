@@ -88,7 +88,7 @@
                        <bean parent="MaintainableFieldDefinition" p:name="closed" />
                        <bean parent="MaintainableFieldDefinition" p:name="accountTypeCode" />
                        <bean parent="MaintainableFieldDefinition" p:name="appropriationAccountNumber" />
-                       <bean parent="MaintainableFieldDefinition" p:name="accountsFringesBnftIndicator" />
+                       <bean parent="MaintainableFieldDefinition" p:name="accountsFringesBnftIndicator" p:defaultValue="true"/>
                        <bean parent="MaintainableFieldDefinition" p:name="reportsToChartOfAccountsCode" />
                        <bean parent="MaintainableFieldDefinition" p:name="reportsToAccountNumber" />
                        <bean parent="MaintainableFieldDefinition" p:name="accountRestrictedStatusCode" />
