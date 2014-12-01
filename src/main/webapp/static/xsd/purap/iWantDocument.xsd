@@ -1,0 +1,57 @@
+<xsd:schema elementFormDefault="qualified"
+    targetNamespace="http://www.kuali.org/kfs/purap/iWantDocument"
+    xmlns:kfs="http://www.kuali.org/kfs/sys/types"
+    xmlns:purap="http://www.kuali.org/kfs/sys/puraptypes"
+    xmlns="http://www.kuali.org/kfs/purap/iWantDocument" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/types.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/purap/purapTypes.xsd" />
+   
+    <xsd:element name="explanation" type="xsd:string"/>
+    <xsd:element name="organizationDocumentNumber" type="xsd:string"/>
+    
+    <!-- definition of attributes -->
+    
+    <!-- definition of complex type elements -->
+    
+    <xsd:element name="i_want_doc_file">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="iWantDocument"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element> 
+    
+    <xsd:element name="documentHeader">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="explanation"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="organizationDocumentNumber"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>    
+
+    <xsd:element name="iWantDocument">
+        <xsd:complexType>
+            <xsd:sequence>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="documentHeader"/>  
+            	<xsd:element maxOccurs="1" minOccurs="1" ref="maximoNumber"/>   
+            	
+            	<xsd:element maxOccurs="1" minOccurs="1" ref="initiatorNetID"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="initiatorEmailAddress"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="initiatorPhoneNumber"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="initiatorAddress"/>
+            	
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="deliverToNetID"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="deliverToEmailAddress"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="deliverToPhoneNumber"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="deliverToAddress"/>
+            	
+                <xsd:element maxOccurs="1" minOccurs="0" ref="vendorName"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="vendorDescription"/>
+            	
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element> 
+   
+</xsd:schema>    
