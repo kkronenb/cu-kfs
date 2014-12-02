@@ -6,23 +6,36 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
 
 import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
+import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
 
+@Transactional
 public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(IWantDocumentFeedServiceImpl.class);
 	
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType iWantDocumentInputFileType;
+    protected DocumentService documentService;
+    protected PersonService personService;
+
+
 
 	@Override
 	public boolean processIWantDocumentFiles() {
@@ -76,74 +89,76 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 	}
 	
     public void loadIWantDocuments(IWantDocumentBatchFeed batchFeed, String incomingFileName, MessageMap MessageMap) {
-//        // get new batch record for the load
-//
-//        boolean batchHasErrors = false;
-//        for (BatchDisbursementVoucherDocument batchDisbursementVoucherDocument : batchFeed.getBatchDisbursementVoucherDocuments()) {
-//            batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_DV_RECORDS_READ, 1);
-//            batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_ACCOUNTING_RECORDS_READ, batchDisbursementVoucherDocument.getSourceAccountingLines().size());
-//
-//            // get defaults for DV chart/org
-//            DisbursementVoucherBatchDefault batchDefault = null;
-//            if (StringUtils.isNotBlank(batchFeed.getUnitCode())) {
-//                batchDefault = getDisbursementVoucherBatchDefault(batchFeed.getUnitCode());
-//            }
-//
-//            MessageMap documentMessageMap = new MessageMap();
-//            batchFeedHelperService.performForceUppercase(DisbursementVoucherDocument.class.getName(), batchDisbursementVoucherDocument);
-//
-//            // create and route doc as system user
-//            // create and route doc as system user
-//            UserSession actualUserSession = GlobalVariables.getUserSession();
-//            GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
-//            MessageMap globalMessageMap = GlobalVariables.getMessageMap();
-//            GlobalVariables.setMessageMap(documentMessageMap);
-//
-//            DisbursementVoucherDocument disbursementVoucherDocument = null;
-//            try {
-//                disbursementVoucherDocument = populateDisbursementVoucherDocument(disbursementVoucherBatch, batchDisbursementVoucherDocument, batchDefault, documentMessageMap);
-//
-//                // if the document is valid create GLPEs, Save and Approve
-//                if (documentMessageMap.hasNoErrors()) {
-//                    businessObjectService.save(disbursementVoucherDocument.getExtension());
-//                    documentService.routeDocument(disbursementVoucherDocument, "", null);
-//
-//                    if (documentMessageMap.hasNoErrors()) {
-//                        batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_DV_RECORDS_WRITTEN, 1);
-//                        batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_ACCOUNTING_RECORDS_WRITTEN, disbursementVoucherDocument.getSourceAccountingLines().size());
-//                        batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_GLPE_RECORDS_WRITTEN, disbursementVoucherDocument.getGeneralLedgerPendingEntries().size());
-//
-//                        batchStatus.getBatchDisbursementVoucherDocuments().add(disbursementVoucherDocument);
-//                    }
-//                }
-//            }
-//            catch (WorkflowException e) {
-//                LOG.error("Unable to route DV: " + e.getMessage());
-//                throw new RuntimeException("Unable to route DV: " + e.getMessage(), e);
-//            }
-//            catch (ValidationException e1) {
-//                // will be reported in audit report
-//            }
-//            finally {
-//                GlobalVariables.setUserSession(actualUserSession);
-//                GlobalVariables.setMessageMap(globalMessageMap);
-//            }
-//
-//            if (documentMessageMap.hasErrors()) {
-//                batchHasErrors = true;
-//            }
-//
-//            // populate summary line and add to report
-//            DisbursementVoucherBatchSummaryLine batchSummaryLine = populateBatchSummaryLine(disbursementVoucherDocument, documentMessageMap);
-//            batchStatus.getBatchSummaryLines().add(batchSummaryLine);
-//        }
-//
-//        // indicate in global map there were errors (for batch upload screen)
-//        if (batchHasErrors) {
-//            MessageMap.putError(KFSConstants.GLOBAL_ERRORS, FPKeyConstants.ERROR_BATCH_DISBURSEMENT_VOUCHER_ERRORS_NOTIFICATION);
-//        }
-//
-//        batchFeedHelperService.removeDoneFile(incomingFileName);
+    	
+    	for(BatchIWantDocument batchIWantDocument :  batchFeed.getBatchIWantDocuments()){
+    		
+    		populateIWantDocument(batchIWantDocument);
+    		
+    	}
+
+    }
+    
+    private void populateIWantDocument(BatchIWantDocument batchIWantDocument){
+    	try {
+    		Person initiator = personService.getPersonByPrincipalName(batchIWantDocument.getInitiatorNetID());
+			IWantDocument iWantDocument = (IWantDocument)documentService.getNewDocument("IWNT", initiator.getPrincipalName());
+			iWantDocument.getDocumentHeader().setDocumentDescription(batchIWantDocument.getMaximoNumber());
+			iWantDocument.setInitiatorNetID(batchIWantDocument.getInitiatorNetID());
+			iWantDocument.getDocumentHeader().setExplanation(batchIWantDocument.getBusinessPurpose());
+			iWantDocument.setCollegeLevelOrganization(batchIWantDocument.getCollegeLevelOrganization());
+			iWantDocument.setDepartmentLevelOrganization(batchIWantDocument.getDepartmentLevelOrganization());
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getInitiatorName())){
+				iWantDocument.setInitiatorName(batchIWantDocument.getInitiatorName());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getInitiatorEmailAddress())){
+				iWantDocument.setInitiatorEmailAddress(batchIWantDocument.getInitiatorEmailAddress());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getInitiatorPhoneNumber())){
+				iWantDocument.setInitiatorPhoneNumber(batchIWantDocument.getInitiatorPhoneNumber());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getInitiatorAddress())){
+				iWantDocument.setInitiatorAddress(batchIWantDocument.getInitiatorAddress());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getDeliverToNetID())){
+				iWantDocument.setDeliverToNetID(batchIWantDocument.getDeliverToNetID());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getDeliverToName())){
+				iWantDocument.setDeliverToName(batchIWantDocument.getDeliverToName());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getDeliverToEmailAddress())){
+				iWantDocument.setDeliverToEmailAddress(batchIWantDocument.getDeliverToEmailAddress());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getDeliverToPhoneNumber())){
+				iWantDocument.setDeliverToPhoneNumber(batchIWantDocument.getDeliverToPhoneNumber());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getDeliverToAddress())){
+				iWantDocument.setDeliverToAddress(batchIWantDocument.getDeliverToAddress());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getVendorName())){
+				iWantDocument.setVendorName(batchIWantDocument.getVendorName());
+			}
+			
+			if(StringUtils.isNotEmpty(batchIWantDocument.getVendorDescription())){
+				iWantDocument.setVendorDescription(batchIWantDocument.getVendorDescription());
+			}
+			
+			documentService.saveDocument(iWantDocument);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
     }
 
 	
@@ -168,6 +183,24 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 	public void setiWantDocumentInputFileType(
 			BatchInputFileType iWantDocumentInputFileType) {
 		this.iWantDocumentInputFileType = iWantDocumentInputFileType;
+	}
+	
+    
+	public DocumentService getDocumentService() {
+		return documentService;
+	}
+
+	public void setDocumentService(DocumentService documentService) {
+		this.documentService = documentService;
+	}
+	
+
+	public PersonService getPersonService() {
+		return personService;
+	}
+
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
 	}
 
 }

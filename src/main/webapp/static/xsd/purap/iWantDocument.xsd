@@ -9,6 +9,20 @@
    
     <xsd:element name="explanation" type="xsd:string"/>
     <xsd:element name="organizationDocumentNumber" type="xsd:string"/>
+    <xsd:element name="maximoNumber" type="xsd:string"/>
+    <xsd:element name="businessPurpose" type="xsd:string"/>
+    <xsd:element name="collegeLevelOrganization" type="xsd:string"/>
+    <xsd:element name="departmentLevelOrganization" type="xsd:string"/> 
+    <xsd:element name="initiatorNetID" type="xsd:string"/>
+    <xsd:element name="initiatorEmailAddress" type="xsd:string"/>
+    <xsd:element name="initiatorPhoneNumber" type="xsd:string"/>
+    <xsd:element name="initiatorAddress" type="xsd:string"/>
+    <xsd:element name="deliverToNetID" type="xsd:string"/>
+    <xsd:element name="deliverToEmailAddress" type="xsd:string"/>
+    <xsd:element name="deliverToPhoneNumber" type="xsd:string"/>
+    <xsd:element name="deliverToAddress" type="xsd:string"/>
+    <xsd:element name="vendorName" type="xsd:string"/>
+    <xsd:element name="vendorDescription" type="xsd:string"/>
     
     <!-- definition of attributes -->
     
@@ -35,7 +49,11 @@
         <xsd:complexType>
             <xsd:sequence>
             	<xsd:element maxOccurs="1" minOccurs="0" ref="documentHeader"/>  
-            	<xsd:element maxOccurs="1" minOccurs="1" ref="maximoNumber"/>   
+            	<xsd:element maxOccurs="1" minOccurs="1" ref="maximoNumber"/>
+            	<xsd:element maxOccurs="1" minOccurs="1" ref="businessPurpose"/>    
+            	
+            	<xsd:element maxOccurs="1" minOccurs="1" ref="collegeLevelOrganization"/> 
+            	<xsd:element maxOccurs="1" minOccurs="1" ref="departmentLevelOrganization"/> 
             	
             	<xsd:element maxOccurs="1" minOccurs="1" ref="initiatorNetID"/>
             	<xsd:element maxOccurs="1" minOccurs="0" ref="initiatorEmailAddress"/>
