@@ -53,6 +53,33 @@
             
             <call-method-rule pattern="vendorName" methodname="setVendorName" paramcount="0" /> 
             <call-method-rule pattern="vendorDescription" methodname="setVendorDescription" paramcount="0" /> 
+            
+            <pattern value="item">
+            	<object-create-rule classname="edu.cornell.kfs.module.purap.businessobject.BatchIWantItem" />
+            	<call-method-rule pattern="itemUnitOfMeasureCode" methodname="setItemUnitOfMeasureCode" paramcount="0" />
+            	<call-method-rule pattern="itemCatalogNumber" methodname="setItemCatalogNumber" paramcount="0" />
+            	<call-method-rule pattern="itemDescription" methodname="setItemDescription" paramcount="0" />
+            	<call-method-rule pattern="itemUnitPrice" methodname="setItemUnitPrice" paramcount="0" />
+            	<call-method-rule pattern="purchasingCommodityCode" methodname="setPurchasingCommodityCode" paramcount="0" />
+            	<call-method-rule pattern="itemQuantity" methodname="setItemQuantity" paramcount="0" />
+            	
+            	<set-next-rule methodname="addItem" />
+            </pattern> 
+            
+            <pattern value="account">
+            	<object-create-rule classname="edu.cornell.kfs.module.purap.businessobject.BatchIWantAccount" />
+            	<call-method-rule pattern="chartOfAccountsCode" methodname="setChartOfAccountsCode" paramcount="0" />
+            	<call-method-rule pattern="accountNumber" methodname="setAccountNumber" paramcount="0" />
+            	<call-method-rule pattern="financialObjectCode" methodname="setFinancialObjectCode" paramcount="0" />
+            	<call-method-rule pattern="subAccountNumber" methodname="setSubAccountNumber" paramcount="0" />
+            	<call-method-rule pattern="financialSubObjectCode" methodname="setFinancialSubObjectCode" paramcount="0" />
+            	<call-method-rule pattern="projectCode" methodname="setProjectCode" paramcount="0" />
+            	<call-method-rule pattern="organizationReferenceId" methodname="setOrganizationReferenceId" paramcount="0" />
+            	<call-method-rule pattern="amountOrPercent" methodname="setAmountOrPercent" paramcount="0" />
+            	<call-method-rule pattern="useAmountOrPercent" methodname="setUseAmountOrPercent" paramcount="0" />
+            	
+            	<set-next-rule methodname="addAccount" />
+            </pattern> 
 
              
             <set-next-rule methodname="addIWantDocument" />
