@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -21,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
 
 import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
+import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
+import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
@@ -150,6 +153,27 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 			
 			if(StringUtils.isNotEmpty(batchIWantDocument.getVendorDescription())){
 				iWantDocument.setVendorDescription(batchIWantDocument.getVendorDescription());
+			}
+			
+			//items
+			List<IWantItem> iWantItems = batchIWantDocument.getItems();
+			if(CollectionUtils.isNotEmpty(iWantItems)){
+				for(IWantItem item : iWantItems){
+					iWantDocument.addItem(item);
+				}
+			}
+			
+			//accounts
+			List<IWantAccount> iWantAccounts = batchIWantDocument.getAccounts();
+			if(CollectionUtils.isNotEmpty(iWantAccounts)){
+				for(IWantAccount account : iWantAccounts){
+					iWantDocument.addAccount(account);
+				}
+			}
+			
+			//account Description
+			if(StringUtils.isNotBlank(batchIWantDocument.getAccountDescriptionTxt())){
+				iWantDocument.setAccountDescriptionTxt(batchIWantDocument.getAccountDescriptionTxt());
 			}
 			
 			documentService.saveDocument(iWantDocument);

@@ -81,6 +81,7 @@
             	<set-next-rule methodname="addAccount" />
             </pattern> 
 
+			<call-method-rule pattern="accountDescriptionTxt" methodname="setAccountDescriptionTxt" paramcount="0" /> 
              
             <set-next-rule methodname="addIWantDocument" />
          </pattern>             

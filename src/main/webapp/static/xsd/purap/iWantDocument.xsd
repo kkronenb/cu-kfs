@@ -40,6 +40,8 @@
     <xsd:element name="organizationReferenceId" type="xsd:string"/>
     <xsd:element name="amountOrPercent" type="xsd:decimal"/>
     <xsd:element name="useAmountOrPercent" type="xsd:string"/>
+    
+   <xsd:element name="accountDescriptionTxt" type="xsd:string"/> 
        
     <!-- definition of attributes -->
     
@@ -116,6 +118,9 @@
             	
             	<xsd:element maxOccurs="100" minOccurs="0" ref="item"/>
             	<xsd:element maxOccurs="100" minOccurs="0" ref="account"/>
+            	
+            	<xsd:element maxOccurs="100" minOccurs="0" ref="accountDescriptionTxt"/>
+            	
             	
             </xsd:sequence>
         </xsd:complexType>
