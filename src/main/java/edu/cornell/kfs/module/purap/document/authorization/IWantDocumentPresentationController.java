@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.tools.shell.util.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
@@ -50,7 +51,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
 
     @Override
     public boolean canClose(Document document) {
-        return false;
+        return super.canClose(document);
     }
 
     @Override
