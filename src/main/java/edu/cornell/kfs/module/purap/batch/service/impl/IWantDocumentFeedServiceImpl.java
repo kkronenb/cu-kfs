@@ -176,6 +176,16 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 				iWantDocument.setAccountDescriptionTxt(batchIWantDocument.getAccountDescriptionTxt());
 			}
 			
+			if(StringUtils.isNotBlank(batchIWantDocument.getCommentsAndSpecialInstructions())){
+				iWantDocument.setCommentsAndSpecialInstructions(batchIWantDocument.getCommentsAndSpecialInstructions());
+			}
+			
+			iWantDocument.setGoods(batchIWantDocument.isGoods());
+			
+			if(StringUtils.isNotBlank(batchIWantDocument.getServicePerformedOnCampus())){
+				iWantDocument.setServicePerformedOnCampus(batchIWantDocument.getServicePerformedOnCampus());
+			}
+			
 			documentService.saveDocument(iWantDocument);
 			
 		} catch (Exception e) {

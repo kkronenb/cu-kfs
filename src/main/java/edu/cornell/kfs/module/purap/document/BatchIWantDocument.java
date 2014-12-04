@@ -1,5 +1,8 @@
 package edu.cornell.kfs.module.purap.document;
 
+import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.core.web.format.BooleanFormatter;
+
 public class BatchIWantDocument extends IWantDocument {
 	
 	protected String maximoNumber;
@@ -19,6 +22,13 @@ public class BatchIWantDocument extends IWantDocument {
 
 	public void setBusinessPurpose(String businessPurpose) {
 		this.businessPurpose = businessPurpose;
+	}
+	
+	public void setGoods(String goods) {
+        if (StringUtils.isNotBlank(goods)) {
+            Boolean goodsB = (Boolean) (new BooleanFormatter()).convertFromPresentationFormat(goods);
+            super.setGoods(goodsB);
+        }
 	}
 
 }

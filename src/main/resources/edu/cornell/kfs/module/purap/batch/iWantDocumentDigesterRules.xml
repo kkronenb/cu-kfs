@@ -82,7 +82,15 @@
             </pattern> 
 
 			<call-method-rule pattern="accountDescriptionTxt" methodname="setAccountDescriptionTxt" paramcount="0" /> 
-             
+			
+			<call-method-rule pattern="commentsAndSpecialInstructions" methodname="setCommentsAndSpecialInstructions" paramcount="0" /> 
+			
+			<call-method-rule pattern="goods" methodname="setGoods" paramcount="0" /> 
+			
+			<call-method-rule pattern="servicePerformedOnCampus" methodname="setServicePerformedOnCampus" paramcount="0" /> 
+			
+			<call-method-rule pattern="explanation" methodname="setExplanation" paramcount="0" /> 
+			
             <set-next-rule methodname="addIWantDocument" />
          </pattern>             
     </pattern>    

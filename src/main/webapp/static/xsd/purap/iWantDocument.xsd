@@ -27,7 +27,7 @@
     <xsd:element name="itemUnitOfMeasureCode" type="xsd:string"/>
     <xsd:element name="itemCatalogNumber" type="xsd:string"/>
     <xsd:element name="itemDescription" type="xsd:string"/>
-    <xsd:element name="itemUnitPrice" type="xsd:decimal"/>
+    <xsd:element name="itemUnitPrice" type="kfs:amountType"/>
     <xsd:element name="purchasingCommodityCode" type="xsd:string"/>
     <xsd:element name="itemQuantity" type="xsd:decimal"/>
     
@@ -38,10 +38,16 @@
     <xsd:element name="financialSubObjectCode" type="xsd:string"/>
     <xsd:element name="projectCode" type="xsd:string"/>
     <xsd:element name="organizationReferenceId" type="xsd:string"/>
-    <xsd:element name="amountOrPercent" type="xsd:decimal"/>
+    <xsd:element name="amountOrPercent" type="kfs:amountType"/>
     <xsd:element name="useAmountOrPercent" type="xsd:string"/>
     
    <xsd:element name="accountDescriptionTxt" type="xsd:string"/> 
+   
+   <xsd:element name="commentsAndSpecialInstructions" type="xsd:string"/> 
+   
+   <xsd:element name="goods" type="kfs:indicatorType"/> 
+   
+   <xsd:element name="servicePerformedOnCampus" type="kfs:indicatorType"/> 
        
     <!-- definition of attributes -->
     
@@ -119,9 +125,16 @@
             	<xsd:element maxOccurs="100" minOccurs="0" ref="item"/>
             	<xsd:element maxOccurs="100" minOccurs="0" ref="account"/>
             	
-            	<xsd:element maxOccurs="100" minOccurs="0" ref="accountDescriptionTxt"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="accountDescriptionTxt"/>
             	
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="commentsAndSpecialInstructions"/>
             	
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="goods"/>
+            	
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="servicePerformedOnCampus"/>
+            	
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="explanation"/>
+  	
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element> 
