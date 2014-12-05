@@ -32,6 +32,8 @@
             	<set-next-rule methodname="setDocumentHeader" />
             </pattern>  
             
+            <call-method-rule pattern="initiator" methodname="setInitiator" paramcount="0" />  
+            
             <call-method-rule pattern="maximoNumber" methodname="setMaximoNumber" paramcount="0" /> 
             
             <call-method-rule pattern="businessPurpose" methodname="setBusinessPurpose" paramcount="0" />
@@ -41,10 +43,10 @@
             <call-method-rule pattern="departmentLevelOrganization" methodname="setDepartmentLevelOrganization" paramcount="0" /> 
             
              
-            <call-method-rule pattern="initiatorNetID" methodname="setInitiatorNetID" paramcount="0" />  
-            <call-method-rule pattern="initiatorEmailAddress" methodname="setInitiatorEmailAddress" paramcount="0" />        
-            <call-method-rule pattern="initiatorPhoneNumber" methodname="setInitiatorPhoneNumber" paramcount="0" /> 
-            <call-method-rule pattern="initiatorAddress" methodname="setInitiatorAddress" paramcount="0" />   
+            <call-method-rule pattern="requestorNetID" methodname="setInitiatorNetID" paramcount="0" />  
+            <call-method-rule pattern="requestorEmailAddress" methodname="setInitiatorEmailAddress" paramcount="0" />        
+            <call-method-rule pattern="requestorPhoneNumber" methodname="setInitiatorPhoneNumber" paramcount="0" /> 
+            <call-method-rule pattern="requestorAddress" methodname="setInitiatorAddress" paramcount="0" />   
             
             <call-method-rule pattern="deliverToNetID" methodname="setDeliverToNetID" paramcount="0" /> 
             <call-method-rule pattern="deliverToEmailAddress" methodname="setDeliverToEmailAddress" paramcount="0" /> 

@@ -219,7 +219,7 @@ public class CUPurapConstants extends PurapConstants {
     public static final String WIRE_TRANSFER = "Wire Transfer";
     
     //KFSPTS-3718
-    public static final String I_WANT_DOC_FEED_FILE_PREFIX = "i_want_doc_file_";
+    public static final String I_WANT_DOC_FEED_FILE_PREFIX = "purap_iwantdoc_";
     public static final String I_WANT_DOC_FEED_FILE_TYPE_INDENTIFIER = "iWantDocumentInputFileType";
 
 }

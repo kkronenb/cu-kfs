@@ -5,8 +5,17 @@ import org.kuali.rice.core.web.format.BooleanFormatter;
 
 public class BatchIWantDocument extends IWantDocument {
 	
+	protected String initiator;
 	protected String maximoNumber;
 	protected String businessPurpose;
+	
+	public String getInitiator() {
+		return initiator;
+	}
+
+	public void setInitiator(String initiator) {
+		this.initiator = initiator;
+	}
 
 	public String getMaximoNumber() {
 		return maximoNumber;

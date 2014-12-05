@@ -103,8 +103,8 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     
     private void populateIWantDocument(BatchIWantDocument batchIWantDocument){
     	try {
-    		Person initiator = personService.getPersonByPrincipalName(batchIWantDocument.getInitiatorNetID());
-			IWantDocument iWantDocument = (IWantDocument)documentService.getNewDocument("IWNT", initiator.getPrincipalName());
+			IWantDocument iWantDocument = (IWantDocument)documentService.getNewDocument("IWNT", batchIWantDocument.getInitiator());
+			
 			iWantDocument.getDocumentHeader().setDocumentDescription(batchIWantDocument.getMaximoNumber());
 			iWantDocument.setInitiatorNetID(batchIWantDocument.getInitiatorNetID());
 			iWantDocument.getDocumentHeader().setExplanation(batchIWantDocument.getBusinessPurpose());
