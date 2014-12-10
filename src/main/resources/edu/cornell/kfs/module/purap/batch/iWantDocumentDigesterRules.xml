@@ -24,13 +24,6 @@
      
          <pattern value="iWantDocument">
             <object-create-rule classname="edu.cornell.kfs.module.purap.document.BatchIWantDocument" />
-            <pattern value="documentHeader">
-            	<object-create-rule classname="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" />
-            	<call-method-rule pattern="explanation" methodname="setExplanation" paramcount="0" />
-            	<call-method-rule pattern="organizationDocumentNumber" methodname="setOrganizationDocumentNumber" paramcount="0" />
-            	
-            	<set-next-rule methodname="setDocumentHeader" />
-            </pattern>  
             
             <call-method-rule pattern="initiator" methodname="setInitiator" paramcount="0" />  
             
@@ -90,8 +83,6 @@
 			<call-method-rule pattern="goods" methodname="setGoods" paramcount="0" /> 
 			
 			<call-method-rule pattern="servicePerformedOnCampus" methodname="setServicePerformedOnCampus" paramcount="0" /> 
-			
-			<call-method-rule pattern="explanation" methodname="setExplanation" paramcount="0" /> 
 			
             <set-next-rule methodname="addIWantDocument" />
          </pattern>             

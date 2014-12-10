@@ -7,8 +7,6 @@
     <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/types.xsd" />
     <xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/purap/purapTypes.xsd" />
    
-    <xsd:element name="explanation" type="xsd:string"/>
-    <xsd:element name="organizationDocumentNumber" type="xsd:string"/>
     <xsd:element name="initiator" type="xsd:string"/>
     <xsd:element name="maximoNumber" type="xsd:string"/>
     <xsd:element name="businessPurpose" type="xsd:string"/>
@@ -28,7 +26,7 @@
     <xsd:element name="itemUnitOfMeasureCode" type="xsd:string"/>
     <xsd:element name="itemCatalogNumber" type="xsd:string"/>
     <xsd:element name="itemDescription" type="xsd:string"/>
-    <xsd:element name="itemUnitPrice" type="kfs:amountType"/>
+    <xsd:element name="itemUnitPrice" type="xsd:decimal"/>
     <xsd:element name="purchasingCommodityCode" type="xsd:string"/>
     <xsd:element name="itemQuantity" type="xsd:decimal"/>
     
@@ -58,15 +56,6 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element maxOccurs="unbounded" minOccurs="1" ref="iWantDocument"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element> 
-    
-    <xsd:element name="documentHeader">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="explanation"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="organizationDocumentNumber"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>    
@@ -103,7 +92,6 @@
     <xsd:element name="iWantDocument">
         <xsd:complexType>
             <xsd:sequence>
-            	<xsd:element maxOccurs="1" minOccurs="0" ref="documentHeader"/>  
             	<xsd:element maxOccurs="1" minOccurs="1" ref="initiator"/>
             	<xsd:element maxOccurs="1" minOccurs="1" ref="maximoNumber"/>
             	<xsd:element maxOccurs="1" minOccurs="1" ref="businessPurpose"/>    
@@ -124,8 +112,8 @@
                 <xsd:element maxOccurs="1" minOccurs="0" ref="vendorName"/>
             	<xsd:element maxOccurs="1" minOccurs="0" ref="vendorDescription"/>
             	
-            	<xsd:element maxOccurs="100" minOccurs="0" ref="item"/>
-            	<xsd:element maxOccurs="100" minOccurs="0" ref="account"/>
+            	<xsd:element maxOccurs="unbounded" minOccurs="0" ref="item"/>
+            	<xsd:element maxOccurs="unbounded" minOccurs="0" ref="account"/>
             	
             	<xsd:element maxOccurs="1" minOccurs="0" ref="accountDescriptionTxt"/>
             	
@@ -135,8 +123,6 @@
             	
             	<xsd:element maxOccurs="1" minOccurs="0" ref="servicePerformedOnCampus"/>
             	
-            	<xsd:element maxOccurs="1" minOccurs="0" ref="explanation"/>
-  	
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element> 
