@@ -3,7 +3,6 @@ package edu.cornell.kfs.module.purap.batch.service.impl;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -11,15 +10,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.krad.bo.AdHocRouteRecipient;
-import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,15 +186,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 				iWantDocument.setServicePerformedOnCampus(batchIWantDocument.getServicePerformedOnCampus());
 			}
 			
-	        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
-	        boolean rulePassed = true;
-
-	        // call business rules
-	        rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
-			
-	        if(rulePassed){
-	        	documentService.routeDocument(iWantDocument,"", null);
-	        }
+			documentService.saveDocument(iWantDocument);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
