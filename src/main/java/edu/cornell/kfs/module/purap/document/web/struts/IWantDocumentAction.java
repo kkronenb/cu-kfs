@@ -520,11 +520,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
-    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        super.close(mapping, form, request, response);
-
-        return mapping.findForward(KFSConstants.MAPPING_PORTAL);
+    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	// KFSPTS-3606 : Always redirect to Action List on close.
+    	((IWantDocumentForm) form).setReturnToActionList(true);
+    	return super.close(mapping, form, request, response);
     }
 
     /**
@@ -1007,5 +1006,23 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
         return rulePassed;
     }
+
+//  @Override
+//  protected ActionForward returnToSender(HttpServletRequest request, ActionMapping mapping, KualiDocumentFormBase form) {
+//	//String actionCalled = form.getMethodToCall();
+//	
+//
+//    if (KewApiConstants.INITIATE_COMMAND.equalsIgnoreCase("close")) {
+//    //if(StringUtils.isNotEmpty(actionCalled) && actionCalled.equalsIgnoreCase("close")) {
+//	  // KFSPTS-3606 : Always redirect to Action List on close.
+//	  String workflowBase = getKualiConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY);
+//	  String actionListUrl = workflowBase + "/ActionList.do";
+//
+//      setupDocumentExit();
+//	  return new ActionForward(actionListUrl, true);
+//	} else {
+//	  return super.returnToSender(request, mapping, form);
+//	}
+//}
 
 }
