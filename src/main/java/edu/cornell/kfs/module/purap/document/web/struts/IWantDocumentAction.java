@@ -1007,22 +1007,4 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return rulePassed;
     }
 
-//  @Override
-//  protected ActionForward returnToSender(HttpServletRequest request, ActionMapping mapping, KualiDocumentFormBase form) {
-//	//String actionCalled = form.getMethodToCall();
-//	
-//
-//    if (KewApiConstants.INITIATE_COMMAND.equalsIgnoreCase("close")) {
-//    //if(StringUtils.isNotEmpty(actionCalled) && actionCalled.equalsIgnoreCase("close")) {
-//	  // KFSPTS-3606 : Always redirect to Action List on close.
-//	  String workflowBase = getKualiConfigurationService().getPropertyValueAsString(KRADConstants.WORKFLOW_URL_KEY);
-//	  String actionListUrl = workflowBase + "/ActionList.do";
-//
-//      setupDocumentExit();
-//	  return new ActionForward(actionListUrl, true);
-//	} else {
-//	  return super.returnToSender(request, mapping, form);
-//	}
-//}
-
 }
