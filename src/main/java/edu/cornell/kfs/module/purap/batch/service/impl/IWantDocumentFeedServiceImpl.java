@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -16,13 +18,17 @@ import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.krad.bo.AdHocRouteRecipient;
 import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.rice.krad.service.DictionaryValidationService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.util.ErrorMessage;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.AutoPopulatingList;
 
 import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
 
@@ -32,6 +38,7 @@ import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 
 @Transactional
 public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
@@ -113,6 +120,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 			iWantDocument.getDocumentHeader().setDocumentDescription(batchIWantDocument.getMaximoNumber());
 			iWantDocument.setInitiatorNetID(batchIWantDocument.getInitiatorNetID());
 			iWantDocument.getDocumentHeader().setExplanation(batchIWantDocument.getBusinessPurpose());
+			iWantDocument.setExplanation(batchIWantDocument.getBusinessPurpose());		
 			iWantDocument.setCollegeLevelOrganization(batchIWantDocument.getCollegeLevelOrganization());
 			iWantDocument.setDepartmentLevelOrganization(batchIWantDocument.getDepartmentLevelOrganization());
 			
@@ -159,12 +167,19 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 			if(StringUtils.isNotEmpty(batchIWantDocument.getVendorDescription())){
 				iWantDocument.setVendorDescription(batchIWantDocument.getVendorDescription());
 			}
+			 KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
 			
 			//items
 			List<IWantItem> iWantItems = batchIWantDocument.getItems();
 			if(CollectionUtils.isNotEmpty(iWantItems)){
 				for(IWantItem item : iWantItems){
-					iWantDocument.addItem(item);
+					boolean rulePassed = ruleService.applyRules(new AddIWantItemEvent(StringUtils.EMPTY, iWantDocument, item));
+					if(rulePassed){
+						iWantDocument.addItem(item);
+					}
+					else{
+						loggErrorMessages();
+					}
 				}
 			}
 			
@@ -172,7 +187,15 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 			List<IWantAccount> iWantAccounts = batchIWantDocument.getAccounts();
 			if(CollectionUtils.isNotEmpty(iWantAccounts)){
 				for(IWantAccount account : iWantAccounts){
-					iWantDocument.addAccount(account);
+					
+					boolean rulePassed = ruleService.applyRules(new KualiAddLineEvent(iWantDocument, "accounts", account));
+					
+					if(rulePassed){
+						iWantDocument.addAccount(account);
+					}
+					else{
+						loggErrorMessages();
+					}
 				}
 			}
 			
@@ -191,11 +214,16 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 				iWantDocument.setServicePerformedOnCampus(batchIWantDocument.getServicePerformedOnCampus());
 			}
 			
-	        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
+	       
 	        boolean rulePassed = true;
 
 	        // call business rules
 	        rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
+	        if(!rulePassed){
+	        	LOG.error("Errors for I Want doc related to Maximo PO number: " + batchIWantDocument.getMaximoNumber());
+	        	loggErrorMessages();
+
+	        }
 			
 	        if(rulePassed){
 	        	documentService.routeDocument(iWantDocument,"", null);
@@ -206,6 +234,18 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 			e.printStackTrace();
 		}
 
+    }
+    
+    protected void loggErrorMessages(){
+        Map<String,AutoPopulatingList<ErrorMessage>> errors = GlobalVariables.getMessageMap().getErrorMessages();
+        for(AutoPopulatingList<ErrorMessage> error: errors.values()){
+        	Iterator<ErrorMessage> iterator = error.iterator();
+        	while(iterator.hasNext()){
+        		ErrorMessage errorMessage = iterator.next();
+        		LOG.error(errorMessage.toString());
+        	}
+        }
+        GlobalVariables.getMessageMap().clearErrorMessages();
     }
 
 	
