@@ -27,7 +27,7 @@
             
             <call-method-rule pattern="initiator" methodname="setInitiator" paramcount="0" />  
             
-            <call-method-rule pattern="maximoNumber" methodname="setMaximoNumber" paramcount="0" /> 
+            <call-method-rule pattern="sourceNumber" methodname="setSourceNumber" paramcount="0" /> 
             
             <call-method-rule pattern="businessPurpose" methodname="setBusinessPurpose" paramcount="0" />
             

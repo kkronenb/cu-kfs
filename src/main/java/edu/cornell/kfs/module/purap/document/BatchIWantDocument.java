@@ -6,24 +6,25 @@ import org.kuali.rice.core.web.format.BooleanFormatter;
 public class BatchIWantDocument extends IWantDocument {
 	
 	protected String initiator;
-	protected String maximoNumber;
+	protected String sourceNumber;
 	protected String businessPurpose;
 	
 	public String getInitiator() {
 		return initiator;
 	}
 
+	public String getSourceNumber() {
+		return sourceNumber;
+	}
+
+	public void setSourceNumber(String sourceNumber) {
+		this.sourceNumber = sourceNumber;
+	}
+	
 	public void setInitiator(String initiator) {
 		this.initiator = initiator;
 	}
 
-	public String getMaximoNumber() {
-		return maximoNumber;
-	}
-
-	public void setMaximoNumber(String maximoNumber) {
-		this.maximoNumber = maximoNumber;
-	}
 
 	public String getBusinessPurpose() {
 		return businessPurpose;

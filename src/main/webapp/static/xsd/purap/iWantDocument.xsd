@@ -8,7 +8,7 @@
     <xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/purap/purapTypes.xsd" />
    
     <xsd:element name="initiator" type="xsd:string"/>
-    <xsd:element name="maximoNumber" type="xsd:string"/>
+    <xsd:element name="sourceNumber" type="xsd:string"/>
     <xsd:element name="businessPurpose" type="xsd:string"/>
     <xsd:element name="collegeLevelOrganization" type="xsd:string"/>
     <xsd:element name="departmentLevelOrganization" type="xsd:string"/> 
@@ -93,7 +93,7 @@
         <xsd:complexType>
             <xsd:sequence>
             	<xsd:element maxOccurs="1" minOccurs="1" ref="initiator"/>
-            	<xsd:element maxOccurs="1" minOccurs="1" ref="maximoNumber"/>
+            	<xsd:element maxOccurs="1" minOccurs="1" ref="sourceNumber"/>
             	<xsd:element maxOccurs="1" minOccurs="1" ref="businessPurpose"/>    
             	
             	<xsd:element maxOccurs="1" minOccurs="1" ref="collegeLevelOrganization"/> 

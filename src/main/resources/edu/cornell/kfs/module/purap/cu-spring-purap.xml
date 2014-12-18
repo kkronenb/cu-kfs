@@ -208,6 +208,7 @@
 		<property name="iWantDocumentInputFileType" ref="iWantDocumentInputFileType" />
 		<property name="documentService" ref="documentService" />
 		<property name="personService" ref="personService" />
+		<property name="iWantDocumentService" ref="iWantDocumentService"></property>
 	</bean>
     
     <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />

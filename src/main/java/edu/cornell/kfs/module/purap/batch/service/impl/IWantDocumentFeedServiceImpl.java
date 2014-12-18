@@ -38,6 +38,7 @@ import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 
 @Transactional
@@ -49,8 +50,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     protected BatchInputFileType iWantDocumentInputFileType;
     protected DocumentService documentService;
     protected PersonService personService;
-
-
+    protected IWantDocumentService iWantDocumentService;
 
 	@Override
 	public boolean processIWantDocumentFiles() {
@@ -117,7 +117,6 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     	try {
 			IWantDocument iWantDocument = (IWantDocument)documentService.getNewDocument("IWNT", batchIWantDocument.getInitiator());
 			
-			iWantDocument.getDocumentHeader().setDocumentDescription(batchIWantDocument.getMaximoNumber());
 			iWantDocument.setInitiatorNetID(batchIWantDocument.getInitiatorNetID());
 			iWantDocument.getDocumentHeader().setExplanation(batchIWantDocument.getBusinessPurpose());
 			iWantDocument.setExplanation(batchIWantDocument.getBusinessPurpose());		
@@ -214,13 +213,14 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 				iWantDocument.setServicePerformedOnCampus(batchIWantDocument.getServicePerformedOnCampus());
 			}
 			
+			iWantDocumentService.setIWantDocumentDescription(iWantDocument);
 	       
 	        boolean rulePassed = true;
 
 	        // call business rules
 	        rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
 	        if(!rulePassed){
-	        	LOG.error("Errors for I Want doc related to Maximo PO number: " + batchIWantDocument.getMaximoNumber());
+	        	LOG.error("Errors for I Want doc related to source number: " + batchIWantDocument.getSourceNumber());
 	        	loggErrorMessages();
 
 	        }
@@ -288,6 +288,14 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
+	}
+
+	public IWantDocumentService getiWantDocumentService() {
+		return iWantDocumentService;
+	}
+
+	public void setiWantDocumentService(IWantDocumentService iWantDocumentService) {
+		this.iWantDocumentService = iWantDocumentService;
 	}
 
 }

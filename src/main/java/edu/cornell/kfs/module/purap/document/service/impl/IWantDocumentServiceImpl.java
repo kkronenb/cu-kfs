@@ -28,7 +28,6 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
-
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
@@ -47,6 +46,7 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.address.EntityAddress;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.rice.krad.bo.DocumentHeader;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.exception.InvalidAddressException;
@@ -794,6 +794,34 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         
     }
     
+	/**
+	 * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#setIWantDocumentDescription(edu.cornell.kfs.module.purap.document.IWantDocument)
+	 */
+	@Override
+	public void setIWantDocumentDescription(IWantDocument iWantDocument) {
+        // add selected chart and department to document description
+        String routingChart = iWantDocument.getRoutingChart() == null ? StringUtils.EMPTY : iWantDocument
+                .getRoutingChart() + "-";
+        String routingOrg = iWantDocument.getRoutingOrganization() == null ? StringUtils.EMPTY : iWantDocument
+                .getRoutingOrganization();
+        String addChartOrgToDesc = routingChart + routingOrg;
+        String vendorName = iWantDocument.getVendorName() == null ? StringUtils.EMPTY : iWantDocument.getVendorName();
+        String description = addChartOrgToDesc + " " + vendorName;
+
+        int maxLengthOfDocumentDescription = KFSConstants.getMaxLengthOfDocumentDescription();
+        if (StringUtils.isNotBlank(description) && description.length() > maxLengthOfDocumentDescription) {
+            description = description.substring(0, maxLengthOfDocumentDescription);
+        }
+
+        // If necessary, add a default description.
+        if (StringUtils.isBlank(description)) {
+            description = "New IWantDocument";
+        }
+        
+        iWantDocument.getDocumentHeader().setDocumentDescription(description);
+	}
+    
+    
     public AttachmentService getAttachmentService() {
         return attachmentService;
     }
@@ -889,6 +917,5 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
-    
 
 }
