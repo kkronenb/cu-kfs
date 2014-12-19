@@ -1,8 +1,10 @@
 package edu.cornell.kfs.module.purap.batch.service.impl;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
@@ -21,6 +24,7 @@ import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.util.ErrorMessage;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AutoPopulatingList;
 
@@ -53,6 +57,8 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(iWantDocumentInputFileType);
 
+        List<String> processedFiles = new ArrayList<String>();
+
         for (String incomingFileName : fileNamesToLoad) {
             try {
                 LOG.debug("processIWantDocumentFiles  () Processing " + incomingFileName);
@@ -60,13 +66,16 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
                 if (batchFeed != null && !batchFeed.getBatchIWantDocuments().isEmpty()) {
                     loadIWantDocuments(batchFeed, incomingFileName, GlobalVariables.getMessageMap());
+                    processedFiles.add(incomingFileName);
                 }
             } catch (RuntimeException e) {
                 LOG.error("Caught exception trying to load i want document file: " + incomingFileName, e);
                 throw new RuntimeException("Caught exception trying to load i want document file: " + incomingFileName, e);
             }
         }
-        
+        // remove done files
+        removeDoneFiles(processedFiles);
+
         return true;
 
     }
@@ -75,7 +84,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
      * Parses the input file.
      * 
      * @param incomingFileName
-     * @return an IWantDocumentBatchFeed containg input data
+     * @return an IWantDocumentBatchFeed containing input data
      */
     protected IWantDocumentBatchFeed parseInputFile(String incomingFileName) {
         LOG.info("Parsing file: " + incomingFileName);
@@ -134,6 +143,18 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
         LOG.info("Creating I Want document from data related to source number: " + batchIWantDocument.getSourceNumber());
 
         try {
+            if (StringUtils.isBlank(batchIWantDocument.getInitiator())) {
+                LOG.error("Initiator net ID cannot be empty: " + batchIWantDocument.getInitiator());
+                noErrors = false;
+            }
+
+            Person initiator = personService.getPersonByPrincipalName(batchIWantDocument.getInitiator());
+
+            if (ObjectUtils.isNull(initiator)) {
+                LOG.error("Initiator net ID is not valid: " + batchIWantDocument.getInitiator());
+                noErrors = false;
+            }
+
             IWantDocument iWantDocument = (IWantDocument) documentService.getNewDocument("IWNT", batchIWantDocument.getInitiator());
 
             iWantDocument.setInitiatorNetID(batchIWantDocument.getInitiatorNetID());
@@ -318,6 +339,20 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
         }
 
         GlobalVariables.getMessageMap().clearErrorMessages();
+    }
+
+    /**
+     * Clears out associated .done files for the processed data files.
+     * 
+     * @param dataFileNames
+     */
+    protected void removeDoneFiles(List<String> dataFileNames) {
+        for (String dataFileName : dataFileNames) {
+            File doneFile = new File(StringUtils.substringBeforeLast(dataFileName, ".") + ".done");
+            if (doneFile.exists()) {
+                doneFile.delete();
+            }
+        }
     }
 
     /**
