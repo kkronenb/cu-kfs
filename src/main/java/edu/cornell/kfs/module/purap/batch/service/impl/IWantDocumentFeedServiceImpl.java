@@ -15,9 +15,12 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
+import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
+import org.kuali.rice.krad.bo.AdHocRoutePerson;
+import org.kuali.rice.krad.bo.AdHocRouteRecipient;
 import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.KualiRuleService;
@@ -140,6 +143,8 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     private void populateIWantDocument(BatchIWantDocument batchIWantDocument) {
 
         boolean noErrors = true;
+        List<AdHocRoutePerson> adHocRoutePersons = new ArrayList<AdHocRoutePerson>();
+
         LOG.info("Creating I Want document from data related to source number: " + batchIWantDocument.getSourceNumber());
 
         try {
@@ -228,6 +233,28 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
                 iWantDocument.setServicePerformedOnCampus(batchIWantDocument.getServicePerformedOnCampus());
             }
 
+            if (StringUtils.isNotBlank(batchIWantDocument.getCurrentRouteToNetId())) {
+
+                Person adHocRouteTo = personService.getPersonByPrincipalName(batchIWantDocument.getCurrentRouteToNetId());
+
+                if (ObjectUtils.isNull(adHocRouteTo)) {
+                    LOG.error("Ad Hoc Route to net ID is not valid: " + batchIWantDocument.getCurrentRouteToNetId());
+                    noErrors = false;
+                } else {
+
+                    iWantDocument.setCurrentRouteToNetId(batchIWantDocument.getCurrentRouteToNetId());
+
+                    AdHocRoutePerson recipient = new AdHocRoutePerson();
+                    recipient.setId(iWantDocument.getCurrentRouteToNetId());
+                    recipient.setActionRequested(KewApiConstants.ACTION_REQUEST_APPROVE_REQ);
+
+                    adHocRoutePersons.add(recipient);
+                    
+                    iWantDocument.setAdHocRoutePersons(adHocRoutePersons);
+                }
+
+            }
+
             iWantDocumentService.setIWantDocumentDescription(iWantDocument);
 
             boolean rulePassed = true;
@@ -238,7 +265,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
                 loggErrorMessages();
 
             } else if (noErrors) {
-                documentService.routeDocument(iWantDocument, "", null);
+                documentService.routeDocument(iWantDocument, "", new ArrayList<AdHocRouteRecipient>(iWantDocument.getAdHocRoutePersons()));
             }
 
         } catch (Exception e) {

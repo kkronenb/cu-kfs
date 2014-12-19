@@ -47,6 +47,8 @@
    <xsd:element name="goods" type="kfs:indicatorType"/> 
    
    <xsd:element name="servicePerformedOnCampus" type="kfs:indicatorType"/> 
+   
+   <xsd:element name="adHocRouteToNetID" type="xsd:string"/> 
        
     <!-- definition of attributes -->
     
@@ -122,6 +124,8 @@
             	<xsd:element maxOccurs="1" minOccurs="0" ref="goods"/>
             	
             	<xsd:element maxOccurs="1" minOccurs="0" ref="servicePerformedOnCampus"/>
+            	
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="adHocRouteToNetID"/>
             	
             </xsd:sequence>
         </xsd:complexType>
