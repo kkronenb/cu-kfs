@@ -12,10 +12,12 @@
     <xsd:element name="businessPurpose" type="xsd:string"/>
     <xsd:element name="collegeLevelOrganization" type="xsd:string"/>
     <xsd:element name="departmentLevelOrganization" type="xsd:string"/> 
+    <xsd:element name="sameAsInitiator" type="kfs:indicatorType"/>
     <xsd:element name="requestorNetID" type="xsd:string"/>
     <xsd:element name="requestorEmailAddress" type="xsd:string"/>
     <xsd:element name="requestorPhoneNumber" type="xsd:string"/>
     <xsd:element name="requestorAddress" type="xsd:string"/>
+    <xsd:element name="sameAsRequestor" type="kfs:indicatorType"/>
     <xsd:element name="deliverToNetID" type="xsd:string"/>
     <xsd:element name="deliverToEmailAddress" type="xsd:string"/>
     <xsd:element name="deliverToPhoneNumber" type="xsd:string"/>
@@ -101,10 +103,12 @@
             	<xsd:element maxOccurs="1" minOccurs="1" ref="collegeLevelOrganization"/> 
             	<xsd:element maxOccurs="1" minOccurs="1" ref="departmentLevelOrganization"/> 
             	
-            	<xsd:element maxOccurs="1" minOccurs="1" ref="requestorNetID"/>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="requestorNetID"/>
             	<xsd:element maxOccurs="1" minOccurs="0" ref="requestorEmailAddress"/>
             	<xsd:element maxOccurs="1" minOccurs="0" ref="requestorPhoneNumber"/>
             	<xsd:element maxOccurs="1" minOccurs="0" ref="requestorAddress"/>
+            	
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="sameAsRequestor"/>
             	
             	<xsd:element maxOccurs="1" minOccurs="0" ref="deliverToNetID"/>
             	<xsd:element maxOccurs="1" minOccurs="0" ref="deliverToEmailAddress"/>

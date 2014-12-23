@@ -168,40 +168,71 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             iWantDocument.setCollegeLevelOrganization(batchIWantDocument.getCollegeLevelOrganization());
             iWantDocument.setDepartmentLevelOrganization(batchIWantDocument.getDepartmentLevelOrganization());
 
-            if (StringUtils.isNotEmpty(batchIWantDocument.getInitiatorName())) {
-                iWantDocument.setInitiatorName(batchIWantDocument.getInitiatorName());
+            // populate requestor fields
+
+            if (StringUtils.isBlank(batchIWantDocument.getInitiatorName()) && StringUtils.isBlank(batchIWantDocument.getInitiatorEmailAddress()) && StringUtils.isBlank(batchIWantDocument.getInitiatorPhoneNumber()) && StringUtils.isBlank(batchIWantDocument.getInitiatorAddress())) {
+
+                // populate with data from doc initator
+                String initiatorNetID = initiator.getPrincipalName();
+
+                iWantDocument.setInitiatorNetID(initiatorNetID);
+
+                String initiatorName = initiator.getName();
+                String initiatorPhoneNumber = initiator.getPhoneNumber();
+                String initiatorEmailAddress = initiator.getEmailAddress();
+
+                String address = iWantDocumentService.getPersonCampusAddress(initiatorNetID);
+
+                iWantDocument.setInitiatorName(initiatorName);
+                iWantDocument.setInitiatorPhoneNumber(initiatorPhoneNumber);
+                iWantDocument.setInitiatorEmailAddress(initiatorEmailAddress);
+                iWantDocument.setInitiatorAddress(address);
+            } else {
+                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorName())) {
+                    iWantDocument.setInitiatorName(batchIWantDocument.getInitiatorName());
+                }
+
+                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorEmailAddress())) {
+                    iWantDocument.setInitiatorEmailAddress(batchIWantDocument.getInitiatorEmailAddress());
+                }
+
+                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorPhoneNumber())) {
+                    iWantDocument.setInitiatorPhoneNumber(batchIWantDocument.getInitiatorPhoneNumber());
+                }
+
+                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorAddress())) {
+                    iWantDocument.setInitiatorAddress(batchIWantDocument.getInitiatorAddress());
+                }
             }
 
-            if (StringUtils.isNotEmpty(batchIWantDocument.getInitiatorEmailAddress())) {
-                iWantDocument.setInitiatorEmailAddress(batchIWantDocument.getInitiatorEmailAddress());
-            }
+            if (batchIWantDocument.isSameAsInitiator() && StringUtils.isBlank(batchIWantDocument.getDeliverToNetID()) && StringUtils.isBlank(batchIWantDocument.getDeliverToName()) && StringUtils.isBlank(batchIWantDocument.getDeliverToEmailAddress()) && StringUtils.isBlank(batchIWantDocument.getDeliverToPhoneNumber()) && StringUtils.isBlank(batchIWantDocument.getDeliverToAddress())) {
+                iWantDocument.setSameAsInitiator(true);
+                iWantDocument.setDeliverToNetID(iWantDocument.getInitiatorNetID());
+                iWantDocument.setDeliverToName(iWantDocument.getInitiatorName());
+                iWantDocument.setDeliverToEmailAddress(iWantDocument.getInitiatorEmailAddress());
+                iWantDocument.setDeliverToPhoneNumber(iWantDocument.getInitiatorPhoneNumber());
+                iWantDocument.setDeliverToAddress(iWantDocument.getInitiatorAddress());
+            } else {
 
-            if (StringUtils.isNotEmpty(batchIWantDocument.getInitiatorPhoneNumber())) {
-                iWantDocument.setInitiatorPhoneNumber(batchIWantDocument.getInitiatorPhoneNumber());
-            }
+                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToNetID())) {
+                    iWantDocument.setDeliverToNetID(batchIWantDocument.getDeliverToNetID());
+                }
 
-            if (StringUtils.isNotEmpty(batchIWantDocument.getInitiatorAddress())) {
-                iWantDocument.setInitiatorAddress(batchIWantDocument.getInitiatorAddress());
-            }
+                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToName())) {
+                    iWantDocument.setDeliverToName(batchIWantDocument.getDeliverToName());
+                }
 
-            if (StringUtils.isNotEmpty(batchIWantDocument.getDeliverToNetID())) {
-                iWantDocument.setDeliverToNetID(batchIWantDocument.getDeliverToNetID());
-            }
+                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToEmailAddress())) {
+                    iWantDocument.setDeliverToEmailAddress(batchIWantDocument.getDeliverToEmailAddress());
+                }
 
-            if (StringUtils.isNotEmpty(batchIWantDocument.getDeliverToName())) {
-                iWantDocument.setDeliverToName(batchIWantDocument.getDeliverToName());
-            }
+                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToPhoneNumber())) {
+                    iWantDocument.setDeliverToPhoneNumber(batchIWantDocument.getDeliverToPhoneNumber());
+                }
 
-            if (StringUtils.isNotEmpty(batchIWantDocument.getDeliverToEmailAddress())) {
-                iWantDocument.setDeliverToEmailAddress(batchIWantDocument.getDeliverToEmailAddress());
-            }
-
-            if (StringUtils.isNotEmpty(batchIWantDocument.getDeliverToPhoneNumber())) {
-                iWantDocument.setDeliverToPhoneNumber(batchIWantDocument.getDeliverToPhoneNumber());
-            }
-
-            if (StringUtils.isNotEmpty(batchIWantDocument.getDeliverToAddress())) {
-                iWantDocument.setDeliverToAddress(batchIWantDocument.getDeliverToAddress());
+                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToAddress())) {
+                    iWantDocument.setDeliverToAddress(batchIWantDocument.getDeliverToAddress());
+                }
             }
 
             if (StringUtils.isNotEmpty(batchIWantDocument.getVendorName())) {
@@ -249,7 +280,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
                     recipient.setActionRequested(KewApiConstants.ACTION_REQUEST_APPROVE_REQ);
 
                     adHocRoutePersons.add(recipient);
-                    
+
                     iWantDocument.setAdHocRoutePersons(adHocRoutePersons);
                 }
 

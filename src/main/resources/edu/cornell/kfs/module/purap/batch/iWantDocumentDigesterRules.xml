@@ -41,6 +41,8 @@
             <call-method-rule pattern="requestorPhoneNumber" methodname="setInitiatorPhoneNumber" paramcount="0" /> 
             <call-method-rule pattern="requestorAddress" methodname="setInitiatorAddress" paramcount="0" />   
             
+            <call-method-rule pattern="sameAsRequestor" methodname="setSameAsInitiator" paramcount="0" /> 
+            
             <call-method-rule pattern="deliverToNetID" methodname="setDeliverToNetID" paramcount="0" /> 
             <call-method-rule pattern="deliverToEmailAddress" methodname="setDeliverToEmailAddress" paramcount="0" /> 
             <call-method-rule pattern="deliverToPhoneNumber" methodname="setDeliverToPhoneNumber" paramcount="0" /> 

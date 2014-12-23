@@ -40,5 +40,12 @@ public class BatchIWantDocument extends IWantDocument {
             super.setGoods(goodsB);
         }
 	}
+	
+	public void setSameAsInitiator(String sameAsInitiator) {
+	    if (StringUtils.isNotBlank(sameAsInitiator)) {
+            Boolean sameAsInitiatorB = (Boolean) (new BooleanFormatter()).convertFromPresentationFormat(sameAsInitiator);
+	    super.setSameAsInitiator(sameAsInitiatorB);
+	    }
+	}
 
 }
