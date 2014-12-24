@@ -51,6 +51,11 @@
    <xsd:element name="servicePerformedOnCampus" type="kfs:indicatorType"/> 
    
    <xsd:element name="adHocRouteToNetID" type="xsd:string"/> 
+   
+   <xsd:element name="noteText" type="xsd:string"/> 
+   
+   <xsd:element name="attachmentType" type="xsd:string"/> 
+   <xsd:element name="attachmentFileName" type="xsd:string"/> 
        
     <!-- definition of attributes -->
     
@@ -92,6 +97,23 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element> 
+    
+    <xsd:element name="note">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="noteText"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element> 
+    
+    <xsd:element name="attachment">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="attachmentType"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="attachmentFileName"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element> 
 
     <xsd:element name="iWantDocument">
         <xsd:complexType>
@@ -130,6 +152,10 @@
             	<xsd:element maxOccurs="1" minOccurs="0" ref="servicePerformedOnCampus"/>
             	
             	<xsd:element maxOccurs="1" minOccurs="0" ref="adHocRouteToNetID"/>
+            	
+            	<xsd:element maxOccurs="unbounded" minOccurs="0" ref="note"/>
+            	
+            	<xsd:element maxOccurs="unbounded" minOccurs="0" ref="attachment"/>
             	
             </xsd:sequence>
         </xsd:complexType>

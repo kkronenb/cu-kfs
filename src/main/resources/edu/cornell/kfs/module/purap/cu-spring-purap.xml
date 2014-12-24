@@ -210,6 +210,7 @@
 		<property name="personService" ref="personService" />
 		<property name="iWantDocumentService" ref="iWantDocumentService" />
 		<property name="ruleService" ref="kualiRuleService"/>
+		<property name="attachmentService" ref="attachmentService" />
 	</bean>
     
     <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />

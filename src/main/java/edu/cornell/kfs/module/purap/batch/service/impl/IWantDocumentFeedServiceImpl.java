@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
@@ -21,7 +23,10 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.krad.bo.AdHocRoutePerson;
 import org.kuali.rice.krad.bo.AdHocRouteRecipient;
+import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.rice.krad.service.AttachmentService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.util.ErrorMessage;
@@ -32,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
+import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
+import edu.cornell.kfs.module.purap.businessobject.BatchIWantNote;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
@@ -51,6 +58,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     protected PersonService personService;
     protected IWantDocumentService iWantDocumentService;
     protected KualiRuleService ruleService;
+    protected AttachmentService attachmentService;
 
     /**
      * @see edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService#processIWantDocumentFiles()
@@ -288,6 +296,10 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
             iWantDocumentService.setIWantDocumentDescription(iWantDocument);
 
+            addNotes(iWantDocument, batchIWantDocument);
+
+            loadDocumentAttachments(iWantDocument, batchIWantDocument.getiWantAttachments());
+
             boolean rulePassed = true;
 
             // call business rules
@@ -381,6 +393,72 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
         }
 
         return noErrors;
+    }
+
+    private void addNotes(IWantDocument document, BatchIWantDocument batchIWantDocument) {
+        if (ObjectUtils.isNotNull(batchIWantDocument.getiWantNotes()) && !batchIWantDocument.getiWantNotes().isEmpty()) {
+            for (BatchIWantNote note : batchIWantDocument.getiWantNotes()) {
+                addNote(document, note);
+            }
+        }
+
+    }
+
+    /*
+     * create a note and add it to vendor document
+     */
+    private void addNote(IWantDocument document, BatchIWantNote batchNote) {
+        Note note = new Note();
+
+        note.setNoteText(batchNote.getNoteText());
+        note.setRemoteObjectIdentifier(document.getObjectId());
+        note.setAuthorUniversalIdentifier(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
+        note.setNoteTypeCode(KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE.getCode());
+        note.setNotePostedTimestampToCurrent();
+        document.addNote(note);
+    }
+
+    private void loadDocumentAttachments(IWantDocument document, List<BatchIWantAttachment> attachments) {
+        String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachment";
+
+        for (BatchIWantAttachment attachment : attachments) {
+            Note note = new Note();
+
+            note.setNoteText(attachment.getAttachmentType());
+            note.setRemoteObjectIdentifier(document.getObjectId());
+            note.setAuthorUniversalIdentifier(document.getDocumentHeader().getWorkflowDocument().getPrincipalId());
+            note.setNoteTypeCode(KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE.getCode());
+            note.setNotePostedTimestampToCurrent();
+
+            // attempt to load file
+            String fileName = attachmentsPath + "/" + attachment.getAttachmentFileName();
+            File attachmentFile = new File(fileName);
+            if (!attachmentFile.exists()) {
+                continue;
+            }
+
+            try {
+                FileInputStream fileInputStream = new FileInputStream(fileName);
+                Integer fileSize = Integer.parseInt(Long.toString(attachmentFile.length()));
+
+                // TODO : Files.probeContentType is supported by java 7. Not sure if this will be an issue
+                String mimeTypeCode = Files.probeContentType(attachmentFile.toPath());
+                // TODO : urlconnection is working for java 7 and under, but it return null for 'docx/pptx/xslx'
+                // String type = URLConnection.guessContentTypeFromName(attachmentFile.getAbsolutePath());
+
+                LOG.info("Mime type " + fileName + " " + mimeTypeCode);
+                String attachType = KFSConstants.EMPTY_STRING;
+
+                Attachment noteAttachment = attachmentService.createAttachment(document.getDocumentHeader(), attachment.getAttachmentFileName(), mimeTypeCode, fileSize, fileInputStream, attachType);
+
+                note.addAttachment(noteAttachment);
+                document.addNote(note);
+            } catch (FileNotFoundException e) {
+                continue;
+            } catch (IOException e1) {
+                throw new RuntimeException("Unable to create attachment for File: " + fileName, e1);
+            }
+        }
     }
 
     /**
@@ -521,5 +599,13 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     public void setRuleService(KualiRuleService ruleService) {
         this.ruleService = ruleService;
     }
+
+	public AttachmentService getAttachmentService() {
+		return attachmentService;
+	}
+
+	public void setAttachmentService(AttachmentService attachmentService) {
+		this.attachmentService = attachmentService;
+	}
 
 }
