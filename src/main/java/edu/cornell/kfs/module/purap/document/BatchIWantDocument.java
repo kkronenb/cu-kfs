@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.web.format.BooleanFormatter;
+import org.kuali.rice.krad.bo.Attachment;
 
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantNote;
@@ -14,13 +15,11 @@ public class BatchIWantDocument extends IWantDocument {
 	protected String initiator;
 	protected String sourceNumber;
 	protected String businessPurpose;
-	private List<BatchIWantNote> iWantNotes;
-	private List<BatchIWantAttachment> iWantAttachments;
+	private List<Attachment> attachments;
 	
 	public BatchIWantDocument() {
 	    super();
-	    iWantNotes = new ArrayList<BatchIWantNote>();
-	    iWantAttachments = new ArrayList<BatchIWantAttachment>();
+	    attachments = new ArrayList<Attachment>();
 	    
     }
 	
@@ -62,29 +61,17 @@ public class BatchIWantDocument extends IWantDocument {
 	    super.setSameAsInitiator(sameAsInitiatorB);
 	    }
 	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
     
-    public void addNote(BatchIWantNote note){
-        iWantNotes.add(note);
-    }
-    
-    public void addAttachment(BatchIWantAttachment attachment){
-        iWantAttachments.add(attachment);
-    }
-
-    public List<BatchIWantNote> getiWantNotes() {
-        return iWantNotes;
-    }
-
-    public void setiWantNotes(List<BatchIWantNote> iWantNotes) {
-        this.iWantNotes = iWantNotes;
-    }
-
-    public List<BatchIWantAttachment> getiWantAttachments() {
-        return iWantAttachments;
-    }
-
-    public void setiWantAttachments(List<BatchIWantAttachment> iWantAttachments) {
-        this.iWantAttachments = iWantAttachments;
+    public void addAttachment(Attachment attachment) {
+        getAttachments().add(attachment);
     }
 
 }

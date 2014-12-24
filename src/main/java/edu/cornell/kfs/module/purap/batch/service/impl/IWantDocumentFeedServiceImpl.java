@@ -36,6 +36,8 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AutoPopulatingList;
 
+import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
+
 import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantNote;
@@ -59,6 +61,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     protected IWantDocumentService iWantDocumentService;
     protected KualiRuleService ruleService;
     protected AttachmentService attachmentService;
+    private BatchFeedHelperService batchFeedHelperService;
 
     /**
      * @see edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService#processIWantDocumentFiles()
@@ -298,7 +301,9 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
             addNotes(iWantDocument, batchIWantDocument);
 
-            loadDocumentAttachments(iWantDocument, batchIWantDocument.getiWantAttachments());
+            String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachment";
+            MessageMap documentMessageMap = new MessageMap();
+            batchFeedHelperService.loadDocumentAttachments(iWantDocument, batchIWantDocument.getAttachments(), attachmentsPath, "", documentMessageMap);
 
             boolean rulePassed = true;
 
@@ -396,10 +401,15 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     }
 
     private void addNotes(IWantDocument document, BatchIWantDocument batchIWantDocument) {
-        if (ObjectUtils.isNotNull(batchIWantDocument.getiWantNotes()) && !batchIWantDocument.getiWantNotes().isEmpty()) {
-            for (BatchIWantNote note : batchIWantDocument.getiWantNotes()) {
-                addNote(document, note);
-            }
+        // set notes
+        for (Iterator iterator = batchIWantDocument.getNotes().iterator(); iterator.hasNext();) {
+            Note note = (Note) iterator.next();
+            note.setRemoteObjectIdentifier(document.getObjectId());
+            note.setAuthorUniversalIdentifier(batchFeedHelperService.getSystemUser().getPrincipalId());
+            note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+            note.setNotePostedTimestampToCurrent();
+            
+            document.addNote(note); 
         }
 
     }
@@ -606,6 +616,15 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
 	public void setAttachmentService(AttachmentService attachmentService) {
 		this.attachmentService = attachmentService;
+	}
+
+	public BatchFeedHelperService getBatchFeedHelperService() {
+		return batchFeedHelperService;
+	}
+
+	public void setBatchFeedHelperService(
+			BatchFeedHelperService batchFeedHelperService) {
+		this.batchFeedHelperService = batchFeedHelperService;
 	}
 
 }

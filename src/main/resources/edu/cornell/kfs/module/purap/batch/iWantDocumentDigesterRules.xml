@@ -88,20 +88,22 @@
 			
 			<call-method-rule pattern="adHocRouteToNetID" methodname="setCurrentRouteToNetId" paramcount="0" /> 
 			
-			<pattern value="note">
-            	<object-create-rule classname="edu.cornell.kfs.module.purap.businessobject.BatchIWantNote" />
-            	<call-method-rule pattern="noteText" methodname="setNoteText" paramcount="0" />
-            	
-            	<set-next-rule methodname="addNote" />
-            </pattern> 
-			
-			<pattern value="attachment">
-            	<object-create-rule classname="edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment" />
-            	<call-method-rule pattern="attachmentType" methodname="setAttachmentType" paramcount="0" />
-            	<call-method-rule pattern="attachmentFileName" methodname="setAttachmentFileName" paramcount="0" />
-            	
-            	<set-next-rule methodname="addAttachment" />
-            </pattern> 
+             <pattern value="note">
+                <object-create-rule classname="org.kuali.rice.krad.bo.Note" />
+                
+                <call-method-rule pattern="noteText" methodname="setNoteText" paramcount="0" /> 
+                
+                <set-next-rule methodname="addNote" />
+             </pattern>
+            
+             <pattern value="attachment">
+                <object-create-rule classname="org.kuali.rice.krad.bo.Attachment" />
+                
+                <call-method-rule pattern="mimeTypeCode" methodname="setAttachmentMimeTypeCode" paramcount="0" /> 
+                <call-method-rule pattern="fileName" methodname="setAttachmentFileName" paramcount="0" /> 
+                
+                <set-next-rule methodname="addAttachment" />
+             </pattern>   
 			
             <set-next-rule methodname="addIWantDocument" />
          </pattern>             
