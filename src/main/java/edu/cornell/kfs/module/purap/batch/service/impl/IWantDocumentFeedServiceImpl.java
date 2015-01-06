@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,11 +36,8 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AutoPopulatingList;
 
-import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
-
 import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
-import edu.cornell.kfs.module.purap.businessobject.BatchIWantNote;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
@@ -61,9 +58,9 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     protected IWantDocumentService iWantDocumentService;
     protected KualiRuleService ruleService;
     protected AttachmentService attachmentService;
-    private BatchFeedHelperService batchFeedHelperService;
+    protected Properties mimeTypeProperties;
 
-    /**
+	/**
      * @see edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService#processIWantDocumentFiles()
      */
     @Override
@@ -179,11 +176,11 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             iWantDocument.setCollegeLevelOrganization(batchIWantDocument.getCollegeLevelOrganization());
             iWantDocument.setDepartmentLevelOrganization(batchIWantDocument.getDepartmentLevelOrganization());
 
-            // populate requestor fields
+            // populate requester fields
 
             if (StringUtils.isBlank(batchIWantDocument.getInitiatorName()) && StringUtils.isBlank(batchIWantDocument.getInitiatorEmailAddress()) && StringUtils.isBlank(batchIWantDocument.getInitiatorPhoneNumber()) && StringUtils.isBlank(batchIWantDocument.getInitiatorAddress())) {
 
-                // populate with data from doc initator
+                // populate with data from doc initiator
                 String initiatorNetID = initiator.getPrincipalName();
 
                 iWantDocument.setInitiatorNetID(initiatorNetID);
@@ -299,12 +296,12 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
             iWantDocumentService.setIWantDocumentDescription(iWantDocument);
 
+            // add notes
             addNotes(iWantDocument, batchIWantDocument);
 
-            String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachment";
-            MessageMap documentMessageMap = new MessageMap();
-            batchFeedHelperService.loadDocumentAttachments(iWantDocument, batchIWantDocument.getAttachments(), attachmentsPath, "", documentMessageMap);
-
+            // add attachments
+            loadDocumentAttachments(iWantDocument, batchIWantDocument.getAttachments());
+            
             boolean rulePassed = true;
 
             // call business rules
@@ -400,12 +397,17 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
         return noErrors;
     }
 
+    /**
+     * Adds notes to the I Want document.
+     * @param document
+     * @param batchIWantDocument
+     */
     private void addNotes(IWantDocument document, BatchIWantDocument batchIWantDocument) {
         // set notes
         for (Iterator iterator = batchIWantDocument.getNotes().iterator(); iterator.hasNext();) {
             Note note = (Note) iterator.next();
             note.setRemoteObjectIdentifier(document.getObjectId());
-            note.setAuthorUniversalIdentifier(batchFeedHelperService.getSystemUser().getPrincipalId());
+            note.setAuthorUniversalIdentifier(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
             note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
             note.setNotePostedTimestampToCurrent();
             
@@ -414,20 +416,11 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
     }
 
-    /*
-     * create a note and add it to vendor document
+    /**
+     * Adds attachments to the I Want document.
+     * @param document
+     * @param attachments
      */
-    private void addNote(IWantDocument document, BatchIWantNote batchNote) {
-        Note note = new Note();
-
-        note.setNoteText(batchNote.getNoteText());
-        note.setRemoteObjectIdentifier(document.getObjectId());
-        note.setAuthorUniversalIdentifier(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
-        note.setNoteTypeCode(KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE.getCode());
-        note.setNotePostedTimestampToCurrent();
-        document.addNote(note);
-    }
-
     private void loadDocumentAttachments(IWantDocument document, List<BatchIWantAttachment> attachments) {
         String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachment";
 
@@ -451,10 +444,16 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
                 FileInputStream fileInputStream = new FileInputStream(fileName);
                 Integer fileSize = Integer.parseInt(Long.toString(attachmentFile.length()));
 
-                // TODO : Files.probeContentType is supported by java 7. Not sure if this will be an issue
-                String mimeTypeCode = Files.probeContentType(attachmentFile.toPath());
-                // TODO : urlconnection is working for java 7 and under, but it return null for 'docx/pptx/xslx'
-                // String type = URLConnection.guessContentTypeFromName(attachmentFile.getAbsolutePath());
+                String mimeTypeCode = KFSConstants.EMPTY_STRING;
+                String fileExtension = "." + StringUtils.substringAfterLast(fileName, ".");
+                if (StringUtils.isNotBlank(fileExtension) && mimeTypeProperties.containsKey(fileExtension)) {
+                    if (StringUtils.isBlank(mimeTypeCode)) {
+                        mimeTypeCode = mimeTypeProperties.getProperty(fileExtension);
+                    }
+                }
+                else {
+                	LOG.error("Mime type error" + fileName + " " + mimeTypeCode);
+                }
 
                 LOG.info("Mime type " + fileName + " " + mimeTypeCode);
                 String attachType = KFSConstants.EMPTY_STRING;
@@ -617,14 +616,23 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 	public void setAttachmentService(AttachmentService attachmentService) {
 		this.attachmentService = attachmentService;
 	}
-
-	public BatchFeedHelperService getBatchFeedHelperService() {
-		return batchFeedHelperService;
+	
+    /**
+     * Gets the mimeTypeProperties.
+     * 
+     * @return mimeTypeProperties
+     */
+    public Properties getMimeTypeProperties() {
+		return mimeTypeProperties;
 	}
 
-	public void setBatchFeedHelperService(
-			BatchFeedHelperService batchFeedHelperService) {
-		this.batchFeedHelperService = batchFeedHelperService;
+	/**
+	 * Sets the mimeTypeProperties.
+	 * 
+	 * @param mimeTypeProperties
+	 */
+	public void setMimeTypeProperties(Properties mimeTypeProperties) {
+		this.mimeTypeProperties = mimeTypeProperties;
 	}
 
 }

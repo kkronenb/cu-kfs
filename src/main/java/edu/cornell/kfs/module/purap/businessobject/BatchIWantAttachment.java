@@ -1,9 +1,10 @@
 package edu.cornell.kfs.module.purap.businessobject;
 
-public class BatchIWantAttachment {
+import org.kuali.rice.krad.bo.Attachment;
+
+public class BatchIWantAttachment extends Attachment{
 
     private String attachmentType;
-    private String attachmentFileName;
 
     public BatchIWantAttachment() {}
 
@@ -15,12 +16,5 @@ public class BatchIWantAttachment {
         this.attachmentType = attachmentType;
     }
 
-    public String getAttachmentFileName() {
-        return attachmentFileName;
-    }
-
-    public void setAttachmentFileName(String attachmentFileName) {
-        this.attachmentFileName = attachmentFileName;
-    }
 
 }

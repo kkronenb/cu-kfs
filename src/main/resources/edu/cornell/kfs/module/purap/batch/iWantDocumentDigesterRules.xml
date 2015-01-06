@@ -97,10 +97,11 @@
              </pattern>
             
              <pattern value="attachment">
-                <object-create-rule classname="org.kuali.rice.krad.bo.Attachment" />
+                <object-create-rule classname="edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment" />
                 
                 <call-method-rule pattern="mimeTypeCode" methodname="setAttachmentMimeTypeCode" paramcount="0" /> 
                 <call-method-rule pattern="fileName" methodname="setAttachmentFileName" paramcount="0" /> 
+                <call-method-rule pattern="attachmentType" methodname="setAttachmentType" paramcount="0" /> 
                 
                 <set-next-rule methodname="addAttachment" />
              </pattern>   

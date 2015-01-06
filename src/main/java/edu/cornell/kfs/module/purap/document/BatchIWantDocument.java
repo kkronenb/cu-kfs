@@ -15,11 +15,11 @@ public class BatchIWantDocument extends IWantDocument {
 	protected String initiator;
 	protected String sourceNumber;
 	protected String businessPurpose;
-	private List<Attachment> attachments;
+	private List<BatchIWantAttachment> attachments;
 	
 	public BatchIWantDocument() {
 	    super();
-	    attachments = new ArrayList<Attachment>();
+	    attachments = new ArrayList<BatchIWantAttachment>();
 	    
     }
 	
@@ -62,15 +62,15 @@ public class BatchIWantDocument extends IWantDocument {
 	    }
 	}
 
-	public List<Attachment> getAttachments() {
+	public List<BatchIWantAttachment> getAttachments() {
 		return attachments;
 	}
 
-	public void setAttachments(List<Attachment> attachments) {
+	public void setAttachments(List<BatchIWantAttachment> attachments) {
 		this.attachments = attachments;
 	}
     
-    public void addAttachment(Attachment attachment) {
+    public void addAttachment(BatchIWantAttachment attachment) {
         getAttachments().add(attachment);
     }
 
