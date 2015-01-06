@@ -137,7 +137,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
         for (BatchIWantDocument batchIWantDocument : batchFeed.getBatchIWantDocuments()) {
 
-            populateIWantDocument(batchIWantDocument);
+            populateIWantDocument(batchIWantDocument, incomingFileName);
 
         }
 
@@ -148,7 +148,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
      * 
      * @param batchIWantDocument
      */
-    private void populateIWantDocument(BatchIWantDocument batchIWantDocument) {
+    private void populateIWantDocument(BatchIWantDocument batchIWantDocument, String incomingFileName) {
 
         boolean noErrors = true;
         List<AdHocRoutePerson> adHocRoutePersons = new ArrayList<AdHocRoutePerson>();
@@ -300,7 +300,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             addNotes(iWantDocument, batchIWantDocument);
 
             // add attachments
-            loadDocumentAttachments(iWantDocument, batchIWantDocument.getAttachments());
+            loadDocumentAttachments(iWantDocument, batchIWantDocument.getAttachments(), incomingFileName);
             
             boolean rulePassed = true;
 
@@ -410,6 +410,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             note.setAuthorUniversalIdentifier(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
             note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
             note.setNotePostedTimestampToCurrent();
+            note.setNoteText("Note: " + note.getNoteText());
             
             document.addNote(note); 
         }
@@ -421,8 +422,8 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
      * @param document
      * @param attachments
      */
-    private void loadDocumentAttachments(IWantDocument document, List<BatchIWantAttachment> attachments) {
-        String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachment";
+    private void loadDocumentAttachments(IWantDocument document, List<BatchIWantAttachment> attachments, String incomingFileName) {
+        String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachments/" + StringUtils.substringBeforeLast(StringUtils.substringAfterLast(incomingFileName, "/"), ".");
 
         for (BatchIWantAttachment attachment : attachments) {
             Note note = new Note();
@@ -444,7 +445,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
                 FileInputStream fileInputStream = new FileInputStream(fileName);
                 Integer fileSize = Integer.parseInt(Long.toString(attachmentFile.length()));
 
-                String mimeTypeCode = KFSConstants.EMPTY_STRING;
+                String mimeTypeCode = attachment.getAttachmentMimeTypeCode();
                 String fileExtension = "." + StringUtils.substringAfterLast(fileName, ".");
                 if (StringUtils.isNotBlank(fileExtension) && mimeTypeProperties.containsKey(fileExtension)) {
                     if (StringUtils.isBlank(mimeTypeCode)) {
