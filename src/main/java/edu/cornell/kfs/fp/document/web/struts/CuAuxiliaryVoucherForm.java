@@ -40,7 +40,8 @@ public class CuAuxiliaryVoucherForm extends AuxiliaryVoucherForm {
 	        
 	        cal.set(Calendar.DAY_OF_MONTH, reversalDateDefaultDayOfMonth);
 
-	        avReversalDate.setTime(cal.getTimeInMillis());
+	        long timeInMillis = cal.getTimeInMillis();
+	        avReversalDate.setTime(timeInMillis);
 	        
 	        return avReversalDate;
 	}
