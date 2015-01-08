@@ -9,41 +9,44 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 public class CuAuxiliaryVoucherForm extends AuxiliaryVoucherForm {
 	
+	/**
+	 * Overrides method to fix reversal date calculation when selected accounting period is in previous year
+	 * 
+	 * @see org.kuali.kfs.fp.document.web.struts.AuxiliaryVoucherForm#getAvReversalDate()
+	 */
 	@Override
 	protected Date getAvReversalDate() {
-		 Date documentReveralDate = getAuxiliaryVoucherDocument().getReversalDate();      
-	        if (ObjectUtils.isNotNull(documentReveralDate)) {
-	            return documentReveralDate;
-	        }
-	        
-	        java.sql.Date avReversalDate = getAuxiliaryVoucherDocument().getAccountingPeriod().getUniversityFiscalPeriodEndDate();
+		Date documentReveralDate = getAuxiliaryVoucherDocument().getReversalDate();
+		if (ObjectUtils.isNotNull(documentReveralDate)) {
+			return documentReveralDate;
+		}
 
-	        Calendar cal = Calendar.getInstance();
-	        cal.setTimeInMillis(avReversalDate.getTime());
-	        
-	        int thisMonth;
-	        
-	        if (getAuxiliaryVoucherDocument().getAccountingPeriod().getUniversityFiscalPeriodCode().equals(KFSConstants.MONTH13)) {
-	            thisMonth = cal.JULY;
-	        } else
-	            thisMonth = getAuxiliaryVoucherDocument().getAccountingPeriod().getMonth();
+		java.sql.Date avReversalDate = getAuxiliaryVoucherDocument().getAccountingPeriod().getUniversityFiscalPeriodEndDate();
 
-	        
-	        cal.set(Calendar.MONTH, (thisMonth));
-	        
-	        //if today's day > 15 then set the month to next month.
-	     //   if (cal.get(Calendar.DAY_OF_MONTH) > KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_DAY_OF_MONTH) {
-	      //      cal.add(Calendar.MONTH, 1);
-	      //  }
-	        
-	        int reversalDateDefaultDayOfMonth = this.getReversalDateDefaultDayOfMonth();
-	        
-	        cal.set(Calendar.DAY_OF_MONTH, reversalDateDefaultDayOfMonth);
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(avReversalDate.getTime());
 
-	        long timeInMillis = cal.getTimeInMillis();
-	        avReversalDate.setTime(timeInMillis);
-	        
-	        return avReversalDate;
+		int thisMonth;
+
+		if (getAuxiliaryVoucherDocument().getAccountingPeriod().getUniversityFiscalPeriodCode().equals(KFSConstants.MONTH13)) {
+			thisMonth = cal.JULY;
+		} else
+			thisMonth = getAuxiliaryVoucherDocument().getAccountingPeriod().getMonth();
+
+		// the Calendar month of January starts at 0 while the months from
+		// AccountingPeriod start with January being 1; that is why we get
+		// reversal date one month ahead except from period 13 which will get
+		// reversal date July
+		cal.set(Calendar.MONTH, (thisMonth));
+
+		int reversalDateDefaultDayOfMonth = this.getReversalDateDefaultDayOfMonth();
+
+		cal.set(Calendar.DAY_OF_MONTH, reversalDateDefaultDayOfMonth);
+
+		long timeInMillis = cal.getTimeInMillis();
+		avReversalDate.setTime(timeInMillis);
+
+		return avReversalDate;
 	}
 
 }
