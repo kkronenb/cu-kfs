@@ -172,7 +172,15 @@
             validate="false" attribute="KualiForm">
             <forward name="selection" path="/jsp/pdp/format/formatSelection.jsp" />
             <forward name="continue" path="/jsp/pdp/format/formatContinue.jsp" />
-        </action>		
+        </action>
+        
+        <action path="/createDoneBatchFileAdmin" name="KualiBatchFileAdminForm"
+			scope="request" attribute="KualiForm" parameter="methodToCall"
+			type="edu.cornell.kfs.sys.web.struts.CreateDoneKualiBatchFileAdminAction">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/sys/KualiBatchFileAdmin.jsp" />
+		</action>
+        		
     </action-mappings>
     
 </struts-config>
