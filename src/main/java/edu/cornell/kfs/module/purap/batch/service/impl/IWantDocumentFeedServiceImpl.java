@@ -175,6 +175,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             iWantDocument.setExplanation(batchIWantDocument.getBusinessPurpose());
             iWantDocument.setCollegeLevelOrganization(batchIWantDocument.getCollegeLevelOrganization());
             iWantDocument.setDepartmentLevelOrganization(batchIWantDocument.getDepartmentLevelOrganization());
+            iWantDocument.getDocumentHeader().setOrganizationDocumentNumber(batchIWantDocument.getSourceNumber());
 
             // populate requester fields
 
