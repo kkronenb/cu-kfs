@@ -94,6 +94,9 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_DISENCUMBRANCE_FILE = "message.batchUpload.title.labor.disencumbrance.file";
     public static final String MESSAGE_CREATE_DISENCUMBRANCE_ERROR = "message.ld.disencumbrance.error";
     public static final String MESSAGE_CREATE_DISENCUMBRANCE_SUCCESSFUL = "message.ld.disencumber.successful";
+    
+    // KFSPTS-3416
+    public static final String MESSAGE_DONE_FILE_ALREADY_EXISTS = "message.system.batch.doneFileAlreadyExists";
 
 	    //KFSPTS-990 Award 
 	    public static final String ERROR_DUPLICATE_AWARD_ACCOUNT = "error.duplicate.awardAccount";
