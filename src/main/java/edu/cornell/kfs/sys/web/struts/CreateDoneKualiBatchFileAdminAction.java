@@ -16,7 +16,9 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminAction;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminForm;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.batch.CreateDoneBatchFile;
 
 public class CreateDoneKualiBatchFileAdminAction extends
@@ -53,6 +55,9 @@ public class CreateDoneKualiBatchFileAdminAction extends
             if (!doneFileCreated) {
                 throw new RuntimeException("Errors encountered while saving the file: Unable to create .done file " + doneFileName);
             }
+        }
+        else{
+        	GlobalVariables.getMessageMap().putInfo("documentHeader", CUKFSKeyConstants.MESSAGE_DONE_FILE_ALREADY_EXISTS);
         }
     }
 
