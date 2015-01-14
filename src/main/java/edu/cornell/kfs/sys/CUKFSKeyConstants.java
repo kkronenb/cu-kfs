@@ -95,9 +95,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String MESSAGE_CREATE_DISENCUMBRANCE_ERROR = "message.ld.disencumbrance.error";
     public static final String MESSAGE_CREATE_DISENCUMBRANCE_SUCCESSFUL = "message.ld.disencumber.successful";
     
-    // KFSPTS-3416
-    public static final String MESSAGE_DONE_FILE_ALREADY_EXISTS = "message.system.batch.doneFileAlreadyExists";
-
 	    //KFSPTS-990 Award 
 	    public static final String ERROR_DUPLICATE_AWARD_ACCOUNT = "error.duplicate.awardAccount";
 	    public static final String ERROR_DUPLICATE_AWARD_PROJECT_DIRECTOR = "error.duplicate.awardProjectDirector";
@@ -110,5 +107,9 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION = "note.trickleDownInactivation.inactivatedAccountReversions";
 	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownInactivation.inactivatedAccountReversions.errorDuringPersistence";
 	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED = "note.trickleDownInactivation.inactivatedAccountReversions.recordAlreadyMaintenanceLocked";
+
+	    // KFSPTS-3416
+	    public static final String MESSAGE_DONE_FILE_ALREADY_EXISTS = "message.system.batch.doneFileAlreadyExists";
+	    public static final String MESSAGE_DONE_FILE_SUCCESSFULLY_CREATED = "message.system.batch.doneFileSuccessfullyCreated";
 
 }

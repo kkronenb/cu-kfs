@@ -11,15 +11,19 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
+import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminAction;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminForm;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.batch.CreateDoneBatchFile;
+import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
 
 public class CreateDoneKualiBatchFileAdminAction extends
 		KualiBatchFileAdminAction {
@@ -27,26 +31,33 @@ public class CreateDoneKualiBatchFileAdminAction extends
     public ActionForward createDone(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         KualiBatchFileAdminForm fileAdminForm = (KualiBatchFileAdminForm) form;
         String filePath = BatchFileUtils.resolvePathToAbsolutePath(fileAdminForm.getFilePath());
-        createDoneFile(filePath);
-        return new ActionForward(getBackUrl(fileAdminForm), true);
-    }
-
-    protected String getBackUrl(KualiBatchFileAdminForm form) {
-    	String basePath = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY);
-        return "kr/lookup.do" + "?methodToCall=start&docFormKey=88888888&businessObjectClassName=" + CreateDoneBatchFile.class.getName() + "&docFormKey=88888888&returnLocation=" +basePath +"/portal.do&hideReturnLink=true";
+        File file = new File(filePath).getAbsoluteFile();
+        BatchFile batchFile = new BatchFile();
+        batchFile.setFile(file);
+        if (!SpringContext.getBean(CreateDoneBatchFileAuthorizationService.class).canCreateDoneFile(batchFile, GlobalVariables.getUserSession().getPerson())) {
+            throw new RuntimeException("Error: not authorized to create a .done file");
+        }
+        
+        String status = createDoneFile(filePath);
+        request.setAttribute("status", status);
+        return mapping.findForward(RiceConstants.MAPPING_BASIC);
     }
     
     /**
      * Creates a '.done' file with the name of the original file.
      */
-    protected void createDoneFile(String filename) {
+    protected String createDoneFile(String filename) {
+    	String status = null;
         String doneFileName =  StringUtils.substringBeforeLast(filename,".") + ".done";
         File doneFile = new File(doneFileName);
+        
+        ConfigurationService kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
 
         if (!doneFile.exists()) {
             boolean doneFileCreated = false;
             try {
                 doneFileCreated = doneFile.createNewFile();
+                status = kualiConfigurationService.getPropertyValueAsString( CUKFSKeyConstants.MESSAGE_DONE_FILE_SUCCESSFULLY_CREATED);
             }
             catch (IOException e) {
                 throw new RuntimeException("Errors encountered while saving the file: Unable to create .done file " + doneFileName, e);
@@ -57,8 +68,10 @@ public class CreateDoneKualiBatchFileAdminAction extends
             }
         }
         else{
-        	GlobalVariables.getMessageMap().putInfo("documentHeader", CUKFSKeyConstants.MESSAGE_DONE_FILE_ALREADY_EXISTS);
+        	status = kualiConfigurationService.getPropertyValueAsString( CUKFSKeyConstants.MESSAGE_DONE_FILE_ALREADY_EXISTS);
         }
+        
+        return status;
     }
 
 }

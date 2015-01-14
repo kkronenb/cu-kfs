@@ -178,7 +178,7 @@
 			scope="request" attribute="KualiForm" parameter="methodToCall"
 			type="edu.cornell.kfs.sys.web.struts.CreateDoneKualiBatchFileAdminAction">
 			<set-property property="cancellable" value="true" />
-			<forward name="basic" path="/jsp/sys/KualiBatchFileAdmin.jsp" />
+			<forward name="basic" path="/jsp/sys/CreateDoneBatchFile.jsp" />
 		</action>
         		
     </action-mappings>
