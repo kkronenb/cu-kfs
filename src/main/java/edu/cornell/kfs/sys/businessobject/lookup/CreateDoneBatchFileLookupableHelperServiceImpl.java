@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl;
@@ -32,7 +33,8 @@ public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLoo
     }
 
     protected boolean canCreateDoneFile(BatchFile batchFile) {
-    	return createDoneAuthorizationService.canCreateDoneFile(batchFile, GlobalVariables.getUserSession().getPerson());
+    	boolean isDoneFile = StringUtils.endsWith(batchFile.getFileName(), ".done");
+    	return (!isDoneFile && createDoneAuthorizationService.canCreateDoneFile(batchFile, GlobalVariables.getUserSession().getPerson()));
     }
     
     protected HtmlData getCreateDoneUrl(BatchFile batchFile) {

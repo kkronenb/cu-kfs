@@ -10,6 +10,7 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.rice.krad.service.KualiModuleService;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
 
 public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminAuthorizationServiceImpl  implements
@@ -23,7 +24,7 @@ public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminA
         boolean isAuthorized = false;
 
             isAuthorized = getIdentityManagementService().isAuthorizedByTemplateName(user.getPrincipalId(),
-                KFSConstants.PermissionTemplate.VIEW_BATCH_FILES.namespace, KFSConstants.PermissionTemplate.VIEW_BATCH_FILES.name,
+                KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.CREATE_DONE_FILE_PERMISSION_TEMPLATE_NAME,
                 generateCreateDoneCheckPermissionDetails(batchFile, user), generateCreateDoneCheckRoleQualifiers(batchFile, user));
             
         return isAuthorized;
