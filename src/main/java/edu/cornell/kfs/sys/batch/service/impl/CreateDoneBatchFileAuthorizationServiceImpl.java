@@ -13,8 +13,7 @@ import org.kuali.rice.krad.service.KualiModuleService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
 
-public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminAuthorizationServiceImpl  implements
-		CreateDoneBatchFileAuthorizationService {
+public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminAuthorizationServiceImpl implements CreateDoneBatchFileAuthorizationService {
 	
     private IdentityManagementService identityManagementService;
     private KualiModuleService kualiModuleService;

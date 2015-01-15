@@ -25,8 +25,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.batch.CreateDoneBatchFile;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
 
-public class CreateDoneKualiBatchFileAdminAction extends
-		KualiBatchFileAdminAction {
+public class CreateDoneKualiBatchFileAdminAction extends KualiBatchFileAdminAction {
 	
     public ActionForward createDone(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         KualiBatchFileAdminForm fileAdminForm = (KualiBatchFileAdminForm) form;
