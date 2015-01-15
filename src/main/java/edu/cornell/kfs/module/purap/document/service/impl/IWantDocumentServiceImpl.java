@@ -307,6 +307,11 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         requisitionDocument.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(
                 RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
         requisitionDocument.setUseTaxIndicator(SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(requisitionDocument));
+        
+        // if org doc number present on I Want doc, copy it to REQ
+        if(StringUtils.isNotBlank(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber())){
+        	requisitionDocument.getDocumentHeader().setOrganizationDocumentNumber(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber());
+        }
 
         // set up document link identifier.
         requisitionDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(iWantDocument.getAccountsPayablePurchasingDocumentLinkIdentifier());
