@@ -178,72 +178,12 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             iWantDocument.getDocumentHeader().setOrganizationDocumentNumber(batchIWantDocument.getSourceNumber());
 
             // populate requester fields
+            populateIWantDocRequestorSection(initiator, batchIWantDocument, iWantDocument);
 
-            if (StringUtils.isBlank(batchIWantDocument.getInitiatorName()) && StringUtils.isBlank(batchIWantDocument.getInitiatorEmailAddress()) && StringUtils.isBlank(batchIWantDocument.getInitiatorPhoneNumber()) && StringUtils.isBlank(batchIWantDocument.getInitiatorAddress())) {
+            // populate deliver to section
+            populateIWantDocDeliverToSection(batchIWantDocument, iWantDocument);
 
-                // populate with data from doc initiator
-                String initiatorNetID = initiator.getPrincipalName();
-
-                iWantDocument.setInitiatorNetID(initiatorNetID);
-
-                String initiatorName = initiator.getName();
-                String initiatorPhoneNumber = initiator.getPhoneNumber();
-                String initiatorEmailAddress = initiator.getEmailAddress();
-
-                String address = iWantDocumentService.getPersonCampusAddress(initiatorNetID);
-
-                iWantDocument.setInitiatorName(initiatorName);
-                iWantDocument.setInitiatorPhoneNumber(initiatorPhoneNumber);
-                iWantDocument.setInitiatorEmailAddress(initiatorEmailAddress);
-                iWantDocument.setInitiatorAddress(address);
-            } else {
-                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorName())) {
-                    iWantDocument.setInitiatorName(batchIWantDocument.getInitiatorName());
-                }
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorEmailAddress())) {
-                    iWantDocument.setInitiatorEmailAddress(batchIWantDocument.getInitiatorEmailAddress());
-                }
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorPhoneNumber())) {
-                    iWantDocument.setInitiatorPhoneNumber(batchIWantDocument.getInitiatorPhoneNumber());
-                }
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorAddress())) {
-                    iWantDocument.setInitiatorAddress(batchIWantDocument.getInitiatorAddress());
-                }
-            }
-
-            if (batchIWantDocument.isSameAsInitiator() && StringUtils.isBlank(batchIWantDocument.getDeliverToNetID()) && StringUtils.isBlank(batchIWantDocument.getDeliverToName()) && StringUtils.isBlank(batchIWantDocument.getDeliverToEmailAddress()) && StringUtils.isBlank(batchIWantDocument.getDeliverToPhoneNumber()) && StringUtils.isBlank(batchIWantDocument.getDeliverToAddress())) {
-                iWantDocument.setSameAsInitiator(true);
-                iWantDocument.setDeliverToNetID(iWantDocument.getInitiatorNetID());
-                iWantDocument.setDeliverToName(iWantDocument.getInitiatorName());
-                iWantDocument.setDeliverToEmailAddress(iWantDocument.getInitiatorEmailAddress());
-                iWantDocument.setDeliverToPhoneNumber(iWantDocument.getInitiatorPhoneNumber());
-                iWantDocument.setDeliverToAddress(iWantDocument.getInitiatorAddress());
-            } else {
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToNetID())) {
-                    iWantDocument.setDeliverToNetID(batchIWantDocument.getDeliverToNetID());
-                }
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToName())) {
-                    iWantDocument.setDeliverToName(batchIWantDocument.getDeliverToName());
-                }
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToEmailAddress())) {
-                    iWantDocument.setDeliverToEmailAddress(batchIWantDocument.getDeliverToEmailAddress());
-                }
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToPhoneNumber())) {
-                    iWantDocument.setDeliverToPhoneNumber(batchIWantDocument.getDeliverToPhoneNumber());
-                }
-
-                if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToAddress())) {
-                    iWantDocument.setDeliverToAddress(batchIWantDocument.getDeliverToAddress());
-                }
-            }
-
+            //populate vendor data
             if (StringUtils.isNotEmpty(batchIWantDocument.getVendorName())) {
                 iWantDocument.setVendorName(batchIWantDocument.getVendorName());
             }
@@ -308,6 +248,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             // call business rules
             rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
             if (!rulePassed) {
+            	LOG.error("I Want document " + iWantDocument.getDocumentNumber() + "not routed due to errors");
                 loggErrorMessages();
 
             } else if (noErrors) {
@@ -321,6 +262,96 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
     }
 
+    /**
+     * Populates the Requestor section of the I Want doc section.
+     * 
+     * @param initiator
+     * @param batchIWantDocument
+     * @param iWantDocument
+     * @return true if no errors, false otherwise
+     */
+    protected boolean populateIWantDocRequestorSection(Person initiator, BatchIWantDocument batchIWantDocument, IWantDocument iWantDocument){
+    	boolean noErrors = true;
+        if (StringUtils.isBlank(batchIWantDocument.getInitiatorName())) {
+
+            // populate with data from doc initiator
+            String initiatorNetID = initiator.getPrincipalName();
+
+            iWantDocument.setInitiatorNetID(initiatorNetID);
+
+            String initiatorName = initiator.getName();
+            String initiatorPhoneNumber = initiator.getPhoneNumber();
+            String initiatorEmailAddress = initiator.getEmailAddress();
+
+            String address = iWantDocumentService.getPersonCampusAddress(initiatorNetID);
+
+            iWantDocument.setInitiatorName(initiatorName);
+            iWantDocument.setInitiatorPhoneNumber(initiatorPhoneNumber);
+            iWantDocument.setInitiatorEmailAddress(initiatorEmailAddress);
+            iWantDocument.setInitiatorAddress(address);
+        } else {
+            if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorName())) {
+                iWantDocument.setInitiatorName(batchIWantDocument.getInitiatorName());
+            }
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorEmailAddress())) {
+                iWantDocument.setInitiatorEmailAddress(batchIWantDocument.getInitiatorEmailAddress());
+            }
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorPhoneNumber())) {
+                iWantDocument.setInitiatorPhoneNumber(batchIWantDocument.getInitiatorPhoneNumber());
+            }
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getInitiatorAddress())) {
+                iWantDocument.setInitiatorAddress(batchIWantDocument.getInitiatorAddress());
+            }
+        }
+        
+        return noErrors;
+    }
+    
+    /**
+     * Populates the Deliver To section of the I Want document.
+     * 
+     * @param batchIWantDocument
+     * @param iWantDocument
+     * 
+     * @return true if no errors occur, false otherwise
+     */
+    protected boolean populateIWantDocDeliverToSection(BatchIWantDocument batchIWantDocument, IWantDocument iWantDocument){
+    	boolean noErrors = true;
+        if (batchIWantDocument.isSameAsInitiator()) {
+            iWantDocument.setSameAsInitiator(true);
+            iWantDocument.setDeliverToNetID(iWantDocument.getInitiatorNetID());
+            iWantDocument.setDeliverToName(iWantDocument.getInitiatorName());
+            iWantDocument.setDeliverToEmailAddress(iWantDocument.getInitiatorEmailAddress());
+            iWantDocument.setDeliverToPhoneNumber(iWantDocument.getInitiatorPhoneNumber());
+            iWantDocument.setDeliverToAddress(iWantDocument.getInitiatorAddress());
+        } else {
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToNetID())) {
+                iWantDocument.setDeliverToNetID(batchIWantDocument.getDeliverToNetID());
+            }
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToName())) {
+                iWantDocument.setDeliverToName(batchIWantDocument.getDeliverToName());
+            }
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToEmailAddress())) {
+                iWantDocument.setDeliverToEmailAddress(batchIWantDocument.getDeliverToEmailAddress());
+            }
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToPhoneNumber())) {
+                iWantDocument.setDeliverToPhoneNumber(batchIWantDocument.getDeliverToPhoneNumber());
+            }
+
+            if (StringUtils.isNotBlank(batchIWantDocument.getDeliverToAddress())) {
+                iWantDocument.setDeliverToAddress(batchIWantDocument.getDeliverToAddress());
+            }
+        }
+        return noErrors;
+    }
+    
     /**
      * Populates I Want doc items.
      * 
@@ -424,7 +455,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
      * @param attachments
      */
     private void loadDocumentAttachments(IWantDocument document, List<BatchIWantAttachment> attachments, String incomingFileName) {
-        String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachments/" + StringUtils.substringBeforeLast(StringUtils.substringAfterLast(incomingFileName, "/"), ".");
+        String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachment/";
 
         for (BatchIWantAttachment attachment : attachments) {
             Note note = new Note();
