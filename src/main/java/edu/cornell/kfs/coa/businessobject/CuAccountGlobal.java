@@ -71,6 +71,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
     protected Chart endowmentIncomeChartOfAccounts;
     protected Account endowmentIncomeAccount;
     protected BudgetRecordingLevel budgetRecordingLevel;
+    protected SubFundProgram subFundProgram; 
     
 
 	@Override
@@ -676,6 +677,14 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
 
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
+	}
+
+	public SubFundProgram getSubFundProgram() {
+		return subFundProgram;
+	}
+
+	public void setSubFundProgram(SubFundProgram subFundProgram) {
+		this.subFundProgram = subFundProgram;
 	}
 
 

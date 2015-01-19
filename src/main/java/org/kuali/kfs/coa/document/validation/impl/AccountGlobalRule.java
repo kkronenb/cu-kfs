@@ -605,7 +605,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
             
             if (ObjectUtils.isNotNull(effectiveDate) && ObjectUtils.isNotNull(newExpDate)) {
                 if (newExpDate.before(effectiveDate)) {
-                    putGlobalError(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE);
+                    putFieldError("accountExpirationDate", CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE, new String[] { detail.getAccountNumber() });
                     success &= false;
                 }
             }
