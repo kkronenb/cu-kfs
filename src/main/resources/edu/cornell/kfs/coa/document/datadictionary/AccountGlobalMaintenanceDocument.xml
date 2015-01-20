@@ -18,6 +18,7 @@
 
   <bean id="AccountGlobalMaintenanceDocument" parent="AccountGlobalMaintenanceDocument-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountGlobal"/>
+    <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountGlobalPreRules"/>
     <property name="defaultExistenceChecks">
       <list merge = "true">
         <bean parent="ReferenceDefinition" p:attributeName="majorReportingCategory" p:attributeToHighlightOnFail="majorReportingCategoryCode" />

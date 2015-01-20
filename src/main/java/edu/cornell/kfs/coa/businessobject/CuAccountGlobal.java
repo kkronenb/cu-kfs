@@ -224,9 +224,9 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
                 }
                 
                 // ACCOUNT FRINGE BENEFIT INDICATOR
-                if(accountsFringesBnftIndicator){
+                //if(accountsFringesBnftIndicator){
                 	account.setAccountsFringesBnftIndicator(accountsFringesBnftIndicator);
-                }
+               // }
                 
                 // FRINGE BENEFITS CHART OF ACCOUNTS CODE
                 if (StringUtils.isNotBlank(reportsToChartOfAccountsCode)) {
