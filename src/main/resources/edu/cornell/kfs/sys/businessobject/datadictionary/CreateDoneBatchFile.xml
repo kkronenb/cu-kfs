@@ -100,7 +100,7 @@
     <property name="lookupFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="path"/>
-        <bean parent="FieldDefinition" p:attributeName="fileName" p:defaultValue="*.data"/>
+        <bean parent="FieldDefinition" p:attributeName="fileName"/>
         <bean parent="FieldDefinition" p:attributeName="lastModifiedDate"/>
       </list>
     </property>
