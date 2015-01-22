@@ -940,11 +940,11 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         boolean success = true;
 
         String subFundGroupCode = newAccountGlobal.getSubFundGroupCode();
-        String subFundProg =  newAccountGlobal.getProgramCode();
+        String subFundProg = newAccountGlobal.getProgramCode();
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
-        if (StringUtils.isNotBlank(subFundProg) && StringUtils.isNotBlank(subFundGroupCode)) {
-            Map<String, String> fieldValues = new HashMap<String, String>();
+        if (!StringUtils.isBlank(subFundProg)) {
+            Map fieldValues = new HashMap();
             fieldValues.put("subFundGroupCode", subFundGroupCode);
             fieldValues.put("programCode", subFundProg);
             
@@ -954,18 +954,24 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
                 success = false;
                 putFieldError(CUKFSPropertyConstants.PROGRAM_CODE, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, subFundGroupCode});
             } else {
-                for (SubFundProgram sfp : retVals) {
-                    if (!sfp.isActive()) {
+            	for (SubFundProgram sfp : retVals) {
+            		if (!sfp.isActive()) {
                         putFieldError(CUKFSPropertyConstants.PROGRAM_CODE, KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, CUKFSPropertyConstants.PROGRAM_CODE));
                         success = false;
-                    }
-                }
-            }            
-        }
-        
-        else if(StringUtils.isBlank(subFundProg) && StringUtils.isNotBlank(subFundGroupCode)){
+            		}
+            	}
+            }
+            
+        } else {
+        	// BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+            Map fieldValues = new HashMap();
+            fieldValues.put("subFundGroupCode", subFundGroupCode);
+            Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
+            if (!retVals.isEmpty()) {
+                success = false;
                 putFieldError(CUKFSPropertyConstants.PROGRAM_CODE, CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
             }
+        }
         return success; 
     }
     
