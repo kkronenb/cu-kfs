@@ -237,8 +237,11 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         // this set confirms that all fields which are grouped (ie, foreign keys of a referenc
         // object), must either be none filled out, or all filled out.
-        success &= checkForPartiallyFilledOutReferenceForeignKeys("continuationAccount");
-        success &= checkForPartiallyFilledOutReferenceForeignKeys("incomeStreamAccount");
+        success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.CONTINUATION_ACCOUNT);
+        success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.INCOME_STREAM_ACCOUNT);
+        success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.ENDOWMENT_INCOME_ACCOUNT);
+        success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.REPORTS_TO_ACCOUNT);
+        success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.CONTRACT_CONTROL_ACCOUNT);
 
         return success;
     }
