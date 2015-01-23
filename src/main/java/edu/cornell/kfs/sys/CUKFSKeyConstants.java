@@ -107,6 +107,9 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 	    public static final String QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB = "question.cm.clearUnneededTab";
 	
 	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INVALID_CG_RESPONSIBILITY = "error.document.accountGlobalMaintenance.invalidContractsAndGrantsResponsibility";
-
 	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE  = "error.document.accountGlobal.acct.expDateCannotBeBeforeEffectiveDate";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LEDGER_ENTRIES = "error.document.accountGlobal.acct.closedAccount.noPendingLedgerEntriesAllowed"; 	   
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_LOADED_BEGINNING_BALANCE = "error.document.accountGlobal.acct.closedAccount.beginningBalanceNotLoaded";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_FUND_BALANCES = "error.document.accountGlobal.acct.closedAccount.noFundBalances";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LABOR_LEDGER_ENTRIES = "error.document.accountGlobal.acct.closedAccount.noPendingLaborLedgerEntriesAllowed";
 }

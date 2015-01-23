@@ -1314,36 +1314,18 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 	protected boolean checkCloseAccounts() {
 		boolean success = true;
 		
-		if(ObjectUtils.isNotNull(newAccountGlobal.getAccountGlobalDetails()) && newAccountGlobal.getAccountGlobalDetails().size() > 0){
-			int counter = 0;
-		for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
-			success &= checkCloseAccount(detail, counter);
-			counter ++;
-		}
-		}
-		
-		return success;
-	}
-    
-    /**
-     * This method checks to see if the user is trying to close the account and if so if any rules are being violated Calls the
-     * additional rule checkAccountExpirationDateValidTodayOrEarlier
-     *
-     * @param maintenanceDocument
-     * @return false on rules violation
-     */
-    protected boolean checkCloseAccount(AccountGlobalDetail detail, int lineNum) {
-
         LOG.info("checkCloseAccount called");
 
-        boolean success = true;
+        // check that at least one account is being closed
         boolean isBeingClosed = false;
-
-        // if the account isnt being closed, then dont bother processing the rest of
-        // the method
-        if (detail.getAccount().isActive() && newAccountGlobal.isClosed()) {
-            isBeingClosed = true;
-        }
+		if(ObjectUtils.isNotNull(newAccountGlobal.getAccountGlobalDetails()) && newAccountGlobal.getAccountGlobalDetails().size() > 0){
+			for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
+				if (detail.getAccount().isActive() && newAccountGlobal.isClosed()) {
+					isBeingClosed = true;
+					break;
+				}
+			}
+		}
 
         if (!isBeingClosed) {
             return true;
@@ -1361,18 +1343,52 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
             putFieldError("continuationFinChrtOfAcctCd", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CLOSE_CONTINUATION_CHART_CODE_REQD);
             success &= false;
         }
+		
+		if(ObjectUtils.isNotNull(newAccountGlobal.getAccountGlobalDetails()) && newAccountGlobal.getAccountGlobalDetails().size() > 0){
+			
+			for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
+				success &= checkCloseAccount(detail);
+			}
+		}
+		
+		return success;
+	}
+    
+    /**
+     * This method checks to see if the user is trying to close the account and if so if any rules are being violated Calls the
+     * additional rule checkAccountExpirationDateValidTodayOrEarlier
+     *
+     * @param maintenanceDocument
+     * @return false on rules violation
+     */
+    protected boolean checkCloseAccount(AccountGlobalDetail detail) {
 
-        String errorPath = KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "[" + lineNum + "]." + "accountNumber";
+        LOG.info("checkCloseAccount called");
+
+        boolean success = true;
+        boolean isBeingClosed = false;
+
+        // if the account isnt being closed, then dont bother processing the rest of
+        // the method
+        if (detail.getAccount().isActive() && newAccountGlobal.isClosed()) {
+            isBeingClosed = true;
+        }
+
+        if (!isBeingClosed) {
+            return true;
+        }
+
+        String errorPath = KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS;
         // must have no pending ledger entries
         if (generalLedgerPendingEntryService.hasPendingGeneralLedgerEntry(detail.getAccount())) {
         	
-            putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_CLOSED_PENDING_LEDGER_ENTRIES);
+            putFieldError(errorPath, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LEDGER_ENTRIES, new String[]{detail.getAccountNumber()});
             success &= false;
         }
 
         // beginning balance must be loaded in order to close account
         if (!balanceService.beginningBalanceLoaded(detail.getAccount())) {
-            putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_CLOSED_NO_LOADED_BEGINNING_BALANCE);
+            putFieldError(errorPath, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_LOADED_BEGINNING_BALANCE, new String[]{detail.getAccountNumber()});
             success &= false;
         }
 
@@ -1381,13 +1397,13 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         // (9899 is fund balance for us), and the process of closing income and expense into 9899 must take the 9899 balance to
         // zero.
         if (balanceService.hasAssetLiabilityFundBalanceBalances(detail.getAccount())) {
-            putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_CLOSED_NO_FUND_BALANCES);
+            putFieldError(errorPath, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_FUND_BALANCES, new String[]{detail.getAccountNumber()});
             success &= false;
         }
 
         // We must not have any pending labor ledger entries
         if (SpringContext.getBean(LaborModuleService.class).hasPendingLaborLedgerEntry(detail.getAccount().getChartOfAccountsCode(), detail.getAccount().getAccountNumber())) {
-            putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_CLOSED_PENDING_LABOR_LEDGER_ENTRIES);
+            putFieldError(errorPath, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LABOR_LEDGER_ENTRIES, new String[]{detail.getAccountNumber()});
             success &= false;
         }
 
