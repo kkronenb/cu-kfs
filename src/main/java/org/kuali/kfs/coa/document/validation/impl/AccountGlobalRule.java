@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.AccountDescription;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail;
@@ -42,9 +43,11 @@ import org.kuali.kfs.integration.ld.LaborModuleService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -77,6 +80,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
     private static final String WHEN_FUND_PREFIX = "When Fund Group Code is ";
     private static final String AND_SUB_FUND = " and Sub-Fund Group Code is ";
+    protected static final String ACCT_CAPITAL_SUBFUNDGROUP = "CAPITAL_SUB_FUND_GROUPS";
    
     protected CuAccountGlobal newAccountGlobal;
     protected Timestamp today;
@@ -132,7 +136,8 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         checkSubFundProgram(document);
         checkAppropriationAccount(document);
         // checkFundGroup(document);
-        // checkSubFundGroup(document);
+        checkSubFundGroup();
+        checkOpenEncumbrances();
 
         // Save always succeeds, even if there are business rule failures
         return true;
@@ -162,7 +167,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         success &= checkSubFundProgram(document);
         success &= checkAppropriationAccount(document);
         // success &= checkFundGroup(document);
-        // success &= checkSubFundGroup(document);
+        success &= checkSubFundGroup();
         success &= checkOpenEncumbrances();
 
         return success;
@@ -1438,6 +1443,109 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
         }
 
         return true;
+    }
+    
+    protected boolean checkSubFundGroup() {
+    	
+		boolean success = true;
+		for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
+			success &= checkSubFundGroup(detail);
+		}
+		return success;
+    	
+    }
+    
+    
+    /**
+     * This method checks to see if any SubFund Group rules were violated Specifically: if SubFundGroup is empty or not "PFCMR" we
+     * cannot have a campus code or building code if SubFundGroup is "PFCMR" then campus code and building code "must" be entered
+     * and be valid codes
+     *
+     * @param maintenanceDocument
+     * @return false on rules violation
+     */
+    protected boolean checkSubFundGroup( AccountGlobalDetail detail) {
+
+        LOG.info("checkSubFundGroup called");
+
+        boolean success = true;
+
+        String subFundGroupCode = newAccountGlobal.getSubFundGroupCode();
+        Account account = detail.getAccount();
+        String errorPath = KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS;
+
+        if (account.getAccountDescription() != null) {
+
+            String campusCode = account.getAccountDescription().getCampusCode();
+            String buildingCode = account.getAccountDescription().getBuildingCode();
+
+            // check if sub fund group code is blank
+            if (StringUtils.isBlank(subFundGroupCode)) {
+
+                // check if campus code and building code are NOT blank
+                if (!StringUtils.isBlank(campusCode) || !StringUtils.isBlank(buildingCode)) {
+
+                    // if sub_fund_grp_cd is blank, campus code should NOT be entered
+                    if (!StringUtils.isBlank(campusCode)) {
+                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_BLANK_SUBFUNDGROUP_WITH_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
+                        success &= false;
+                    }
+
+                    // if sub_fund_grp_cd is blank, then bldg_cd should NOT be entered
+                    if (!StringUtils.isBlank(buildingCode)) {
+                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_BLANK_SUBFUNDGROUP_WITH_BUILDING_CD, subFundGroupCode);
+                        success &= false;
+                    }
+
+                }
+                else {
+
+                    // if all sub fund group, campus code, building code are all blank return true
+                    return success;
+                }
+
+            }
+            else if (!StringUtils.isBlank(subFundGroupCode) && !ObjectUtils.isNull(account.getSubFundGroup())) {
+
+                // Attempt to get the right SubFundGroup code to check the following logic with. If the value isn't available, go
+                // ahead
+                // and die, as this indicates a mis-configured application, and important business rules wont be implemented without it.
+                ParameterEvaluator evaluator = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, ACCT_CAPITAL_SUBFUNDGROUP, subFundGroupCode.trim());
+
+                if (evaluator.evaluationSucceeds()) {
+
+                    // if sub_fund_grp_cd is 'PFCMR' then campus_cd must be entered
+                    if (StringUtils.isBlank(campusCode)) {
+                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CAMS_SUBFUNDGROUP_WITH_MISSING_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
+                        success &= false;
+                    }
+
+                    // if sub_fund_grp_cd is 'PFCMR' then bldg_cd must be entered
+                    if (StringUtils.isBlank(buildingCode)) {
+                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CAMS_SUBFUNDGROUP_WITH_MISSING_BUILDING_CD, subFundGroupCode);
+                        success &= false;
+                    }
+
+                }
+                else {
+
+                    // if sub_fund_grp_cd is NOT 'PFCMR', campus code should NOT be entered
+                    if (!StringUtils.isBlank(campusCode)) {
+                        putFieldError("accountDescription.campusCode", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_NONCAMS_SUBFUNDGROUP_WITH_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
+                        success &= false;
+                    }
+
+                    // if sub_fund_grp_cd is NOT 'PFCMR' then bldg_cd should NOT be entered
+                    if (!StringUtils.isBlank(buildingCode)) {
+                        putFieldError("accountDescription.buildingCode", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_NONCAMS_SUBFUNDGROUP_WITH_BUILDING_CD, subFundGroupCode);
+                        success &= false;
+                    }
+                }
+            }
+
+        }
+
+        return success;
     }
     
     public EncumbranceService getEncumbranceService() {

@@ -11,6 +11,7 @@ import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.AccountType;
 import org.kuali.kfs.coa.businessobject.BudgetRecordingLevel;
 import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType;
 import org.kuali.kfs.coa.businessobject.RestrictedStatus;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -72,6 +73,13 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
     protected Account endowmentIncomeAccount;
     protected BudgetRecordingLevel budgetRecordingLevel;
     protected SubFundProgram subFundProgram; 
+    
+    protected List<IndirectCostRecoveryAccount> indirectCostRecoveryAccounts;
+    
+    public CuAccountGlobal() {
+		super();
+		indirectCostRecoveryAccounts = new ArrayList<IndirectCostRecoveryAccount>();
+	}
     
 
 	@Override
@@ -685,6 +693,15 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalBusinessObje
 
 	public void setSubFundProgram(SubFundProgram subFundProgram) {
 		this.subFundProgram = subFundProgram;
+	}
+
+	public List<IndirectCostRecoveryAccount> getIndirectCostRecoveryAccounts() {
+		return indirectCostRecoveryAccounts;
+	}
+
+	public void setIndirectCostRecoveryAccounts(
+			List<IndirectCostRecoveryAccount> indirectCostRecoveryAccounts) {
+		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
 	}
 
 

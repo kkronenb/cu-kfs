@@ -19,6 +19,13 @@
   <bean id="AccountGlobalMaintenanceDocument" parent="AccountGlobalMaintenanceDocument-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountGlobal"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountGlobalPreRules"/>
+  	<property name="maintainableSections">
+      <list>
+        <ref bean="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance"/>
+        <ref bean="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts"/>
+        <ref bean="AccountGlobalMaintenanceDocument-EditListofAccounts"/>
+      </list>
+    </property>
     <property name="defaultExistenceChecks">
       <list merge = "true">
         <bean parent="ReferenceDefinition" p:attributeName="majorReportingCategory" p:attributeToHighlightOnFail="majorReportingCategoryCode" />
@@ -187,6 +194,45 @@
         </list>
     </property>
   </bean>
+  
+  <bean id="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts" parent="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts-parentBean"/>
+  
+  <bean id="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="indirectCostRecoveryAccounts"/>
+    <property name="title" value="Indirect Cost Recovery Accounts"/>
+    <property name="maintainableItems">
+      <list>
+          <bean parent="MaintainableCollectionDefinition">
+            <property name="name" value="indirectCostRecoveryAccounts"/>
+            <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount"/>
+            <property name="summaryTitle" value="Indirect Cost Recovery Account"/>
+            <property name="summaryFields">
+            <list>
+              <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
+              <dd:maintField attributeName="indirectCostRecoveryAccountNumber"/>
+              <dd:maintField attributeName="accountLinePercent"/>
+            </list>
+            </property>
+            <property name="maintainableFields">
+              <list>
+                <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
+                <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
+                <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountNumber" p:webUILeaveFieldFunction="onblur_accountNumber_newAccount">
+                  <property name="webUILeaveFieldFunctionParameters">
+                    <list>
+                      <value>indirectCostRecoveryFinCoaCode</value>
+                    </list>
+                  </property> 
+                </bean>      
+                <dd:maintField attributeName="accountLinePercent" />
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+              </list>
+            </property>
+          </bean>
+        </list>
+       </property>
+      </bean>
  
   <bean id="AccountGlobalMaintenanceDocument-EditListofAccounts" parent="AccountGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
   <bean id="AccountGlobalMaintenanceDocument-EditListofAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
@@ -222,7 +268,9 @@
           </property>
         </bean>
       </list>
+      
     </property>
+    
   </bean>
   
   <bean id="AccountGlobalMaintenanceDocument-workflowAttributes" parent="AccountGlobalMaintenanceDocument-workflowAttributes-parentBean">
